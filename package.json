@@ -1,0 +1,47 @@
+{
+  "name": "bluecodex",
+  "type": "module",
+  "version": "0.0.3",
+  "description": "The knowledge toolkit for dev teams.",
+  "repository": "https://github.com/bluecodex/bluecodex",
+  "author": "Pedro Moreira <code@pedrosm.com>",
+  "license": "MIT",
+  "main": "src/index.ts",
+  "files": [
+    "src"
+  ],
+  "bin": {
+    "bcx": "src/bin/boot-with-bun.js",
+    "bluecodex": "src/bin/boot-with-bun.js"
+  },
+  "keywords": [
+    "kb",
+    "knowledge base",
+    "toolkit",
+    "tooling",
+    "command",
+    "cli",
+    "scaffolding",
+    "generator",
+    "bcx",
+    "bluecodex"
+  ],
+  "scripts": {
+    "typecheck": "tsc",
+    "format": "prettier ./src/**/* --write; prettier ./*.md --write",
+    "postversion": "git push && git push --tags",
+    "version": "git add package.json"
+  },
+  "devDependencies": {
+    "@total-typescript/ts-reset": "^0.6.1",
+    "@trivago/prettier-plugin-sort-imports": "^5.2.2",
+    "@types/bun": "^1.2.15",
+    "ansi-escapes": "^7.0.0",
+    "chalk": "^5.4.1",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "bun": "^1.2.15"
+  }
+}
