@@ -1,4 +1,4 @@
-import type { Command } from "./types/Command";
+import type { Command } from "./command";
 
 export class CommandRegistry {
   private registeredCommands: Command[] = [];
@@ -8,20 +8,24 @@ export class CommandRegistry {
     return this.registeredCommands;
   }
 
-  register(command: Command): Command {
-    if (this.find(command.name)) {
-      throw new Error(`Command with name "${command.name}" already exists.`);
+  register<C extends Command>(command: C): C {
+    if (this.find(command.blueprint.name)) {
+      throw new Error(
+        `Command with name "${command.blueprint.name}" already exists.`,
+      );
     }
 
     this.registeredCommands.push(command);
     return command;
   }
 
-  selfRegisterIfEnabled(command: Command): Command {
+  selfRegisterIfEnabled<C extends Command>(command: C): C {
     return this.selfRegisterEnabled ? this.register(command) : command;
   }
 
   find(name: string): Command | undefined {
-    return this.registeredCommands.find((command) => command.name === name);
+    return this.registeredCommands.find(
+      (command) => command.blueprint.name === name,
+    );
   }
 }

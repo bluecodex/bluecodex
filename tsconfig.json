@@ -4,7 +4,6 @@
     "target": "ESNext",
     "module": "ESNext",
     "jsx": "react-jsx",
-
     "moduleResolution": "bundler",
     "verbatimModuleSyntax": true,
     "noEmit": true,
@@ -13,5 +12,5 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
   },
-  "include": ["./src"]
+  "include": ["./src", "./tests"]
 }

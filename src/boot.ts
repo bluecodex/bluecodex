@@ -1,7 +1,7 @@
+import { askToInit } from "./embeds/ask-to-init";
 import { embeds } from "./embeds/embeds";
 import { ioc } from "./ioc";
 import { Project } from "./project";
-import { askToInit } from "./utils/ask-to-init";
 
 async function boot() {
   ioc.init({

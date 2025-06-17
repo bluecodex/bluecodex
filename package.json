@@ -28,6 +28,7 @@
   ],
   "scripts": {
     "typecheck": "tsc",
+    "test": "vitest",
     "format": "prettier ./src/**/* --write; prettier ./*.md --write",
     "postversion": "git push && git push --tags",
     "version": "git add package.json"
@@ -39,7 +40,8 @@
     "ansi-escapes": "^7.0.0",
     "chalk": "^5.4.1",
     "prettier": "^3.5.3",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.3"
   },
   "dependencies": {
     "bun": "^1.2.15"
