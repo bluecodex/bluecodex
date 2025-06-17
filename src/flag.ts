@@ -21,7 +21,7 @@ type WithoutFlagMarkers<S extends string> = S extends `--${infer Name}`
     : S;
 
 type FlagType<S extends string> = ValidDataType<
-  AfterChar<":", BeforeChar<"=", S>>,
+  AfterChar<":", BeforeChar<"=", S>, "boolean">,
   "boolean"
 >;
 
@@ -59,7 +59,8 @@ export function isFlagStr(str: string) {
 }
 
 export function parseFlag<S extends string>(str: S): Flag<S> {
-  const parts = str.slice(str.startsWith("--") ? 2 : 1).split(/[:=]/);
+  const dashCount = str[0] === "-" ? (str[1] === "-" ? 2 : 1) : 0;
+  const parts = str.slice(dashCount).split(/[:=]/);
 
   const rawName = parts.shift()!;
   const rawType = str.includes(":") ? parts.shift() : undefined;
