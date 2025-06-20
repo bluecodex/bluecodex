@@ -1,3 +1,5 @@
+import chalk from "chalk";
+
 import { askToInit } from "./embeds/ask-to-init";
 import { embeds } from "./embeds/embeds";
 import { ioc } from "./ioc";
@@ -17,9 +19,17 @@ async function boot() {
     return;
   }
 
+  // Load bluecodex.ts file
   require(ioc.project.bluecodexFilePath);
 
   const [name, ...cmdArgv] = process.argv.slice(2);
+
+  if (!name) {
+    console.log(
+      `Looking for the list of commands? Try ${chalk.blueBright("command:list")}`,
+    );
+    return;
+  }
 
   const command = ioc.commandRegistry.find(name || "list");
   if (!command) {

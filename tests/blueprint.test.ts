@@ -16,7 +16,13 @@ test("with arg but no explicit type", () => {
   expect(blueprint(blueprintStr)).toEqual({
     name: "foo",
     args: [
-      { name: "arg_one", type: "string", optional: false, fallback: undefined },
+      {
+        name: "arg_one",
+        type: "string",
+        explicitType: false,
+        optional: false,
+        fallback: undefined,
+      },
     ],
     flags: [],
   } satisfies Blueprint<typeof blueprintStr>);

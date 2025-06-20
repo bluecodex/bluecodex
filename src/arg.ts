@@ -27,6 +27,7 @@ export type Arg<S extends string = string> = {
     ? true
     : false;
   type: ArgType<S>;
+  explicitType: S extends `${string}:${string}` ? true : false;
   fallback: CastData<ArgType<S>, AfterChar<"=", S, undefined>>;
 };
 
@@ -86,9 +87,10 @@ export function isArgInput(input: string) {
 
 export function parseArg<S extends string>(input: S): Arg<S> {
   const parts = input.split(/[:=]/);
+  const explicitType = input.includes(":");
 
   const rawName = parts.shift()!;
-  const rawType = input.includes(":") ? parts.shift() : undefined;
+  const rawType = explicitType ? parts.shift() : undefined;
   const rawFallback = input.includes("=") ? parts.shift() : undefined;
 
   const optional = rawName.endsWith("?");
@@ -101,7 +103,7 @@ export function parseArg<S extends string>(input: S): Arg<S> {
     ? castData({ type, input: rawFallback })
     : undefined;
 
-  return { name, type, optional, fallback } as Arg<S>;
+  return { name, type, explicitType, optional, fallback } as Arg<S>;
 }
 
 export function castArg<A extends Arg>({
@@ -118,4 +120,13 @@ export function castArg<A extends Arg>({
   } catch {
     throw new InvalidArgInputError(arg, input);
   }
+}
+
+export function formatArg(arg: Arg) {
+  const parts: string[] = [];
+
+  parts.push(arg.name);
+  if (arg.explicitType) parts.push(chalk.dim(`:${arg.type}`));
+
+  return parts.join("");
 }

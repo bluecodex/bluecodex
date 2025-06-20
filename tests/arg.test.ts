@@ -8,6 +8,7 @@ test("just the name", () => {
   expect(parseArg(argStr)).toEqual({
     name: "arg_one",
     type: "string",
+    explicitType: false,
     optional: false,
     fallback: undefined,
   } satisfies Arg<typeof argStr>);
@@ -19,6 +20,7 @@ test("boolean type", () => {
   expect(parseArg(argStr)).toEqual({
     name: "arg_one",
     type: "boolean",
+    explicitType: true,
     optional: false,
     fallback: undefined,
   } satisfies Arg<typeof argStr>);
@@ -29,6 +31,7 @@ test("number type", () => {
   expect(parseArg(argStr)).toEqual({
     name: "arg_one",
     type: "number",
+    explicitType: true,
     optional: false,
     fallback: undefined,
   } satisfies Arg<typeof argStr>);
@@ -40,6 +43,7 @@ test("invalid type", () => {
   expect(parseArg(argStr)).toEqual({
     name: "arg_one",
     type: "string",
+    explicitType: true,
     optional: false,
     fallback: undefined,
   } satisfies Arg<typeof argStr>);
@@ -51,6 +55,7 @@ test("type + fallback", () => {
   expect(parseArg(argStr)).toEqual({
     name: "arg_one",
     type: "boolean",
+    explicitType: true,
     optional: false,
     fallback: true,
   } satisfies Arg<typeof argStr>);
@@ -62,6 +67,7 @@ test("no type but fallback", () => {
   expect(parseArg(argStr)).toEqual({
     name: "arg_one",
     type: "string",
+    explicitType: false,
     optional: false,
     fallback: "true",
   } satisfies Arg<typeof argStr>);
@@ -73,6 +79,7 @@ test("just name with optional", () => {
   expect(parseArg(argStr)).toEqual({
     name: "arg_one",
     type: "string",
+    explicitType: false,
     optional: true,
     fallback: undefined,
   } satisfies Arg<typeof argStr>);
@@ -84,6 +91,7 @@ test("name with optional + fallback", () => {
   expect(parseArg(argStr)).toEqual({
     name: "arg_one",
     type: "string",
+    explicitType: false,
     optional: true,
     fallback: "blue",
   } satisfies Arg<typeof argStr>);

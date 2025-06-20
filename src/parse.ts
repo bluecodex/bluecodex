@@ -39,7 +39,13 @@ export function parse<B extends Blueprint>({
   const parsedArgs = nodeParseArgs({
     args: argv,
     options: blueprint.flags.reduce(
-      (acc, flag) => ({ ...acc, [flag.name]: { type: "string" } }),
+      (acc, flag) => ({
+        ...acc,
+        [flag.name]: {
+          type: "string",
+          short: flag.dash === "-" ? flag.name : undefined,
+        },
+      }),
       {} as ParseArgsOptionsConfig,
     ),
     allowPositionals: true,

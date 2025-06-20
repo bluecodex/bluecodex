@@ -5,7 +5,7 @@ export class CommandRegistry {
   selfRegisterEnabled: boolean = false;
 
   get commands(): Command[] {
-    return this.registeredCommands;
+    return [...this.registeredCommands];
   }
 
   register<C extends Command>(command: C): C {

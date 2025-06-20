@@ -28,6 +28,7 @@ type FlagType<S extends string> = ValidDataType<
 >;
 
 export type Flag<S extends string = string> = {
+  dash: S extends `--${string}` ? "--" : S extends `-${string}` ? "-" : "";
   name: WithoutFlagMarkers<
     BeforeChar<"!", BeforeChar<":", BeforeChar<"=", S>>>
   >;
@@ -35,6 +36,7 @@ export type Flag<S extends string = string> = {
     ? true
     : false;
   type: FlagType<S>;
+  explicitType: S extends `${string}:${string}` ? true : false;
   fallback: CastData<FlagType<S>, AfterChar<"=", S, undefined>>;
 };
 
@@ -62,10 +64,13 @@ export function isFlagInput(input: string) {
 
 export function parseFlag<S extends string>(str: S): Flag<S> {
   const dashCount = str[0] === "-" ? (str[1] === "-" ? 2 : 1) : 0;
+  const dash = str.slice(0, dashCount);
+
   const parts = str.slice(dashCount).split(/[:=]/);
+  const explicitType = str.includes(":");
 
   const rawName = parts.shift()!;
-  const rawType = str.includes(":") ? parts.shift() : undefined;
+  const rawType = explicitType ? parts.shift() : undefined;
   const rawFallback = str.includes("=") ? parts.shift() : undefined;
 
   const required = rawName.endsWith("!");
@@ -78,7 +83,7 @@ export function parseFlag<S extends string>(str: S): Flag<S> {
     ? castData({ type, input: rawFallback })
     : undefined;
 
-  return { name, type, required, fallback } as Flag<S>;
+  return { dash, name, type, explicitType, required, fallback } as Flag<S>;
 }
 
 export function castFlag<F extends Flag>({
@@ -101,4 +106,14 @@ export function castFlag<F extends Flag>({
       `Invalid value ${chalk.redBright(input)} for flag ${chalk.bold(`${flag.name}:${flag.type}`)}`,
     );
   }
+}
+
+export function formatFlag(flag: Flag) {
+  const parts: string[] = [];
+
+  parts.push(chalk(`${flag.dash}${flag.name}`));
+  if (flag.explicitType) parts.push(chalk.dim(`:${flag.type}`));
+  if (flag.fallback) parts.push(chalk.dim(`=${flag.fallback}`));
+
+  return parts.join("");
 }
