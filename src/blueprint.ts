@@ -14,14 +14,12 @@ import {
 } from "./flag";
 import type { AfterChar, BeforeChar } from "./types/string-type-utils";
 
-export type Blueprint<S extends string = string> = {
+export type Blueprint<S extends string = any> = {
   name: BeforeChar<" ", S>;
-  args: AfterChar<" ", S> extends never
-    ? Arg[] & []
-    : ExtractArgs<AfterChar<" ", S>>;
-  flags: AfterChar<" ", S> extends never
-    ? Flag[] & []
-    : ExtractFlags<AfterChar<" ", S>>;
+  args: Arg[] &
+    (AfterChar<" ", S> extends never ? [] : ExtractArgs<AfterChar<" ", S>>);
+  flags: Flag[] &
+    (AfterChar<" ", S> extends never ? [] : ExtractFlags<AfterChar<" ", S>>);
 };
 
 export type RecordFromBlueprint<B extends Blueprint> = ArgsToRecord<B["args"]> &

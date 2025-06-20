@@ -3,7 +3,7 @@ import * as path from "node:path";
 
 import { command } from "../../command";
 
-export const init = command("init", () => {
+export const initCommand = command("init", () => {
   const contents = fs
     .readFileSync(path.join(__dirname, "bluecodex.template.ts"), "utf-8")
     .replace('from "../../index";', 'from "bluecodex";');

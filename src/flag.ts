@@ -27,7 +27,7 @@ type FlagType<S extends string> = ValidDataType<
   "boolean"
 >;
 
-export type Flag<S extends string = string> = {
+export type Flag<S extends string = any> = {
   dash: S extends `--${string}` ? "--" : S extends `-${string}` ? "-" : "";
   name: WithoutFlagMarkers<
     BeforeChar<"!", BeforeChar<":", BeforeChar<"=", S>>>
@@ -41,8 +41,10 @@ export type Flag<S extends string = string> = {
 };
 
 export type ExtractFlags<S extends string> = Concat<
-  S extends `-${string}` ? [Flag<BeforeChar<" ", S>>] : [],
-  AfterChar<" ", S> extends never ? [] : ExtractFlags<AfterChar<" ", S>>
+  S extends `-${string}` ? [Flag<BeforeChar<" ", S>>] : Flag[] & [],
+  AfterChar<" ", S> extends never
+    ? Flag[] & []
+    : ExtractFlags<AfterChar<" ", S>>
 >;
 
 export type FlagsToRecord<Flags extends Flag[]> = {

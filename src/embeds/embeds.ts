@@ -1,5 +1,5 @@
 import type { Command } from "../command";
-import { command_list } from "./command/command_list";
-import { init } from "./init/init";
+import { helpCommand } from "./help/helpCommand";
+import { initCommand } from "./init/initCommand";
 
-export const embeds: Command[] = [init, command_list];
+export const embeds: Command[] = [initCommand, helpCommand];

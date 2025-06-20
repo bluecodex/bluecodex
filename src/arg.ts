@@ -21,7 +21,7 @@ type ArgType<S extends string> = ValidDataType<
   "string"
 >;
 
-export type Arg<S extends string = string> = {
+export type Arg<S extends string = any> = {
   name: BeforeChar<"?", BeforeChar<":", BeforeChar<"=", S>>>;
   optional: BeforeChar<":", BeforeChar<"=", S>> extends `${string}?`
     ? true
@@ -32,8 +32,8 @@ export type Arg<S extends string = string> = {
 };
 
 export type ExtractArgs<S extends string> = Concat<
-  S extends `-${string}` ? [] : [Arg<BeforeChar<" ", S>>],
-  AfterChar<" ", S> extends never ? [] : ExtractArgs<AfterChar<" ", S>>
+  S extends `-${string}` ? Arg[] & [] : [Arg<BeforeChar<" ", S>>],
+  AfterChar<" ", S> extends never ? Arg[] & [] : ExtractArgs<AfterChar<" ", S>>
 >;
 
 export type ArgsToRecord<Args extends Arg[]> = {

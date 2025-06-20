@@ -5,7 +5,7 @@ import { command } from "../../command";
 import { formatFlag } from "../../flag";
 import { ioc } from "../../ioc";
 
-export const command_list = command("command:list", () => {
+export const helpCommand = command("help", () => {
   console.log(""); // Some breathing room
 
   const { groupedCommands } = ioc.project;

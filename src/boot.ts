@@ -37,13 +37,13 @@ async function boot() {
     return;
   }
 
-  const result = parse({ argv: cmdArgv, blueprint: command?.blueprint });
+  const result = parse({ argv: cmdArgv, blueprint: command.blueprint });
   if (result.type === "error") {
     console.log(result.errors.map((error) => error.message).join("\n"));
     return;
   }
 
-  await command.fn({ argv: cmdArgv, ...result.data });
+  await command.fn({ argv: cmdArgv, ...result.data } as any);
 }
 
 await boot();
