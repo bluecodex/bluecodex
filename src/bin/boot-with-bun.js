@@ -10,7 +10,7 @@ const srcDirPath = path.join(
 
 const cmdArgv = process.argv.slice(2);
 
-const child = await spawn(
+await spawn(
   `node_modules/.bin/bun`,
   [path.join(srcDirPath, "boot.ts"), ...cmdArgv],
   { stdio: "inherit" },
