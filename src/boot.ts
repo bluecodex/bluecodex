@@ -1,6 +1,7 @@
 import { askToInit } from "./embeds/ask-to-init";
 import { embeds } from "./embeds/embeds";
 import { ioc } from "./ioc";
+import { parse } from "./parse";
 import { Project } from "./project";
 
 async function boot() {
@@ -21,11 +22,18 @@ async function boot() {
   const [name, ...cmdArgv] = process.argv.slice(2);
 
   const command = ioc.commandRegistry.find(name || "list");
-  if (command) {
-    await command.fn({ argv: cmdArgv });
-  } else {
+  if (!command) {
     console.error("Command not found");
+    return;
   }
+
+  const result = parse({ argv: cmdArgv, blueprint: command?.blueprint });
+  if (result.type === "error") {
+    console.log(result.errors.map((error) => error.message).join("\n"));
+    return;
+  }
+
+  await command.fn({ argv: cmdArgv, ...result.data });
 }
 
 await boot();

@@ -1,3 +1,5 @@
+import chalk from "chalk";
+
 import {
   type CastData,
   type DataType,
@@ -54,8 +56,8 @@ export type FlagsToRecord<Flags extends Flag[]> = {
  * Functions
  */
 
-export function isFlagStr(str: string) {
-  return str.startsWith("-");
+export function isFlagInput(input: string) {
+  return input.startsWith("-");
 }
 
 export function parseFlag<S extends string>(str: S): Flag<S> {
@@ -73,8 +75,30 @@ export function parseFlag<S extends string>(str: S): Flag<S> {
     rawType && isValidDataType(rawType) ? rawType : "boolean";
 
   const fallback = rawFallback
-    ? castData({ type, str: rawFallback })
+    ? castData({ type, input: rawFallback })
     : undefined;
 
   return { name, type, required, fallback } as Flag<S>;
+}
+
+export function castFlag<F extends Flag>({
+  flag,
+  input,
+}: {
+  flag: F;
+  input: string;
+}): DataTypeByName<F["type"]> {
+  if (flag.required && !input) {
+    throw new Error(
+      `Flag ${chalk.bold(`${flag.name}:${flag.type}`)} is required and was not provided.`,
+    );
+  }
+
+  try {
+    return castData({ type: flag.type, input }) as DataTypeByName<F["type"]>;
+  } catch {
+    throw new Error(
+      `Invalid value ${chalk.redBright(input)} for flag ${chalk.bold(`${flag.name}:${flag.type}`)}`,
+    );
+  }
 }

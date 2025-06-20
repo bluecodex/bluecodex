@@ -1,3 +1,5 @@
+import chalk from "chalk";
+
 import {
   type CastData,
   type DataType,
@@ -43,19 +45,51 @@ export type ArgsToRecord<Args extends Arg[]> = {
 };
 
 /*
+ * Errors
+ */
+
+export class MissingRequiredArgError extends Error {
+  arg: Arg;
+
+  constructor(arg: Arg) {
+    super();
+    this.arg = arg;
+  }
+
+  get message() {
+    return `Arg ${chalk.bold(`${this.arg.name}:${this.arg.type}`)} is not optional and was not provided.`;
+  }
+}
+
+export class InvalidArgInputError extends Error {
+  arg: Arg;
+  input: string;
+
+  constructor(arg: Arg, input: string) {
+    super();
+    this.arg = arg;
+    this.input = input;
+  }
+
+  get message() {
+    return `Invalid input ${chalk.redBright(this.input)} for arg ${chalk.bold(`${this.arg.name}:${this.arg.type}`)}`;
+  }
+}
+
+/*
  * Functions
  */
 
-export function isArgStr(str: string) {
-  return !str.startsWith("-");
+export function isArgInput(input: string) {
+  return !input.startsWith("-");
 }
 
-export function parseArg<S extends string>(str: S): Arg<S> {
-  const parts = str.split(/[:=]/);
+export function parseArg<S extends string>(input: S): Arg<S> {
+  const parts = input.split(/[:=]/);
 
   const rawName = parts.shift()!;
-  const rawType = str.includes(":") ? parts.shift() : undefined;
-  const rawFallback = str.includes("=") ? parts.shift() : undefined;
+  const rawType = input.includes(":") ? parts.shift() : undefined;
+  const rawFallback = input.includes("=") ? parts.shift() : undefined;
 
   const optional = rawName.endsWith("?");
   const name = optional ? rawName.slice(0, -1) : rawName;
@@ -64,8 +98,24 @@ export function parseArg<S extends string>(str: S): Arg<S> {
     rawType && isValidDataType(rawType) ? rawType : "string";
 
   const fallback = rawFallback
-    ? castData({ type, str: rawFallback })
+    ? castData({ type, input: rawFallback })
     : undefined;
 
   return { name, type, optional, fallback } as Arg<S>;
+}
+
+export function castArg<A extends Arg>({
+  arg,
+  input,
+}: {
+  arg: A;
+  input: string;
+}): DataTypeByName<A["type"]> {
+  if (!arg.optional && !input) throw new MissingRequiredArgError(arg);
+
+  try {
+    return castData({ type: arg.type, input }) as DataTypeByName<A["type"]>;
+  } catch {
+    throw new InvalidArgInputError(arg, input);
+  }
 }

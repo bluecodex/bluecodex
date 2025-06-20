@@ -9,32 +9,35 @@ export type DataType = (typeof dataTypes)[number];
 export const truthyValues = ["true", "1", "y", "yes"] as const;
 export type TruthyValue = (typeof truthyValues)[number];
 
+export const falsyValues = ["false", "0", "n", "no"] as const;
+export type FalsyValue = (typeof falsyValues)[number];
+
 /*
  * Types
  */
 
-export type DataTypeByName<S extends DataType> = S extends "string"
+export type DataTypeByName<DT extends DataType> = DT extends "string"
   ? string
-  : S extends "boolean"
+  : DT extends "boolean"
     ? boolean
-    : S extends "number"
+    : DT extends "number"
       ? number
       : unknown;
 
 export type ValidDataType<
-  S extends string,
+  DT extends string,
   Fallback extends DataType,
-> = S extends DataType ? S : Fallback;
+> = DT extends DataType ? DT : Fallback;
 
 export type CastData<
-  T extends DataType,
+  DT extends DataType,
   S extends string | undefined,
 > = S extends string
-  ? T extends "string"
+  ? DT extends "string"
     ? S
-    : T extends "number"
+    : DT extends "number"
       ? StringToNumber<S>
-      : T extends "boolean"
+      : DT extends "boolean"
         ? S extends TruthyValue
           ? true
           : false
@@ -45,23 +48,26 @@ export type CastData<
  * Functions
  */
 
-export function isValidDataType(str: string): str is DataType {
-  return dataTypes.includes(str);
+export function isValidDataType(input: string): input is DataType {
+  return dataTypes.includes(input);
 }
 
-export function castData<T extends DataType>({
+export function castData<DT extends DataType>({
   type,
-  str,
+  input,
 }: {
-  type: T;
-  str: string;
-}) {
+  type: DT;
+  input: string;
+}): DataTypeByName<DT> {
   switch (type) {
     case "string":
-      return str;
+      return input as DataTypeByName<DT>;
     case "number":
-      return Number(str);
+      return Number(input) as DataTypeByName<DT>;
     case "boolean":
-      return truthyValues.includes(str);
+      if (truthyValues.includes(input)) return true as DataTypeByName<DT>;
+      if (falsyValues.includes(input)) return false as DataTypeByName<DT>;
+
+      throw new Error(`Invalid boolean value "${input}"`);
   }
 }
