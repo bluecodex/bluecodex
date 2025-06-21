@@ -35,7 +35,9 @@ type FlagType<S extends string> = ValidDataType<
 
 type FlagOnlyFirstLetterIfShort<S extends string> = S extends `--${string}`
   ? S
-  : `-${S[1]}`;
+  : S extends `-${infer Short}${string}`
+    ? Short
+    : "";
 
 export type Flag<S extends string = any> = {
   name: WithoutFlagMarkers<
