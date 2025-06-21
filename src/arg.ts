@@ -8,7 +8,7 @@ import {
   castData,
   isValidDataType,
 } from "./data-type";
-import type { Concat } from "./types/array-type-utils";
+import type { Concat, EmptyArray } from "./types/array-type-utils";
 import type { And } from "./types/operator-type-utils";
 import type { AfterChar, BeforeChar } from "./types/string-type-utils";
 
@@ -28,20 +28,22 @@ export type Arg<S extends string = any> = {
     : false;
   type: ArgType<S>;
   explicitType: S extends `${string}:${string}` ? true : false;
-  fallback: CastData<ArgType<S>, AfterChar<"=", S, undefined>>;
+  fallback: CastData<ArgType<S>, AfterChar<"=", S, null>>;
 };
 
 export type ExtractArgs<S extends string> = Concat<
-  S extends `-${string}` ? Arg[] & [] : [Arg<BeforeChar<" ", S>>],
-  AfterChar<" ", S> extends never ? Arg[] & [] : ExtractArgs<AfterChar<" ", S>>
+  S extends `-${string}` ? EmptyArray<Arg> : [Arg<BeforeChar<" ", S>>],
+  AfterChar<" ", S> extends never
+    ? EmptyArray<Arg>
+    : ExtractArgs<AfterChar<" ", S>>
 >;
 
 export type ArgsToRecord<Args extends Arg[]> = {
   [K in Args[number] as K["name"]]: And<
     K["optional"],
-    K["fallback"] extends undefined ? true : false
+    K["fallback"] extends null ? true : false
   > extends true
-    ? DataTypeByName<K["type"]> | undefined
+    ? DataTypeByName<K["type"]> | null
     : DataTypeByName<K["type"]>;
 };
 
@@ -99,9 +101,7 @@ export function parseArg<S extends string>(input: S): Arg<S> {
   const type: DataType =
     rawType && isValidDataType(rawType) ? rawType : "string";
 
-  const fallback = rawFallback
-    ? castData({ type, input: rawFallback })
-    : undefined;
+  const fallback = rawFallback ? castData({ type, input: rawFallback }) : null;
 
   return { name, type, explicitType, optional, fallback } as Arg<S>;
 }

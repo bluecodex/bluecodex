@@ -8,7 +8,7 @@ import {
   castData,
   isValidDataType,
 } from "./data-type";
-import type { Concat } from "./types/array-type-utils";
+import type { Concat, EmptyArray } from "./types/array-type-utils";
 import type { Or } from "./types/operator-type-utils";
 import type { AfterChar, BeforeChar } from "./types/string-type-utils";
 
@@ -43,29 +43,29 @@ export type Flag<S extends string = any> = {
       BeforeChar<"(", BeforeChar<"!", BeforeChar<":", BeforeChar<"=", S>>>>
     >
   >;
+  short: FlagShort<S>;
   type: FlagType<S>;
   explicitType: S extends `${string}:${string}` ? true : false;
   required: BeforeChar<":", BeforeChar<"=", S>> extends `${string}!`
     ? true
     : false;
-  short: FlagShort<S>;
-  fallback: CastData<FlagType<S>, AfterChar<"=", S, undefined>>;
+  fallback: CastData<FlagType<S>, AfterChar<"=", S, null>>;
 };
 
 export type ExtractFlags<S extends string> = Concat<
-  S extends `-${string}` ? [Flag<BeforeChar<" ", S>>] : Flag[] & [],
+  S extends `-${string}` ? [Flag<BeforeChar<" ", S>>] : EmptyArray<Flag>,
   AfterChar<" ", S> extends never
-    ? Flag[] & []
+    ? EmptyArray<Flag>
     : ExtractFlags<AfterChar<" ", S>>
 >;
 
 export type FlagsToRecord<Flags extends Flag[]> = {
   [K in Flags[number] as K["name"]]: Or<
     K["required"],
-    K["fallback"] extends undefined ? false : true
+    K["fallback"] extends null ? false : true
   > extends true
     ? DataTypeByName<K["type"]>
-    : DataTypeByName<K["type"]> | undefined;
+    : DataTypeByName<K["type"]> | null;
 };
 
 /*
@@ -111,11 +111,9 @@ export function parseFlag<S extends string>(input: S): Flag<S> {
   const type: DataType =
     rawType && isValidDataType(rawType) ? rawType : "boolean";
 
-  const fallback = rawFallback
-    ? castData({ type, input: rawFallback })
-    : undefined;
+  const fallback = rawFallback ? castData({ type, input: rawFallback }) : null;
 
-  return { name, type, explicitType, short, required, fallback } as Flag<S>;
+  return { name, short, type, explicitType, required, fallback } as Flag<S>;
 }
 
 export function castFlag<F extends Flag>({

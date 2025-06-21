@@ -12,14 +12,17 @@ import {
   isFlagInput,
   parseFlag,
 } from "./flag";
+import type { EmptyArray } from "./types/array-type-utils";
 import type { AfterChar, BeforeChar } from "./types/string-type-utils";
 
 export type Blueprint<S extends string = any> = {
   name: BeforeChar<" ", S>;
-  args: Arg[] &
-    (AfterChar<" ", S> extends never ? [] : ExtractArgs<AfterChar<" ", S>>);
-  flags: Flag[] &
-    (AfterChar<" ", S> extends never ? [] : ExtractFlags<AfterChar<" ", S>>);
+  args: AfterChar<" ", S> extends never
+    ? EmptyArray<Arg>
+    : ExtractArgs<AfterChar<" ", S>>;
+  flags: AfterChar<" ", S> extends never
+    ? EmptyArray<Flag>
+    : ExtractFlags<AfterChar<" ", S>>;
 };
 
 export type RecordFromBlueprint<B extends Blueprint> = ArgsToRecord<B["args"]> &

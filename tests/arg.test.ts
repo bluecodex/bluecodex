@@ -10,7 +10,7 @@ test("just the name", () => {
     type: "string",
     explicitType: false,
     optional: false,
-    fallback: undefined,
+    fallback: null,
   } satisfies Arg<typeof argStr>);
 });
 
@@ -22,7 +22,7 @@ test("boolean type", () => {
     type: "boolean",
     explicitType: true,
     optional: false,
-    fallback: undefined,
+    fallback: null,
   } satisfies Arg<typeof argStr>);
 });
 
@@ -33,7 +33,7 @@ test("number type", () => {
     type: "number",
     explicitType: true,
     optional: false,
-    fallback: undefined,
+    fallback: null,
   } satisfies Arg<typeof argStr>);
 });
 
@@ -45,7 +45,7 @@ test("invalid type", () => {
     type: "string",
     explicitType: true,
     optional: false,
-    fallback: undefined,
+    fallback: null,
   } satisfies Arg<typeof argStr>);
 });
 
@@ -81,7 +81,7 @@ test("just name with optional", () => {
     type: "string",
     explicitType: false,
     optional: true,
-    fallback: undefined,
+    fallback: null,
   } satisfies Arg<typeof argStr>);
 });
 

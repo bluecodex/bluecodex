@@ -31,7 +31,7 @@ export type ValidDataType<
 
 export type CastData<
   DT extends DataType,
-  S extends string | undefined,
+  S extends string | null,
 > = S extends string
   ? DT extends "string"
     ? S
@@ -41,8 +41,8 @@ export type CastData<
         ? S extends TruthyValue
           ? true
           : false
-        : undefined
-  : undefined;
+        : null
+  : null;
 
 /*
  * Functions
