@@ -1,38 +1,71 @@
 import {
   type Arg,
-  type ArgsToRecord,
-  type ExtractArgs,
-  isArgInput,
+  type ArgFromInput,
+  type IsNullableArg,
   parseArg,
 } from "./arg";
+import type { DataTypeByName } from "./data-type";
 import {
-  type ExtractFlags,
   type Flag,
-  type FlagsToRecord,
-  isFlagInput,
+  type FlagFromInput,
+  type IsNullableFlag,
   parseFlag,
 } from "./flag";
-import type { EmptyArray } from "./types/array-type-utils";
-import type { AfterChar, BeforeChar } from "./types/string-type-utils";
 
-export type Blueprint<S extends string = any> = {
-  name: BeforeChar<" ", S>;
-  args: AfterChar<" ", S> extends never
-    ? EmptyArray<Arg>
-    : ExtractArgs<AfterChar<" ", S>>;
-  flags: AfterChar<" ", S> extends never
-    ? EmptyArray<Flag>
-    : ExtractFlags<AfterChar<" ", S>>;
+/* Types */
+
+export type Blueprint<
+  Name extends string = string,
+  Parts extends (Arg | Flag)[] = (Arg | Flag)[],
+> = {
+  name: Name;
+  parts: Parts;
 };
 
-export type RecordFromBlueprint<B extends Blueprint> = ArgsToRecord<B["args"]> &
-  FlagsToRecord<B["flags"]>;
+type PartFromInput<S extends string> = S extends `-${string}`
+  ? FlagFromInput<S>
+  : ArgFromInput<S>;
+
+type ExtractParts<S extends string> =
+  S extends `${infer ThisPart} ${infer NextPart}`
+    ? [PartFromInput<ThisPart>, ...ExtractParts<NextPart>]
+    : [PartFromInput<S>];
+
+export type BlueprintFromInput<S extends string> =
+  S extends `${infer Name} ${infer PartsInput}`
+    ? Blueprint<Name, ExtractParts<PartsInput>>
+    : Blueprint<S, never>;
+
+type IsNullablePart<P extends Arg | Flag> = P extends Arg
+  ? IsNullableArg<P>
+  : P extends Flag
+    ? IsNullableFlag<Flag>
+    : false;
+
+export type RecordFromBlueprint<B extends Blueprint> = {
+  [P in B["parts"][number] as P["name"]]: IsNullablePart<P> extends true
+    ? DataTypeByName<P["type"]> | null
+    : DataTypeByName<P["type"]>;
+};
+
+/*
+ * Functions
+ */
+
+export function isArgPart(part: Arg | Flag): part is Arg {
+  return "required" in part;
+}
+
+export function isFlagPart(part: Arg | Flag): part is Flag {
+  return !isArgPart(part);
+}
 
 export function blueprint<S extends string>(input: S): Blueprint<S> {
-  const [name, ...parts] = input.split(" ");
+  const [name, ...inputParts] = input.split(" ");
 
-  const args: Arg[] = parts.filter(isArgInput).map(parseArg);
-  const flags: Flag[] = parts.filter(isFlagInput).map(parseFlag);
+  const parts: (Arg | Flag)[] = inputParts.map((part) =>
+    part.startsWith("-") ? parseFlag(part) : parseArg(part),
+  );
 
-  return { name, args, flags } as Blueprint<S>;
+  return { name, parts } as Blueprint<S>;
 }

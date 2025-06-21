@@ -1,9 +1,10 @@
 import { casex } from "casex";
 import chalk from "chalk";
 
-import { type Arg, formatArg } from "../../arg";
+import { formatArg } from "../../arg";
+import { isFlagPart } from "../../blueprint";
 import { type Command, command } from "../../command";
-import { type Flag, formatFlag } from "../../flag";
+import { formatFlag } from "../../flag";
 import { ioc } from "../../ioc";
 import { embeddedCommands } from "../embeds";
 
@@ -38,14 +39,11 @@ function printGroup({
 
   commands.forEach(({ blueprint }) => {
     const formattedName = chalk.blueBright(blueprint.name);
-    const formattedArgs = (blueprint.args as Arg[]).map(formatArg).join(" ");
-    const formattedFlags = (blueprint.flags as Flag[])
-      .map(formatFlag)
+    const formattedParts = blueprint.parts
+      .map((part) => (isFlagPart(part) ? formatFlag(part) : formatArg(part)))
       .join(" ");
 
-    console.log(
-      `  ${formattedName} ${chalk.white(formattedArgs)} ${chalk.white(formattedFlags)}`,
-    );
+    console.log(`  ${formattedName} ${chalk.white(formattedParts)}`);
   });
 
   console.log(""); // Some breathing room

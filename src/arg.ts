@@ -8,44 +8,57 @@ import {
   castData,
   isValidDataType,
 } from "./data-type";
-import type { Concat, EmptyArray } from "./types/array-type-utils";
-import type { And } from "./types/operator-type-utils";
-import type { AfterChar, BeforeChar } from "./types/string-type-utils";
 
 /*
  * Types
  */
 
-type ArgType<S extends string> = ValidDataType<
-  AfterChar<":", BeforeChar<"=", S>, "string">,
-  "string"
->;
+export type Arg<
+  Name extends string = string,
+  Optional extends boolean = boolean,
+  Type extends DataType = DataType,
+  ExplicitType extends boolean = boolean,
+  Fallback extends any | null = any | null,
+> = {
+  name: Name;
+  optional: Optional;
+  type: Type;
+  explicitType: ExplicitType;
+  fallback: Fallback;
+};
 
-export type Arg<S extends string = any> = {
-  name: BeforeChar<"?", BeforeChar<":", BeforeChar<"=", S>>>;
-  optional: BeforeChar<":", BeforeChar<"=", S>> extends `${string}?`
+export type IsNullableArg<A extends Arg> = A["optional"] extends true
+  ? A["fallback"] extends null
     ? true
-    : false;
-  type: ArgType<S>;
-  explicitType: S extends `${string}:${string}` ? true : false;
-  fallback: CastData<ArgType<S>, AfterChar<"=", S, null>>;
-};
+    : false
+  : false;
 
-export type ExtractArgs<S extends string> = Concat<
-  S extends `-${string}` ? EmptyArray<Arg> : [Arg<BeforeChar<" ", S>>],
-  AfterChar<" ", S> extends never
-    ? EmptyArray<Arg>
-    : ExtractArgs<AfterChar<" ", S>>
->;
+type ArgFromMaybes<
+  MaybeOptionalName extends string,
+  MaybeValidType extends string,
+  ExplicitType extends boolean,
+  MaybeFallback extends string | null,
+  // --
+  Type extends DataType = ValidDataType<MaybeValidType, "string">,
+  Fallback extends any | null = CastData<Type, MaybeFallback>,
+> = MaybeOptionalName extends `${infer OptionalName}?`
+  ? Arg<OptionalName, true, Type, ExplicitType, Fallback>
+  : Arg<
+      MaybeOptionalName,
+      false,
+      ValidDataType<MaybeValidType, "string">,
+      ExplicitType,
+      Fallback
+    >;
 
-export type ArgsToRecord<Args extends Arg[]> = {
-  [K in Args[number] as K["name"]]: And<
-    K["optional"],
-    K["fallback"] extends null ? true : false
-  > extends true
-    ? DataTypeByName<K["type"]> | null
-    : DataTypeByName<K["type"]>;
-};
+export type ArgFromInput<S extends string> =
+  S extends `${infer MaybeOptionalName}:${infer MaybeValidType}=${infer Fallback}`
+    ? ArgFromMaybes<MaybeOptionalName, MaybeValidType, true, Fallback>
+    : S extends `${infer MaybeOptionalName}:${infer MaybeValidType}`
+      ? ArgFromMaybes<MaybeOptionalName, MaybeValidType, true, null>
+      : S extends `${infer MaybeOptionalName}=${infer Fallback}`
+        ? ArgFromMaybes<MaybeOptionalName, "string", false, Fallback>
+        : ArgFromMaybes<S, "string", false, null>;
 
 /*
  * Errors
@@ -83,11 +96,7 @@ export class InvalidArgInputError extends Error {
  * Functions
  */
 
-export function isArgInput(input: string) {
-  return !input.startsWith("-");
-}
-
-export function parseArg<S extends string>(input: S): Arg<S> {
+export function parseArg<S extends string>(input: S): ArgFromInput<S> {
   const parts = input.split(/[:=]/);
   const explicitType = input.includes(":");
 
@@ -101,9 +110,18 @@ export function parseArg<S extends string>(input: S): Arg<S> {
   const type: DataType =
     rawType && isValidDataType(rawType) ? rawType : "string";
 
-  const fallback = rawFallback ? castData({ type, input: rawFallback }) : null;
+  const fallback =
+    typeof rawFallback === "undefined"
+      ? null
+      : castData({ type, input: rawFallback });
 
-  return { name, type, explicitType, optional, fallback } as Arg<S>;
+  return {
+    name,
+    type,
+    explicitType,
+    optional,
+    fallback,
+  } satisfies Arg<any, any, any, any> as ArgFromInput<S>;
 }
 
 export function castArg<A extends Arg>({

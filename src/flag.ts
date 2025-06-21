@@ -8,75 +8,138 @@ import {
   castData,
   isValidDataType,
 } from "./data-type";
-import type { Concat, EmptyArray } from "./types/array-type-utils";
-import type { Or } from "./types/operator-type-utils";
-import type { AfterChar, BeforeChar } from "./types/string-type-utils";
 
 /*
  * Types
  */
 
-type WithoutFlagMarkers<S extends string> = S extends `--${infer Name}`
-  ? Name
-  : S extends `-${infer Name}`
-    ? Name
-    : S;
+export type Flag<
+  Name extends string = string,
+  Short extends string | true | null = string | true | null,
+  Required extends boolean = boolean,
+  Type extends DataType = DataType,
+  ExplicitType extends boolean = boolean,
+  Fallback extends any | null = any | null,
+> = {
+  name: Name;
+  short: Short;
+  required: Required;
+  type: Type;
+  explicitType: ExplicitType;
+  fallback: Fallback;
+};
 
-type FlagShort<S extends string> = S extends `--${string}`
-  ? S extends `--${string}(-${infer Short}${string})${string}`
-    ? Short
-    : null
-  : true;
-
-type FlagType<S extends string> = ValidDataType<
-  AfterChar<":", BeforeChar<"=", S>, "boolean">,
-  "boolean"
->;
-
-type FlagOnlyFirstLetterIfShort<S extends string> = S extends `--${string}`
-  ? S
-  : S extends `-${infer Short}${string}`
-    ? Short
-    : "";
-
-export type Flag<S extends string = any> = {
-  name: WithoutFlagMarkers<
-    FlagOnlyFirstLetterIfShort<
-      BeforeChar<"(", BeforeChar<"!", BeforeChar<":", BeforeChar<"=", S>>>>
-    >
-  >;
-  short: FlagShort<S>;
-  type: FlagType<S>;
-  explicitType: S extends `${string}:${string}` ? true : false;
-  required: BeforeChar<":", BeforeChar<"=", S>> extends `${string}!`
+export type IsNullableFlag<F extends Flag> = F["required"] extends false
+  ? F["fallback"] extends null
     ? true
-    : false;
-  fallback: CastData<FlagType<S>, AfterChar<"=", S, null>>;
-};
+    : false
+  : false;
 
-export type ExtractFlags<S extends string> = Concat<
-  S extends `-${string}` ? [Flag<BeforeChar<" ", S>>] : EmptyArray<Flag>,
-  AfterChar<" ", S> extends never
-    ? EmptyArray<Flag>
-    : ExtractFlags<AfterChar<" ", S>>
->;
+type SingleDashFlagFromMaybe<
+  MaybeRequiredName extends string,
+  MaybeValidType extends string,
+  ExplicitType extends boolean,
+  MaybeFallback extends string | null,
+  // --
+  Type extends DataType = ValidDataType<MaybeValidType, "boolean">,
+  Fallback extends any | null = CastData<Type, MaybeFallback>,
+> = MaybeRequiredName extends `${infer RequiredName}!`
+  ? Flag<RequiredName[0], true, true, Type, ExplicitType, Fallback>
+  : Flag<
+      MaybeRequiredName[0],
+      true,
+      false,
+      ValidDataType<MaybeValidType, "boolean">,
+      ExplicitType,
+      Fallback
+    >;
 
-export type FlagsToRecord<Flags extends Flag[]> = {
-  [K in Flags[number] as K["name"]]: Or<
-    K["required"],
-    K["fallback"] extends null ? false : true
-  > extends true
-    ? DataTypeByName<K["type"]>
-    : DataTypeByName<K["type"]> | null;
-};
+type ShortFromMaybe<S extends string> = S extends `-${infer Short}${string})`
+  ? Short
+  : null;
+
+type DoubleDashFlagFromMaybes<
+  MaybeShortRequiredName extends string,
+  MaybeValidType extends string,
+  ExplicitType extends boolean,
+  MaybeFallback extends string | null,
+  // --
+  Type extends DataType = ValidDataType<MaybeValidType, "boolean">,
+  Fallback extends any | null = CastData<Type, MaybeFallback>,
+> = MaybeShortRequiredName extends `${infer RequiredMaybeShortName}!`
+  ? RequiredMaybeShortName extends `${infer RequiredName}(${infer MaybeShort}`
+    ? Flag<
+        RequiredName,
+        ShortFromMaybe<MaybeShort>,
+        true,
+        Type,
+        ExplicitType,
+        Fallback
+      >
+    : Flag<RequiredMaybeShortName, null, true, Type, ExplicitType, Fallback>
+  : MaybeShortRequiredName extends `${infer RequiredName}(${infer MaybeShort}`
+    ? Flag<
+        RequiredName,
+        ShortFromMaybe<MaybeShort>,
+        false,
+        Type,
+        ExplicitType,
+        Fallback
+      >
+    : Flag<MaybeShortRequiredName, null, false, Type, ExplicitType, Fallback>;
+
+export type FlagFromInput<S extends string> =
+  S extends `--${infer DoubleDashBody}`
+    ? DoubleDashBody extends `${infer MaybeRequiredName}:${infer MaybeValidType}=${infer Fallback}`
+      ? DoubleDashFlagFromMaybes<
+          MaybeRequiredName,
+          MaybeValidType,
+          true,
+          Fallback
+        >
+      : DoubleDashBody extends `${infer MaybeRequiredName}:${infer MaybeValidType}`
+        ? DoubleDashFlagFromMaybes<
+            MaybeRequiredName,
+            MaybeValidType,
+            true,
+            null
+          >
+        : DoubleDashBody extends `${infer MaybeRequiredName}=${infer Fallback}`
+          ? DoubleDashFlagFromMaybes<
+              MaybeRequiredName,
+              "boolean",
+              false,
+              Fallback
+            >
+          : DoubleDashFlagFromMaybes<DoubleDashBody, "boolean", false, null>
+    : S extends `-${infer SingleDashBody}`
+      ? SingleDashBody extends `${infer MaybeRequiredName}:${infer MaybeValidType}=${infer MaybeFallback}`
+        ? SingleDashFlagFromMaybe<
+            MaybeRequiredName,
+            MaybeValidType,
+            true,
+            MaybeFallback
+          >
+        : SingleDashBody extends `${infer MaybeRequiredName}:${infer MaybeValidType}`
+          ? SingleDashFlagFromMaybe<
+              MaybeRequiredName,
+              MaybeValidType,
+              true,
+              null
+            >
+          : SingleDashBody extends `${infer MaybeRequiredName}=${infer MaybeFallback}`
+            ? SingleDashFlagFromMaybe<
+                MaybeRequiredName,
+                "boolean",
+                false,
+                MaybeFallback
+              >
+            : SingleDashFlagFromMaybe<SingleDashBody, "boolean", false, null>
+      : Flag;
 
 /*
  * Functions
  */
-
-export function isFlagInput(input: string) {
-  return input.startsWith("-");
-}
 
 export function extractFlagShortFromNameInput(nameInput: string) {
   const index = nameInput.indexOf("(");
@@ -93,29 +156,41 @@ export function extractFlagShortFromNameInput(nameInput: string) {
   return { name, short: isValidShort ? short : null };
 }
 
-export function parseFlag<S extends string>(input: S): Flag<S> {
+export function parseFlag<S extends string>(input: S): FlagFromInput<S> {
   const dashCount = input[1] === "-" ? 2 : 1;
 
   const parts = input.slice(dashCount).split(/[:=]/);
   const explicitType = input.includes(":");
 
   const rawName = parts.shift()!;
-  const rawType = explicitType ? parts.shift() : undefined;
+  const maybeValidType = explicitType ? parts.shift() : undefined;
   const rawFallback = input.includes("=") ? parts.shift() : undefined;
 
   const required = rawName.endsWith("!");
-  const rawNameWithoutHashbang = required ? rawName.slice(0, -1) : rawName;
+  const maybeNameWithoutHashbang = required ? rawName.slice(0, -1) : rawName;
   const { name, short } =
     dashCount === 1
-      ? { name: rawNameWithoutHashbang[0], short: true }
-      : extractFlagShortFromNameInput(rawNameWithoutHashbang);
+      ? { name: maybeNameWithoutHashbang[0], short: true }
+      : extractFlagShortFromNameInput(maybeNameWithoutHashbang);
 
   const type: DataType =
-    rawType && isValidDataType(rawType) ? rawType : "boolean";
+    maybeValidType && isValidDataType(maybeValidType)
+      ? maybeValidType
+      : "boolean";
 
-  const fallback = rawFallback ? castData({ type, input: rawFallback }) : null;
+  const fallback =
+    typeof rawFallback === "undefined"
+      ? null
+      : castData({ type, input: rawFallback });
 
-  return { name, short, type, explicitType, required, fallback } as Flag<S>;
+  return {
+    name,
+    short,
+    type,
+    explicitType,
+    required,
+    fallback,
+  } satisfies Flag<any, any, any, any, any> as FlagFromInput<S>;
 }
 
 export function castFlag<F extends Flag>({

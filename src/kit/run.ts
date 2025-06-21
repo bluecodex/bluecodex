@@ -1,3 +1,3 @@
-export async function run(input: string) {
+export async function run() {
   // TODO
 }

@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 
-import { type Flag, parseFlag } from "../src/flag";
+import { type FlagFromInput, parseFlag } from "../src/flag";
 
 test("just the name with one dash -", () => {
   const flagStr = "-p";
@@ -12,7 +12,7 @@ test("just the name with one dash -", () => {
     explicitType: false,
     required: false,
     fallback: null,
-  } satisfies Flag<typeof flagStr>);
+  } satisfies FlagFromInput<typeof flagStr>);
 });
 
 test("just the name with double dash -- and short", () => {
@@ -25,7 +25,7 @@ test("just the name with double dash -- and short", () => {
     explicitType: false,
     required: false,
     fallback: null,
-  } satisfies Flag<typeof flagStr>);
+  } satisfies FlagFromInput<typeof flagStr>);
 });
 
 test("just the name with double dash -- and short", () => {
@@ -38,7 +38,7 @@ test("just the name with double dash -- and short", () => {
     explicitType: false,
     required: false,
     fallback: null,
-  } satisfies Flag<typeof flagStr>);
+  } satisfies FlagFromInput<typeof flagStr>);
 });
 
 test("name with single dash - and fallback", () => {
@@ -51,7 +51,7 @@ test("name with single dash - and fallback", () => {
     explicitType: false,
     required: false,
     fallback: true,
-  } satisfies Flag<typeof flagStr>);
+  } satisfies FlagFromInput<typeof flagStr>);
 });
 
 test("name with double dash -- and fallback", () => {
@@ -64,7 +64,7 @@ test("name with double dash -- and fallback", () => {
     explicitType: false,
     required: false,
     fallback: true,
-  } satisfies Flag<typeof flagStr>);
+  } satisfies FlagFromInput<typeof flagStr>);
 });
 
 test("name with single dash -, type and fallback", () => {
@@ -77,7 +77,7 @@ test("name with single dash -, type and fallback", () => {
     explicitType: true,
     required: false,
     fallback: 123,
-  } satisfies Flag<typeof flagStr>);
+  } satisfies FlagFromInput<typeof flagStr>);
 });
 
 test("name with double dash --, type and fallback", () => {
@@ -90,7 +90,7 @@ test("name with double dash --, type and fallback", () => {
     explicitType: true,
     required: false,
     fallback: 123,
-  } satisfies Flag<typeof flagStr>);
+  } satisfies FlagFromInput<typeof flagStr>);
 });
 
 test("name single dash -, type and required", () => {
@@ -103,7 +103,7 @@ test("name single dash -, type and required", () => {
     explicitType: true,
     required: true,
     fallback: null,
-  } satisfies Flag<typeof flagStr>);
+  } satisfies FlagFromInput<typeof flagStr>);
 });
 
 test("name with double dash --, type, required and short", () => {
@@ -116,7 +116,7 @@ test("name with double dash --, type, required and short", () => {
     explicitType: true,
     required: true,
     fallback: null,
-  } satisfies Flag<typeof flagStr>);
+  } satisfies FlagFromInput<typeof flagStr>);
 });
 
 test("name with double dash --, type, required and short", () => {
@@ -129,7 +129,7 @@ test("name with double dash --, type, required and short", () => {
     explicitType: true,
     required: true,
     fallback: null,
-  } satisfies Flag<typeof flagStr>);
+  } satisfies FlagFromInput<typeof flagStr>);
 });
 
 test("single dash - with two letters only picks the first one", () => {
@@ -142,7 +142,7 @@ test("single dash - with two letters only picks the first one", () => {
     explicitType: true,
     required: true,
     fallback: 2,
-  } satisfies Flag<typeof flagStr>);
+  } satisfies FlagFromInput<typeof flagStr>);
 });
 
 test("double dash with two-lettered alias only picks the first one", () => {
@@ -155,7 +155,7 @@ test("double dash with two-lettered alias only picks the first one", () => {
     explicitType: true,
     required: true,
     fallback: null,
-  } satisfies Flag<typeof flagStr>);
+  } satisfies FlagFromInput<typeof flagStr>);
 });
 
 test("double dash with parenthesis but no dash - has null short", () => {
@@ -168,7 +168,7 @@ test("double dash with parenthesis but no dash - has null short", () => {
     explicitType: true,
     required: true,
     fallback: null,
-  } satisfies Flag<typeof flagStr>);
+  } satisfies FlagFromInput<typeof flagStr>);
 });
 
 test("double dash with parenthesis and dash - inside but no letter has null short", () => {
@@ -181,5 +181,7 @@ test("double dash with parenthesis and dash - inside but no letter has null shor
     explicitType: true,
     required: true,
     fallback: null,
-  } satisfies Flag<typeof flagStr>);
+  } satisfies FlagFromInput<typeof flagStr>);
 });
+
+// TODO: add invalid cast of number test

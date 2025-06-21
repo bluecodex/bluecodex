@@ -3,8 +3,13 @@ import { parseArgs as nodeParseArgs } from "node:util";
 import type { ParseArgsOptionsConfig } from "util";
 
 import { castArg } from "./arg";
-import type { Blueprint, RecordFromBlueprint } from "./blueprint";
-import { type Flag, castFlag } from "./flag";
+import {
+  type Blueprint,
+  type RecordFromBlueprint,
+  isArgPart,
+  isFlagPart,
+} from "./blueprint";
+import { castFlag } from "./flag";
 
 /*
  * Errors
@@ -38,10 +43,13 @@ export function parse<B extends Blueprint>({
   | { type: "data"; data: RecordFromBlueprint<B> } {
   let parsedArgs: ReturnType<typeof nodeParseArgs>;
 
+  const flags = blueprint.parts.filter(isFlagPart);
+  const args = blueprint.parts.filter(isArgPart);
+
   try {
     parsedArgs = nodeParseArgs({
       args: argv,
-      options: (blueprint.flags as Flag[]).reduce(
+      options: flags.reduce(
         (acc, flag) => ({
           ...acc,
           [flag.name]: {
@@ -61,7 +69,7 @@ export function parse<B extends Blueprint>({
   const errors: Error[] = [];
   const dataAcc: Record<string, unknown> = {};
 
-  blueprint.args.forEach((arg, index) => {
+  args.forEach((arg, index) => {
     try {
       dataAcc[arg.name] = castArg({
         arg,
@@ -72,7 +80,7 @@ export function parse<B extends Blueprint>({
     }
   });
 
-  (blueprint.flags as Flag[]).forEach((flag) => {
+  flags.forEach((flag) => {
     try {
       dataAcc[flag.name] = castFlag({
         flag,

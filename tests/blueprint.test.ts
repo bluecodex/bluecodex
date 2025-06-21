@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 
-import { type Blueprint, blueprint } from "../src/blueprint";
+import { type BlueprintFromInput, blueprint } from "../src/blueprint";
 
 // Note: blueprint tests are only to assert that the integration with `parseArg`
 //       and `parseFlag` are working. Specific arg and flag cases are covered
@@ -11,9 +11,8 @@ test("just the name", () => {
 
   expect(blueprint(input)).toEqual({
     name: "foo",
-    args: [],
-    flags: [],
-  } satisfies Blueprint<typeof input>);
+    parts: [] as never,
+  } satisfies BlueprintFromInput<typeof input>);
 });
 
 test("with arg but no flag", () => {
@@ -21,7 +20,7 @@ test("with arg but no flag", () => {
 
   expect(blueprint(input)).toEqual({
     name: "foo",
-    args: [
+    parts: [
       {
         name: "arg_one",
         type: "string",
@@ -30,8 +29,7 @@ test("with arg but no flag", () => {
         fallback: null,
       },
     ],
-    flags: [],
-  } satisfies Blueprint<typeof input>);
+  } satisfies BlueprintFromInput<typeof input>);
 });
 
 test("with flag but no arg", () => {
@@ -39,8 +37,7 @@ test("with flag but no arg", () => {
 
   expect(blueprint(input)).toEqual({
     name: "foo",
-    args: [],
-    flags: [
+    parts: [
       {
         name: "flag_one",
         short: "f",
@@ -50,5 +47,5 @@ test("with flag but no arg", () => {
         fallback: null,
       },
     ],
-  } satisfies Blueprint<typeof input>);
+  } satisfies BlueprintFromInput<typeof input>);
 });
