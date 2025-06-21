@@ -25,8 +25,8 @@ export type Blueprint<S extends string = any> = {
 export type RecordFromBlueprint<B extends Blueprint> = ArgsToRecord<B["args"]> &
   FlagsToRecord<B["flags"]>;
 
-export function blueprint<S extends string>(str: S): Blueprint<S> {
-  const [name, ...parts] = str.split(" ");
+export function blueprint<S extends string>(input: S): Blueprint<S> {
+  const [name, ...parts] = input.split(" ");
 
   const args: Arg[] = parts.filter(isArgInput).map(parseArg);
   const flags: Flag[] = parts.filter(isFlagInput).map(parseFlag);

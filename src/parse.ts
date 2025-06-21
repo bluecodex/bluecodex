@@ -43,7 +43,7 @@ export function parse<B extends Blueprint>({
         ...acc,
         [flag.name]: {
           type: "string",
-          short: flag.dash === "-" ? flag.name : undefined,
+          short: flag.short === true ? flag.name : flag.short || undefined,
         },
       }),
       {} as ParseArgsOptionsConfig,

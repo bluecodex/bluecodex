@@ -3,17 +3,19 @@ import { expect, test } from "vitest";
 import { type Blueprint, blueprint } from "../src/blueprint";
 
 test("just the name", () => {
-  expect(blueprint("foo")).toEqual({
+  const input = "foo";
+
+  expect(blueprint(input)).toEqual({
     name: "foo",
     args: [],
     flags: [],
-  } satisfies Blueprint<"foo">);
+  } satisfies Blueprint<typeof input>);
 });
 
 test("with arg but no explicit type", () => {
-  const blueprintStr = "foo arg_one";
+  const input = "foo arg_one";
 
-  expect(blueprint(blueprintStr)).toEqual({
+  expect(blueprint(input)).toEqual({
     name: "foo",
     args: [
       {
@@ -25,5 +27,5 @@ test("with arg but no explicit type", () => {
       },
     ],
     flags: [],
-  } satisfies Blueprint<typeof blueprintStr>);
+  } satisfies Blueprint<typeof input>);
 });

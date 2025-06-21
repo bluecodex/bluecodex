@@ -16,9 +16,18 @@ export type CommandFn<B extends Blueprint> = (
   } & ExpandObject<RecordFromBlueprint<B>>,
 ) => unknown;
 
+export type CommandMeta<B extends Blueprint> = Partial<{
+  [key in
+    | Blueprint["args"][number]["name"]
+    | Blueprint["flags"][number]["name"]]: {
+    description?: string;
+  };
+}>;
+
 export type Command<B extends Blueprint = Blueprint> = {
   blueprint: B;
   fn: CommandFn<B>;
+  meta?: CommandMeta<B>;
 };
 
 /*
@@ -26,11 +35,13 @@ export type Command<B extends Blueprint = Blueprint> = {
  */
 
 export function command<S extends string>(
-  blueprintStr: S,
+  input: S,
   fn: CommandFn<Blueprint<S>>,
+  meta: CommandMeta<Blueprint<S>> = {},
 ): Command<Blueprint<S>> {
   return ioc.commandRegistry.selfRegisterIfEnabled({
-    blueprint: blueprint(blueprintStr),
+    blueprint: blueprint(input),
     fn,
+    meta,
   });
 }
