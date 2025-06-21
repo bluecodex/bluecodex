@@ -33,11 +33,13 @@ export type Flag<
  * Utility types
  */
 
-export type IsNullableFlag<F extends Flag> = F["required"] extends false
-  ? F["fallback"] extends null
-    ? true
-    : false
-  : false;
+export type IsNullableFlag<F extends Flag> = F["type"] extends "boolean"
+  ? false
+  : F["required"] extends true
+    ? false
+    : F["fallback"] extends null
+      ? true
+      : false;
 
 /*
  * Internal parse long types

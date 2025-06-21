@@ -24,7 +24,7 @@ export type Blueprint<
 type IsNullablePart<P extends Arg | Flag> = P extends Arg
   ? IsNullableArg<P>
   : P extends Flag
-    ? IsNullableFlag<Flag>
+    ? IsNullableFlag<P>
     : false;
 
 export type RecordFromBlueprint<B extends Blueprint> = {
