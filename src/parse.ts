@@ -36,20 +36,27 @@ export function parse<B extends Blueprint>({
 }):
   | { type: "error"; errors: Error[] }
   | { type: "data"; data: RecordFromBlueprint<B> } {
-  const parsedArgs = nodeParseArgs({
-    args: argv,
-    options: blueprint.flags.reduce(
-      (acc, flag) => ({
-        ...acc,
-        [flag.name]: {
-          type: "string",
-          short: flag.short === true ? flag.name : flag.short || undefined,
-        },
-      }),
-      {} as ParseArgsOptionsConfig,
-    ),
-    allowPositionals: true,
-  });
+  let parsedArgs: ReturnType<typeof nodeParseArgs>;
+
+  try {
+    parsedArgs = nodeParseArgs({
+      args: argv,
+      options: blueprint.flags.reduce(
+        (acc, flag) => ({
+          ...acc,
+          [flag.name]: {
+            type: "string",
+            short: flag.short === true ? flag.name : flag.short || undefined,
+          },
+        }),
+        {} as ParseArgsOptionsConfig,
+      ),
+      allowPositionals: true,
+    });
+  } catch (error) {
+    // TODO: use custom error
+    return { type: "error", errors: [error as Error] };
+  }
 
   const errors: Error[] = [];
   const dataAcc: Record<string, unknown> = {};
