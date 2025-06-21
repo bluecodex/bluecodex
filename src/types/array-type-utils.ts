@@ -3,4 +3,4 @@ export type Concat<TOne extends Array<unknown>, TTwo extends Array<unknown>> = [
   ...TTwo,
 ];
 
-export type EmptyArray<T> = T[];
+export type EmptyArray<T> = T[] & never[];

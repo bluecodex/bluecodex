@@ -1,5 +1,3 @@
-import chalk from "chalk";
-
 import { askToInit } from "./embeds/ask-to-init";
 import { embeddedCommands } from "./embeds/embeds";
 import { ioc } from "./ioc";

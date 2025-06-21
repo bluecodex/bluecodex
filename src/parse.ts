@@ -4,7 +4,7 @@ import type { ParseArgsOptionsConfig } from "util";
 
 import { castArg } from "./arg";
 import type { Blueprint, RecordFromBlueprint } from "./blueprint";
-import { castFlag } from "./flag";
+import { type Flag, castFlag } from "./flag";
 
 /*
  * Errors
@@ -41,7 +41,7 @@ export function parse<B extends Blueprint>({
   try {
     parsedArgs = nodeParseArgs({
       args: argv,
-      options: blueprint.flags.reduce(
+      options: (blueprint.flags as Flag[]).reduce(
         (acc, flag) => ({
           ...acc,
           [flag.name]: {
@@ -72,7 +72,7 @@ export function parse<B extends Blueprint>({
     }
   });
 
-  blueprint.flags.forEach((flag) => {
+  (blueprint.flags as Flag[]).forEach((flag) => {
     try {
       dataAcc[flag.name] = castFlag({
         flag,

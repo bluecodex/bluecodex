@@ -1,16 +1,20 @@
-export async function askToInit() {
-  console.log("Looks like you do not have a bluecodex.ts file yet.");
+import chalk from "chalk";
 
-  // const answer = await enquirer.prompt<{ question: boolean }>({
-  //   type: "confirm",
-  //   name: "question",
-  //   message: "Would you like to create one?",
-  //   initial: "Y",
-  // });
-  //
-  // if (answer.question) {
-  //   init();
-  // } else {
-  //   console.log("Ok then! See ya later.");
-  // }
+import { prompt } from "../kit/prompt";
+import { initCommand } from "./init/initCommand";
+
+export async function askToInit() {
+  console.log();
+  console.log(
+    `${chalk.white(`Welcome to ${chalk.blueBright("bluecodex")}`)}\n`,
+  );
+  const wantsToCreateFile = await prompt.bool(
+    `${chalk.white("You don't have bluecodex.ts file yet. Would you like to")} create one?`,
+  );
+
+  if (wantsToCreateFile) {
+    initCommand.fn({ argv: [] });
+  } else {
+    console.log("Ok then! See ya later.");
+  }
 }

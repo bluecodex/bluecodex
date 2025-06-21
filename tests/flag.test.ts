@@ -68,11 +68,11 @@ test("name with double dash -- and fallback", () => {
 });
 
 test("name with single dash -, type and fallback", () => {
-  const flagStr = "--p:number=123";
+  const flagStr = "-p:number=123";
 
   expect(parseFlag(flagStr)).toEqual({
     name: "p",
-    short: null,
+    short: true,
     type: "number",
     explicitType: true,
     required: false,
@@ -94,11 +94,11 @@ test("name with double dash --, type and fallback", () => {
 });
 
 test("name single dash -, type and required", () => {
-  const flagStr = "--p!:number";
+  const flagStr = "-p!:number";
 
   expect(parseFlag(flagStr)).toEqual({
     name: "p",
-    short: null,
+    short: true,
     type: "number",
     explicitType: true,
     required: true,
