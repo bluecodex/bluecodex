@@ -1,6 +1,6 @@
 import {
   type Blueprint,
-  type BlueprintFromInput,
+  type ParseBlueprint,
   type RecordFromBlueprint,
   blueprint,
 } from "./blueprint";
@@ -33,7 +33,7 @@ export type Command<B extends Blueprint = Blueprint> = {
  * Functions
  */
 
-export function command<S extends string, B extends BlueprintFromInput<S>>(
+export function command<S extends string, B extends ParseBlueprint<S>>(
   input: S,
   fn: CommandFn<B>,
   meta: CommandMeta<B> = {},

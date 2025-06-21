@@ -10,7 +10,7 @@ import {
 } from "./data-type";
 
 /*
- * Types
+ * Exported types
  */
 
 export type Arg<
@@ -33,32 +33,49 @@ export type IsNullableArg<A extends Arg> = A["optional"] extends true
     : false
   : false;
 
-type ArgFromMaybes<
-  MaybeOptionalName extends string,
-  MaybeValidType extends string,
-  ExplicitType extends boolean,
-  MaybeFallback extends string | null,
-  // --
-  Type extends DataType = ValidDataType<MaybeValidType, "string">,
-  Fallback extends any | null = CastData<Type, MaybeFallback>,
-> = MaybeOptionalName extends `${infer OptionalName}?`
-  ? Arg<OptionalName, true, Type, ExplicitType, Fallback>
-  : Arg<
-      MaybeOptionalName,
-      false,
-      ValidDataType<MaybeValidType, "string">,
-      ExplicitType,
-      Fallback
-    >;
+/*
+ * Internal parse types
+ */
 
-export type ArgFromInput<S extends string> =
-  S extends `${infer MaybeOptionalName}:${infer MaybeValidType}=${infer Fallback}`
-    ? ArgFromMaybes<MaybeOptionalName, MaybeValidType, true, Fallback>
-    : S extends `${infer MaybeOptionalName}:${infer MaybeValidType}`
-      ? ArgFromMaybes<MaybeOptionalName, MaybeValidType, true, null>
-      : S extends `${infer MaybeOptionalName}=${infer Fallback}`
-        ? ArgFromMaybes<MaybeOptionalName, "string", false, Fallback>
-        : ArgFromMaybes<S, "string", false, null>;
+type ParseArg_Step1<S extends string> =
+  // 1. raw fallback
+  S extends `${infer Part2}=${infer RawFallback}`
+    ? ParseArg_Step2<RawFallback, Part2>
+    : ParseArg_Step2<null, S>;
+
+type ParseArg_Step2<RawFallback extends string | null, S extends string> =
+  // 2. raw type
+  S extends `${infer Part3}:${infer RawType}`
+    ? ParseArg_Step3<RawFallback, RawType, Part3>
+    : ParseArg_Step3<RawFallback, null, S>;
+
+type ParseArg_Step3<
+  RawFallback extends string | null,
+  RawType extends string | null,
+  S extends string,
+> =
+  // 3. optional, name
+  S extends `${infer Name}?`
+    ? ParseArg_Step4<RawFallback, RawType, true, Name>
+    : ParseArg_Step4<RawFallback, RawType, false, S>;
+
+type ParseArg_Step4<
+  RawFallback extends string | null,
+  RawType extends string | null,
+  Optional extends boolean,
+  Name extends string,
+  // -- computed
+  ExplicitType extends boolean = RawType extends null ? false : true,
+  Type extends DataType = ValidDataType<RawType, "string">,
+> =
+  // 4. Combine into Arg<...>
+  Arg<Name, Optional, Type, ExplicitType, CastData<Type, RawFallback>>;
+
+/*
+ * Parse types
+ */
+
+export type ParseArg<S extends string> = ParseArg_Step1<S>;
 
 /*
  * Errors
@@ -96,7 +113,7 @@ export class InvalidArgInputError extends Error {
  * Functions
  */
 
-export function parseArg<S extends string>(input: S): ArgFromInput<S> {
+export function parseArg<S extends string>(input: S): ParseArg<S> {
   const parts = input.split(/[:=]/);
   const explicitType = input.includes(":");
 
@@ -121,7 +138,7 @@ export function parseArg<S extends string>(input: S): ArgFromInput<S> {
     explicitType,
     optional,
     fallback,
-  } satisfies Arg<any, any, any, any> as ArgFromInput<S>;
+  } satisfies Arg<any, any, any, any> as ParseArg<S>;
 }
 
 export function castArg<A extends Arg>({

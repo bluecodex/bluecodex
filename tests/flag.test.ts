@@ -1,8 +1,8 @@
 import { expect, test } from "vitest";
 
-import { type FlagFromInput, parseFlag } from "../src/flag";
+import { type ParseFlag, parseFlag } from "../src/flag";
 
-test("just the name with one dash -", () => {
+test("short name only", () => {
   const flagStr = "-p";
 
   expect(parseFlag(flagStr)).toEqual({
@@ -12,10 +12,10 @@ test("just the name with one dash -", () => {
     explicitType: false,
     required: false,
     fallback: null,
-  } satisfies FlagFromInput<typeof flagStr>);
+  } satisfies ParseFlag<typeof flagStr>);
 });
 
-test("just the name with double dash -- and short", () => {
+test("long and short name", () => {
   const flagStr = "--auto-pause(-P)";
 
   expect(parseFlag(flagStr)).toEqual({
@@ -25,10 +25,10 @@ test("just the name with double dash -- and short", () => {
     explicitType: false,
     required: false,
     fallback: null,
-  } satisfies FlagFromInput<typeof flagStr>);
+  } satisfies ParseFlag<typeof flagStr>);
 });
 
-test("just the name with double dash -- and short", () => {
+test("long name only", () => {
   const flagStr = "--auto-pause";
 
   expect(parseFlag(flagStr)).toEqual({
@@ -38,10 +38,10 @@ test("just the name with double dash -- and short", () => {
     explicitType: false,
     required: false,
     fallback: null,
-  } satisfies FlagFromInput<typeof flagStr>);
+  } satisfies ParseFlag<typeof flagStr>);
 });
 
-test("name with single dash - and fallback", () => {
+test("short with fallback", () => {
   const flagStr = "-p=true";
 
   expect(parseFlag(flagStr)).toEqual({
@@ -51,10 +51,10 @@ test("name with single dash - and fallback", () => {
     explicitType: false,
     required: false,
     fallback: true,
-  } satisfies FlagFromInput<typeof flagStr>);
+  } satisfies ParseFlag<typeof flagStr>);
 });
 
-test("name with double dash -- and fallback", () => {
+test("long with fallback", () => {
   const flagStr = "--auto-pause=true";
 
   expect(parseFlag(flagStr)).toEqual({
@@ -64,10 +64,10 @@ test("name with double dash -- and fallback", () => {
     explicitType: false,
     required: false,
     fallback: true,
-  } satisfies FlagFromInput<typeof flagStr>);
+  } satisfies ParseFlag<typeof flagStr>);
 });
 
-test("name with single dash -, type and fallback", () => {
+test("short with type and fallback", () => {
   const flagStr = "-p:number=123";
 
   expect(parseFlag(flagStr)).toEqual({
@@ -77,10 +77,10 @@ test("name with single dash -, type and fallback", () => {
     explicitType: true,
     required: false,
     fallback: 123,
-  } satisfies FlagFromInput<typeof flagStr>);
+  } satisfies ParseFlag<typeof flagStr>);
 });
 
-test("name with double dash --, type and fallback", () => {
+test("long with type and fallback", () => {
   const flagStr = "--auto-pause:number=123";
 
   expect(parseFlag(flagStr)).toEqual({
@@ -90,10 +90,10 @@ test("name with double dash --, type and fallback", () => {
     explicitType: true,
     required: false,
     fallback: 123,
-  } satisfies FlagFromInput<typeof flagStr>);
+  } satisfies ParseFlag<typeof flagStr>);
 });
 
-test("name single dash -, type and required", () => {
+test("required short with type", () => {
   const flagStr = "-p!:number";
 
   expect(parseFlag(flagStr)).toEqual({
@@ -103,10 +103,10 @@ test("name single dash -, type and required", () => {
     explicitType: true,
     required: true,
     fallback: null,
-  } satisfies FlagFromInput<typeof flagStr>);
+  } satisfies ParseFlag<typeof flagStr>);
 });
 
-test("name with double dash --, type, required and short", () => {
+test("required long with type", () => {
   const flagStr = "--auto-pause!:number";
 
   expect(parseFlag(flagStr)).toEqual({
@@ -116,10 +116,10 @@ test("name with double dash --, type, required and short", () => {
     explicitType: true,
     required: true,
     fallback: null,
-  } satisfies FlagFromInput<typeof flagStr>);
+  } satisfies ParseFlag<typeof flagStr>);
 });
 
-test("name with double dash --, type, required and short", () => {
+test("required long with alisa and type", () => {
   const flagStr = "--auto-pause(-a)!:number";
 
   expect(parseFlag(flagStr)).toEqual({
@@ -129,10 +129,10 @@ test("name with double dash --, type, required and short", () => {
     explicitType: true,
     required: true,
     fallback: null,
-  } satisfies FlagFromInput<typeof flagStr>);
+  } satisfies ParseFlag<typeof flagStr>);
 });
 
-test("single dash - with two letters only picks the first one", () => {
+test("short with extra invalid character", () => {
   const flagStr = "-ab!:number=2";
 
   expect(parseFlag(flagStr)).toEqual({
@@ -142,10 +142,10 @@ test("single dash - with two letters only picks the first one", () => {
     explicitType: true,
     required: true,
     fallback: 2,
-  } satisfies FlagFromInput<typeof flagStr>);
+  } satisfies ParseFlag<typeof flagStr>);
 });
 
-test("double dash with two-lettered alias only picks the first one", () => {
+test("long with short containing extra invalid character", () => {
   const flagStr = "--auto-pause(-ab)!:number";
 
   expect(parseFlag(flagStr)).toEqual({
@@ -155,10 +155,10 @@ test("double dash with two-lettered alias only picks the first one", () => {
     explicitType: true,
     required: true,
     fallback: null,
-  } satisfies FlagFromInput<typeof flagStr>);
+  } satisfies ParseFlag<typeof flagStr>);
 });
 
-test("double dash with parenthesis but no dash - has null short", () => {
+test("long with short missing dash", () => {
   const flagStr = "--auto-pause(a)!:number";
 
   expect(parseFlag(flagStr)).toEqual({
@@ -168,10 +168,10 @@ test("double dash with parenthesis but no dash - has null short", () => {
     explicitType: true,
     required: true,
     fallback: null,
-  } satisfies FlagFromInput<typeof flagStr>);
+  } satisfies ParseFlag<typeof flagStr>);
 });
 
-test("double dash with parenthesis and dash - inside but no letter has null short", () => {
+test("long with short missing letter", () => {
   const flagStr = "--auto-pause(-)!:number";
 
   expect(parseFlag(flagStr)).toEqual({
@@ -181,7 +181,7 @@ test("double dash with parenthesis and dash - inside but no letter has null shor
     explicitType: true,
     required: true,
     fallback: null,
-  } satisfies FlagFromInput<typeof flagStr>);
+  } satisfies ParseFlag<typeof flagStr>);
 });
 
 // TODO: add invalid cast of number test

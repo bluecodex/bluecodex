@@ -25,7 +25,7 @@ export type DataTypeByName<DT extends DataType> = DT extends "string"
       : unknown;
 
 export type ValidDataType<
-  DT extends string,
+  DT extends string | null,
   Fallback extends DataType,
 > = DT extends DataType ? DT : Fallback;
 

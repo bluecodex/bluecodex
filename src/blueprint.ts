@@ -1,14 +1,9 @@
-import {
-  type Arg,
-  type ArgFromInput,
-  type IsNullableArg,
-  parseArg,
-} from "./arg";
+import { type Arg, type IsNullableArg, type ParseArg, parseArg } from "./arg";
 import type { DataTypeByName } from "./data-type";
 import {
   type Flag,
-  type FlagFromInput,
   type IsNullableFlag,
+  type ParseFlag,
   parseFlag,
 } from "./flag";
 
@@ -22,19 +17,9 @@ export type Blueprint<
   parts: Parts;
 };
 
-type PartFromInput<S extends string> = S extends `-${string}`
-  ? FlagFromInput<S>
-  : ArgFromInput<S>;
-
-type ExtractParts<S extends string> =
-  S extends `${infer ThisPart} ${infer NextPart}`
-    ? [PartFromInput<ThisPart>, ...ExtractParts<NextPart>]
-    : [PartFromInput<S>];
-
-export type BlueprintFromInput<S extends string> =
-  S extends `${infer Name} ${infer PartsInput}`
-    ? Blueprint<Name, ExtractParts<PartsInput>>
-    : Blueprint<S, never>;
+/*
+ * Type utilities
+ */
 
 type IsNullablePart<P extends Arg | Flag> = P extends Arg
   ? IsNullableArg<P>
@@ -47,6 +32,24 @@ export type RecordFromBlueprint<B extends Blueprint> = {
     ? DataTypeByName<P["type"]> | null
     : DataTypeByName<P["type"]>;
 };
+
+/*
+ * Parse types
+ */
+
+type ParsePart<S extends string> = S extends `-${string}`
+  ? ParseFlag<S>
+  : ParseArg<S>;
+
+type ParseCombinedParts<S extends string> =
+  S extends `${infer ThisPart} ${infer NextPart}`
+    ? [ParsePart<ThisPart>, ...ParseCombinedParts<NextPart>]
+    : [ParsePart<S>];
+
+export type ParseBlueprint<S extends string> =
+  S extends `${infer Name} ${infer PartsInput}`
+    ? Blueprint<Name, ParseCombinedParts<PartsInput>>
+    : Blueprint<S, never>;
 
 /*
  * Functions

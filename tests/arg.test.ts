@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 
-import { type ArgFromInput, parseArg } from "../src/arg";
+import { type ParseArg, parseArg } from "../src/arg";
 
 test("just the name", () => {
   const argStr = "arg_one";
@@ -11,7 +11,7 @@ test("just the name", () => {
     explicitType: false,
     optional: false,
     fallback: null,
-  } satisfies ArgFromInput<typeof argStr>);
+  } satisfies ParseArg<typeof argStr>);
 });
 
 test("boolean type", () => {
@@ -23,7 +23,7 @@ test("boolean type", () => {
     explicitType: true,
     optional: false,
     fallback: null,
-  } satisfies ArgFromInput<typeof argStr>);
+  } satisfies ParseArg<typeof argStr>);
 });
 
 test("number type", () => {
@@ -34,7 +34,7 @@ test("number type", () => {
     explicitType: true,
     optional: false,
     fallback: null,
-  } satisfies ArgFromInput<typeof argStr>);
+  } satisfies ParseArg<typeof argStr>);
 });
 
 test("invalid type", () => {
@@ -46,7 +46,7 @@ test("invalid type", () => {
     explicitType: true,
     optional: false,
     fallback: null,
-  } satisfies ArgFromInput<typeof argStr>);
+  } satisfies ParseArg<typeof argStr>);
 });
 
 test("type + fallback", () => {
@@ -58,7 +58,7 @@ test("type + fallback", () => {
     explicitType: true,
     optional: false,
     fallback: true,
-  } satisfies ArgFromInput<typeof argStr>);
+  } satisfies ParseArg<typeof argStr>);
 });
 
 test("no type but fallback", () => {
@@ -70,7 +70,7 @@ test("no type but fallback", () => {
     explicitType: false,
     optional: false,
     fallback: "true",
-  } satisfies ArgFromInput<typeof argStr>);
+  } satisfies ParseArg<typeof argStr>);
 });
 
 test("just name with optional", () => {
@@ -82,7 +82,7 @@ test("just name with optional", () => {
     explicitType: false,
     optional: true,
     fallback: null,
-  } satisfies ArgFromInput<typeof argStr>);
+  } satisfies ParseArg<typeof argStr>);
 });
 
 test("name with optional + fallback", () => {
@@ -94,5 +94,5 @@ test("name with optional + fallback", () => {
     explicitType: false,
     optional: true,
     fallback: "blue",
-  } satisfies ArgFromInput<typeof argStr>);
+  } satisfies ParseArg<typeof argStr>);
 });
