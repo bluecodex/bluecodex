@@ -1,7 +1,7 @@
 import chalk from "chalk";
 
 import { askToInit } from "./embeds/ask-to-init";
-import { embeds } from "./embeds/embeds";
+import { embeddedCommands } from "./embeds/embeds";
 import { ioc } from "./ioc";
 import { parse } from "./parse";
 import { Project } from "./project";
@@ -11,7 +11,7 @@ async function boot() {
     project: new Project({ path: process.cwd() }),
   });
 
-  embeds.forEach((cmd) => ioc.commandRegistry.register(cmd));
+  embeddedCommands.forEach((cmd) => ioc.commandRegistry.register(cmd));
   ioc.commandRegistry.selfRegisterEnabled = true;
 
   if (!ioc.project.bluecodexFileExists) {
@@ -22,14 +22,9 @@ async function boot() {
   // Load bluecodex.ts file
   require(ioc.project.bluecodexFilePath);
 
-  const [name, ...cmdArgv] = process.argv.slice(2);
+  const [rawName, ...cmdArgv] = process.argv.slice(2);
 
-  if (!name) {
-    console.log(
-      `Looking for the list of commands? Try ${chalk.blueBright("command:list")}`,
-    );
-    return;
-  }
+  const name = rawName ?? "help";
 
   const command = ioc.commandRegistry.find(name || "list");
   if (!command) {

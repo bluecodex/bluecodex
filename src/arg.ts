@@ -125,8 +125,9 @@ export function castArg<A extends Arg>({
 export function formatArg(arg: Arg) {
   const parts: string[] = [];
 
-  parts.push(arg.name);
+  parts.push(arg.optional ? chalk.dim(`${arg.name}?`) : arg.name);
   if (arg.explicitType) parts.push(chalk.dim(`:${arg.type}`));
+  if (arg.fallback !== null) parts.push(chalk.dim(`=${arg.fallback}`));
 
   return parts.join("");
 }

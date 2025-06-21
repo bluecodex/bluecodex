@@ -144,7 +144,7 @@ export function formatFlag(flag: Flag) {
   parts.push(chalk(`${flag.short === true ? "-" : "--"}${flag.name}`));
   if (typeof flag.short === "string") parts.push(chalk.dim(`(-${flag.short})`));
   if (flag.explicitType) parts.push(chalk.dim(`:${flag.type}`));
-  if (flag.fallback) parts.push(chalk.dim(`=${flag.fallback}`));
+  if (flag.fallback !== null) parts.push(chalk.dim(`=${flag.fallback}`));
 
   return parts.join("");
 }
