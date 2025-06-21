@@ -12,9 +12,7 @@ import type { ExpandObject } from "./types/object-type-utils";
  */
 
 export type CommandFn<B extends Blueprint> = (
-  data: {
-    argv: string[];
-  } & ExpandObject<RecordFromBlueprint<B>>,
+  data: ExpandObject<{ argv: string[] } & RecordFromBlueprint<B>>,
 ) => unknown;
 
 export type CommandMeta<B extends Blueprint> = Partial<{

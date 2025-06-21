@@ -131,7 +131,7 @@ type ParseShortFlag_Step4<
   Flag<Name, true, Required, Type, ExplicitType, CastData<Type, RawFallback>>;
 
 /*
- * Exported parse types
+ * Parse types
  */
 
 export type ParseFlag<S extends string> = S extends `--${infer Long_Part1}`
