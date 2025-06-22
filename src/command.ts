@@ -2,7 +2,7 @@ import {
   type Blueprint,
   type ParseBlueprint,
   type RecordFromBlueprint,
-  blueprint,
+  parseBlueprint,
 } from "./blueprint";
 import { ioc } from "./ioc";
 import type { ExpandObject } from "./types/object-type-utils";
@@ -37,7 +37,7 @@ export function command<S extends string, B extends ParseBlueprint<S>>(
   meta: CommandMeta<B> = {},
 ): Command<B> {
   return ioc.commandRegistry.selfRegisterIfEnabled({
-    blueprint: blueprint(input),
+    blueprint: parseBlueprint(input),
     fn,
     meta,
   }) as Command<B>;

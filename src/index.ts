@@ -29,9 +29,9 @@ export {
 
 export {
   type Blueprint,
-  type RecordFromBlueprint,
   type ParseBlueprint,
-  blueprint,
+  parseBlueprint,
+  type RecordFromBlueprint,
   isArgPart,
   isFlagPart,
 } from "./blueprint";

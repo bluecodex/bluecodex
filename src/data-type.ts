@@ -65,6 +65,7 @@ export function castData<DT extends DataType>({
     case "number":
       return Number(input) as DataTypeByName<DT>;
     case "boolean":
+      if (input === "") return true as DataTypeByName<DT>;
       if (truthyValues.includes(input)) return true as DataTypeByName<DT>;
       if (falsyValues.includes(input)) return false as DataTypeByName<DT>;
 
