@@ -1,3 +1,3 @@
 # bluecodex
 
-The knowledge toolkit for dev teams.
+Knowledge toolkit for dev teams.
