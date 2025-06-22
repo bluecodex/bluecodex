@@ -34,7 +34,7 @@ export type RecordFromBlueprint<B extends Blueprint> = {
 };
 
 /*
- * Parse types
+ * Type parser
  */
 
 type ParseBlueprintTokenPart<ArgOrFlagToken extends string> =

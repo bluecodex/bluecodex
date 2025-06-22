@@ -6,10 +6,10 @@ import type { StringToNumber } from "./types/string-type-utils";
 export const dataTypes = ["string", "boolean", "number"] as const;
 export type DataType = (typeof dataTypes)[number];
 
-export const truthyValues = ["true", "1", "y", "yes"] as const;
+export const truthyValues = ["true", "t", "yes", "y", "1"] as const;
 export type TruthyValue = (typeof truthyValues)[number];
 
-export const falsyValues = ["false", "0", "n", "no"] as const;
+export const falsyValues = ["false", "f", "no", "n", "0"] as const;
 export type FalsyValue = (typeof falsyValues)[number];
 
 /*

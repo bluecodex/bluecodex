@@ -144,7 +144,7 @@ type ParseShortFlag_Step4<
   Flag<Name, true, Required, Type, ExplicitType, CastData<Type, FallbackToken>>;
 
 /*
- * Parse types
+ * Type parser
  */
 
 export type ParseFlag<FlagToken extends string> =

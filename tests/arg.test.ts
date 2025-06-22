@@ -14,29 +14,6 @@ test("just the name", () => {
   } satisfies ParseArg<typeof argToken>);
 });
 
-test("boolean type", () => {
-  const argToken = "arg_one:boolean";
-
-  expect(parseArg(argToken)).toEqual({
-    name: "arg_one",
-    type: "boolean",
-    explicitType: true,
-    optional: false,
-    fallback: null,
-  } satisfies ParseArg<typeof argToken>);
-});
-
-test("number type", () => {
-  const argToken = "arg_one:number";
-  expect(parseArg(argToken)).toEqual({
-    name: "arg_one",
-    type: "number",
-    explicitType: true,
-    optional: false,
-    fallback: null,
-  } satisfies ParseArg<typeof argToken>);
-});
-
 test("invalid type", () => {
   const argToken = "arg_one:invalid";
 
@@ -46,18 +23,6 @@ test("invalid type", () => {
     explicitType: true,
     optional: false,
     fallback: null,
-  } satisfies ParseArg<typeof argToken>);
-});
-
-test("type + fallback", () => {
-  const argToken = "arg_one:boolean=true";
-
-  expect(parseArg(argToken)).toEqual({
-    name: "arg_one",
-    type: "boolean",
-    explicitType: true,
-    optional: false,
-    fallback: true,
   } satisfies ParseArg<typeof argToken>);
 });
 

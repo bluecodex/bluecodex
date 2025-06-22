@@ -34,7 +34,7 @@ export type IsNullableArg<A extends Arg> = A["optional"] extends true
   : false;
 
 /*
- * Internal parse types
+ * Internal type parser utils
  */
 
 type ParseArg_Step1<Step1Token extends string> =
@@ -75,7 +75,7 @@ type ParseArg_Step4<
   Arg<Name, Optional, Type, ExplicitType, CastData<Type, FallbackToken>>;
 
 /*
- * Parse types
+ * Type parser
  */
 
 export type ParseArg<ArgToken extends string> = ParseArg_Step1<ArgToken>;
