@@ -32,12 +32,12 @@ export type Command<B extends Blueprint = Blueprint> = {
  */
 
 export function command<S extends string, B extends ParseBlueprint<S>>(
-  input: S,
+  blueprintSpec: S,
   fn: CommandFn<B>,
   meta: CommandMeta<B> = {},
 ): Command<B> {
   return ioc.commandRegistry.selfRegisterIfEnabled({
-    blueprint: parseBlueprint(input),
+    blueprint: parseBlueprint(blueprintSpec),
     fn,
     meta,
   }) as Command<B>;

@@ -63,8 +63,10 @@ export function isFlagPart(part: Arg | Flag): part is Flag {
   return "short" in part;
 }
 
-export function parseBlueprint<S extends string>(input: S): ParseBlueprint<S> {
-  const [name, ...inputParts] = input.split(" ");
+export function parseBlueprint<S extends string>(
+  blueprintToken: S,
+): ParseBlueprint<S> {
+  const [name, ...inputParts] = blueprintToken.split(" ");
 
   const parts: (Arg | Flag)[] = inputParts.map((part) =>
     part.startsWith("-") ? parseFlag(part) : parseArg(part),

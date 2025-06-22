@@ -46,89 +46,92 @@ export type IsNullableFlag<F extends Flag> = F["type"] extends "boolean"
  */
 
 type ParseLongFlag_Step1<S extends string> =
-  // 1. raw fallback
-  S extends `${infer Part2}=${infer RawFallback}`
-    ? ParseLongFlag_Step2<RawFallback, Part2>
+  // 1. fallback spec
+  S extends `${infer Part2}=${infer FallbackSpec}`
+    ? ParseLongFlag_Step2<FallbackSpec, Part2>
     : ParseLongFlag_Step2<null, S>;
 
-type ParseLongFlag_Step2<RawFallback extends string | null, S extends string> =
-  // 3. raw type, explicit type
-  S extends `${infer Step3}:${infer RawType}`
-    ? ParseLongFlag_Step3<RawFallback, RawType, Step3>
-    : ParseLongFlag_Step3<RawFallback, null, S>;
+type ParseLongFlag_Step2<FallbackSpec extends string | null, S extends string> =
+  // 3. type spec, explicit type
+  S extends `${infer Step3}:${infer TypeSpec}`
+    ? ParseLongFlag_Step3<FallbackSpec, TypeSpec, Step3>
+    : ParseLongFlag_Step3<FallbackSpec, null, S>;
 
 type ParseLongFlag_Step3<
-  RawFallback extends string | null,
-  RawType extends string | null,
+  FallbackSpec extends string | null,
+  TypeSpec extends string | null,
   S extends string,
 > =
   // 3. required
   S extends `${infer Part4}!`
-    ? ParseLongFlag_Step4<RawFallback, RawType, true, Part4>
-    : ParseLongFlag_Step4<RawFallback, RawType, false, S>;
+    ? ParseLongFlag_Step4<FallbackSpec, TypeSpec, true, Part4>
+    : ParseLongFlag_Step4<FallbackSpec, TypeSpec, false, S>;
 
 type ParseLongFlag_Step4<
-  RawFallback extends string | null,
-  RawType extends string | null,
+  FallbackSpec extends string | null,
+  TypeSpec extends string | null,
   Required extends boolean,
   S extends string,
 > =
   // 4. short, name
-  S extends `${infer Name}(${infer RawShort}`
-    ? RawShort extends `-${infer Short}${string})`
-      ? ParseLongFlag_Step5<RawFallback, RawType, Required, Short, Name>
-      : ParseLongFlag_Step5<RawFallback, RawType, Required, null, Name>
-    : ParseLongFlag_Step5<RawFallback, RawType, Required, null, S>;
+  S extends `${infer Name}(${infer ShortSpec}`
+    ? ShortSpec extends `-${infer Short}${string})`
+      ? ParseLongFlag_Step5<FallbackSpec, TypeSpec, Required, Short, Name>
+      : ParseLongFlag_Step5<FallbackSpec, TypeSpec, Required, null, Name>
+    : ParseLongFlag_Step5<FallbackSpec, TypeSpec, Required, null, S>;
 
 type ParseLongFlag_Step5<
-  RawFallback extends string | null,
-  RawType extends string | null,
+  FallbackSpec extends string | null,
+  TypeSpec extends string | null,
   Required extends boolean,
   Short extends string | null,
   Name extends string,
   // -- computed
-  ExplicitType extends boolean = RawType extends null ? false : true,
-  Type extends DataType = ValidDataType<RawType, "boolean">,
+  ExplicitType extends boolean = TypeSpec extends null ? false : true,
+  Type extends DataType = ValidDataType<TypeSpec, "boolean">,
 > =
   // 5. Combine into Flag<...>
-  Flag<Name, Short, Required, Type, ExplicitType, CastData<Type, RawFallback>>;
+  Flag<Name, Short, Required, Type, ExplicitType, CastData<Type, FallbackSpec>>;
 
 /*
  * Internal parse short types
  */
 
 type ParseShortFlag_Step1<S extends string> =
-  // 1. raw fallback
-  S extends `${infer Part2}=${infer RawFallback}`
-    ? ParseShortFlag_Step2<RawFallback, Part2>
+  // 1. fallback spec
+  S extends `${infer Part2}=${infer FallbackSpec}`
+    ? ParseShortFlag_Step2<FallbackSpec, Part2>
     : ParseShortFlag_Step2<null, S>;
 
-type ParseShortFlag_Step2<RawFallback extends string | null, S extends string> =
-  // 2. raw type
-  S extends `${infer Part4}:${infer RawType}`
-    ? ParseShortFlag_Step3<RawFallback, RawType, Part4>
-    : ParseShortFlag_Step3<RawFallback, null, S>;
+type ParseShortFlag_Step2<
+  FallbackSpec extends string | null,
+  S extends string,
+> =
+  // 2. type spec
+  S extends `${infer Part4}:${infer TypeSpec}`
+    ? ParseShortFlag_Step3<FallbackSpec, TypeSpec, Part4>
+    : ParseShortFlag_Step3<FallbackSpec, null, S>;
 
 type ParseShortFlag_Step3<
   // 3. required, name
-  RawFallback extends string | null,
-  RawType extends string | null,
+  FallbackSpec extends string | null,
+  TypeSpec extends string | null,
   S extends string,
 > = S extends `${infer Name}${string}!`
-  ? ParseShortFlag_Step4<RawFallback, RawType, true, Name>
-  : ParseShortFlag_Step4<RawFallback, RawType, false, S>;
+  ? ParseShortFlag_Step4<FallbackSpec, TypeSpec, true, Name>
+  : ParseShortFlag_Step4<FallbackSpec, TypeSpec, false, S>;
 
 type ParseShortFlag_Step4<
-  RawFallback extends string | null,
-  RawType extends string | null,
+  FallbackSpec extends string | null,
+  TypeSpec extends string | null,
   Required extends boolean,
   Name extends string,
   // -- computed
-  ExplicitType extends boolean = RawType extends null ? false : true,
-  Type extends DataType = ValidDataType<RawType, "boolean">,
+  ExplicitType extends boolean = TypeSpec extends null ? false : true,
+  Type extends DataType = ValidDataType<TypeSpec, "boolean">,
 > =
   // 4. Combine into Flag<...>
-  Flag<Name, true, Required, Type, ExplicitType, CastData<Type, RawFallback>>;
+  Flag<Name, true, Required, Type, ExplicitType, CastData<Type, FallbackSpec>>;
 
 /*
  * Parse types
@@ -176,45 +179,46 @@ export class InvalidFlagInputError extends Error {
  * Functions
  */
 
-export function extractFlagShortFromNameInput(nameInput: string) {
-  const index = nameInput.indexOf("(");
-  if (index === -1) return { name: nameInput, short: null };
+export function extractFlagShortFromNameInput(nameShortSpec: string) {
+  const index = nameShortSpec.indexOf("(");
+  if (index === -1) return { name: nameShortSpec, short: null };
 
-  const name = nameInput.slice(0, index);
-  const rawShort = nameInput.slice(index);
-  const short = rawShort[2];
+  const name = nameShortSpec.slice(0, index);
+  const shortSpec = nameShortSpec.slice(index);
+  const short = shortSpec[2];
 
   const isValidShortLetter = /^[a-zA-Z]$/.test(short);
   const isValidShort =
-    rawShort.startsWith("(-") && rawShort.endsWith(")") && isValidShortLetter;
+    shortSpec.startsWith("(-") && shortSpec.endsWith(")") && isValidShortLetter;
 
   return { name, short: isValidShort ? short : null };
 }
 
-export function parseFlag<S extends string>(input: S): ParseFlag<S> {
-  const dashCount = input[1] === "-" ? 2 : 1;
+export function parseFlag<S extends string>(flagSpec: S): ParseFlag<S> {
+  const dashCount = flagSpec[1] === "-" ? 2 : 1;
 
-  const parts = input.slice(dashCount).split(/[:=]/);
-  const explicitType = input.includes(":");
+  const parts = flagSpec.slice(dashCount).split(/[:=]/);
+  const explicitType = flagSpec.includes(":");
 
-  const rawName = parts.shift()!;
-  const rawType = explicitType ? parts.shift() : undefined;
-  const rawFallback = input.includes("=") ? parts.shift() : undefined;
+  const nameRequiredSpec = parts.shift()!;
+  const typeSpec = explicitType ? parts.shift() : undefined;
+  const fallbackSpec = flagSpec.includes("=") ? parts.shift() : undefined;
 
-  const required = rawName.endsWith("!");
-  const rawNameWithoutHashbang = required ? rawName.slice(0, -1) : rawName;
+  const required = nameRequiredSpec.endsWith("!");
+  const nameSpec = required ? nameRequiredSpec.slice(0, -1) : nameRequiredSpec;
+
   const { name, short } =
     dashCount === 1
-      ? { name: rawNameWithoutHashbang[0], short: true }
-      : extractFlagShortFromNameInput(rawNameWithoutHashbang);
+      ? { name: nameSpec[0], short: true }
+      : extractFlagShortFromNameInput(nameSpec);
 
   const type: DataType =
-    rawType && isValidDataType(rawType) ? rawType : "boolean";
+    typeSpec && isValidDataType(typeSpec) ? typeSpec : "boolean";
 
   const fallback =
-    typeof rawFallback === "undefined"
+    typeof fallbackSpec === "undefined"
       ? null
-      : castData({ type, input: rawFallback });
+      : castData({ type, input: fallbackSpec });
 
   return {
     name,

@@ -48,8 +48,10 @@ export type CastData<
  * Functions
  */
 
-export function isValidDataType(input: string): input is DataType {
-  return dataTypes.includes(input);
+export function isValidDataType(
+  dataTypeSpec: string,
+): dataTypeSpec is DataType {
+  return dataTypes.includes(dataTypeSpec);
 }
 
 export function castData<DT extends DataType>({

@@ -20,9 +20,9 @@ async function boot() {
   // Load bluecodex.ts file
   require(ioc.project.bluecodexFilePath);
 
-  const [rawName, ...cmdArgv] = process.argv.slice(2);
+  const [firstArgv, ...remainingArgv] = process.argv.slice(2);
 
-  const name = rawName ?? "help";
+  const name = firstArgv ?? "help";
 
   const command = ioc.commandRegistry.find(name || "list");
   if (!command) {
@@ -30,13 +30,17 @@ async function boot() {
     return;
   }
 
-  const result = parse({ argv: cmdArgv, blueprint: command.blueprint });
+  const result = parse({
+    argv: remainingArgv,
+    blueprint: command.blueprint,
+  });
+
   if (result.type === "error") {
     console.log(result.errors.map((error) => error.message).join("\n"));
     return;
   }
 
-  await command.fn({ argv: cmdArgv, ...result.data } as any);
+  await command.fn({ argv: remainingArgv, ...result.data } as any);
 }
 
 await boot();
