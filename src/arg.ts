@@ -38,38 +38,38 @@ export type IsNullableArg<A extends Arg> = A["optional"] extends true
  */
 
 type ParseArg_Step1<S extends string> =
-  // 1. fallback spec
-  S extends `${infer Part2}=${infer FallbackSpec}`
-    ? ParseArg_Step2<FallbackSpec, Part2>
+  // 1. fallback token
+  S extends `${infer Part2}=${infer FallbackToken}`
+    ? ParseArg_Step2<FallbackToken, Part2>
     : ParseArg_Step2<null, S>;
 
-type ParseArg_Step2<FallbackSpec extends string | null, S extends string> =
-  // 2. type spec
-  S extends `${infer Part3}:${infer TypeSpec}`
-    ? ParseArg_Step3<FallbackSpec, TypeSpec, Part3>
-    : ParseArg_Step3<FallbackSpec, null, S>;
+type ParseArg_Step2<FallbackToken extends string | null, S extends string> =
+  // 2. type token
+  S extends `${infer Part3}:${infer TypeToken}`
+    ? ParseArg_Step3<FallbackToken, TypeToken, Part3>
+    : ParseArg_Step3<FallbackToken, null, S>;
 
 type ParseArg_Step3<
-  FallbackSpec extends string | null,
-  TypeSpec extends string | null,
+  FallbackToken extends string | null,
+  TypeToken extends string | null,
   S extends string,
 > =
   // 3. optional, name
   S extends `${infer Name}?`
-    ? ParseArg_Step4<FallbackSpec, TypeSpec, true, Name>
-    : ParseArg_Step4<FallbackSpec, TypeSpec, false, S>;
+    ? ParseArg_Step4<FallbackToken, TypeToken, true, Name>
+    : ParseArg_Step4<FallbackToken, TypeToken, false, S>;
 
 type ParseArg_Step4<
-  FallbackSpec extends string | null,
-  TypeSpec extends string | null,
+  FallbackToken extends string | null,
+  TypeToken extends string | null,
   Optional extends boolean,
   Name extends string,
   // -- computed
-  ExplicitType extends boolean = TypeSpec extends null ? false : true,
-  Type extends DataType = ValidDataType<TypeSpec, "string">,
+  ExplicitType extends boolean = TypeToken extends null ? false : true,
+  Type extends DataType = ValidDataType<TypeToken, "string">,
 > =
   // 4. Combine into Arg<...>
-  Arg<Name, Optional, Type, ExplicitType, CastData<Type, FallbackSpec>>;
+  Arg<Name, Optional, Type, ExplicitType, CastData<Type, FallbackToken>>;
 
 /*
  * Parse types
@@ -113,24 +113,24 @@ export class InvalidArgInputError extends Error {
  * Functions
  */
 
-export function parseArg<S extends string>(argSpec: S): ParseArg<S> {
-  const parts = argSpec.split(/[:=]/);
-  const explicitType = argSpec.includes(":");
+export function parseArg<S extends string>(argToken: S): ParseArg<S> {
+  const parts = argToken.split(/[:=]/);
+  const explicitType = argToken.includes(":");
 
-  const nameOptionalSpec = parts.shift()!;
-  const typeSpec = explicitType ? parts.shift() : undefined;
-  const fallbackSpec = argSpec.includes("=") ? parts.shift() : undefined;
+  const nameOptionalToken = parts.shift()!;
+  const typeToken = explicitType ? parts.shift() : undefined;
+  const fallbackToken = argToken.includes("=") ? parts.shift() : undefined;
 
-  const optional = nameOptionalSpec.endsWith("?");
-  const name = optional ? nameOptionalSpec.slice(0, -1) : nameOptionalSpec;
+  const optional = nameOptionalToken.endsWith("?");
+  const name = optional ? nameOptionalToken.slice(0, -1) : nameOptionalToken;
 
   const type: DataType =
-    typeSpec && isValidDataType(typeSpec) ? typeSpec : "string";
+    typeToken && isValidDataType(typeToken) ? typeToken : "string";
 
   const fallback =
-    typeof fallbackSpec === "undefined"
+    typeof fallbackToken === "undefined"
       ? null
-      : castData({ type, input: fallbackSpec });
+      : castData({ type, input: fallbackToken });
 
   return {
     name,

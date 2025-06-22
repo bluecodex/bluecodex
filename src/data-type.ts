@@ -49,9 +49,9 @@ export type CastData<
  */
 
 export function isValidDataType(
-  dataTypeSpec: string,
-): dataTypeSpec is DataType {
-  return dataTypes.includes(dataTypeSpec);
+  dataTypeToken: string,
+): dataTypeToken is DataType {
+  return dataTypes.includes(dataTypeToken);
 }
 
 export function castData<DT extends DataType>({
