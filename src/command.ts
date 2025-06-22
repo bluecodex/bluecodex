@@ -31,8 +31,11 @@ export type Command<B extends Blueprint = Blueprint> = {
  * Functions
  */
 
-export function command<S extends string, B extends ParseBlueprint<S>>(
-  blueprintToken: S,
+export function command<
+  BlueprintToken extends string,
+  B extends ParseBlueprint<BlueprintToken>,
+>(
+  blueprintToken: BlueprintToken,
   fn: CommandFn<B>,
   meta: CommandMeta<B> = {},
 ): Command<B> {

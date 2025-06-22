@@ -7,18 +7,18 @@ import { type ParseBlueprint, parseBlueprint } from "../src/blueprint";
 //       by the respective test suites.
 
 test("just the name", () => {
-  const input = "foo";
+  const blueprintToken = "foo";
 
-  expect(parseBlueprint(input)).toEqual({
+  expect(parseBlueprint(blueprintToken)).toEqual({
     name: "foo",
     parts: [] as never,
-  } satisfies ParseBlueprint<typeof input>);
+  } satisfies ParseBlueprint<typeof blueprintToken>);
 });
 
 test("with arg but no flag", () => {
-  const input = "foo arg_one";
+  const blueprintToken = "foo arg_one";
 
-  expect(parseBlueprint(input)).toEqual({
+  expect(parseBlueprint(blueprintToken)).toEqual({
     name: "foo",
     parts: [
       {
@@ -29,13 +29,13 @@ test("with arg but no flag", () => {
         fallback: null,
       },
     ],
-  } satisfies ParseBlueprint<typeof input>);
+  } satisfies ParseBlueprint<typeof blueprintToken>);
 });
 
 test("with flag but no arg", () => {
-  const input = "foo --flag_one(-f):number";
+  const blueprintToken = "foo --flag_one(-f):number";
 
-  expect(parseBlueprint(input)).toEqual({
+  expect(parseBlueprint(blueprintToken)).toEqual({
     name: "foo",
     parts: [
       {
@@ -47,5 +47,5 @@ test("with flag but no arg", () => {
         fallback: null,
       },
     ],
-  } satisfies ParseBlueprint<typeof input>);
+  } satisfies ParseBlueprint<typeof blueprintToken>);
 });

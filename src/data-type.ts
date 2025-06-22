@@ -31,14 +31,14 @@ export type ValidDataType<
 
 export type CastData<
   DT extends DataType,
-  S extends string | null,
-> = S extends string
+  Token extends string | null,
+> = Token extends string
   ? DT extends "string"
-    ? S
+    ? Token
     : DT extends "number"
-      ? StringToNumber<S>
+      ? StringToNumber<Token>
       : DT extends "boolean"
-        ? S extends TruthyValue
+        ? Token extends TruthyValue
           ? true
           : false
         : null

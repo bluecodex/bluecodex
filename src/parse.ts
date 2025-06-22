@@ -6,8 +6,8 @@ import { castArg } from "./arg";
 import {
   type Blueprint,
   type RecordFromBlueprint,
-  isArgPart,
-  isFlagPart,
+  isArg,
+  isFlag,
 } from "./blueprint";
 import { castFlag } from "./flag";
 
@@ -43,8 +43,8 @@ export function parse<B extends Blueprint>({
   | { type: "data"; data: RecordFromBlueprint<B> } {
   let parsedArgs: ReturnType<typeof nodeParseArgs>;
 
-  const flags = blueprint.parts.filter(isFlagPart);
-  const args = blueprint.parts.filter(isArgPart);
+  const flags = blueprint.parts.filter(isFlag);
+  const args = blueprint.parts.filter(isArg);
 
   try {
     parsedArgs = nodeParseArgs({

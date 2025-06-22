@@ -1,2 +1,2 @@
-export type StringToNumber<S extends string> =
-  S extends `${infer N extends number}` ? N : never;
+export type StringToNumber<Token extends string> =
+  Token extends `${infer N extends number}` ? N : never;

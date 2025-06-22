@@ -32,8 +32,8 @@ export {
   type ParseBlueprint,
   parseBlueprint,
   type RecordFromBlueprint,
-  isArgPart,
-  isFlagPart,
+  isArg,
+  isFlag,
 } from "./blueprint";
 
 // Export command

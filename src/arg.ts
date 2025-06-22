@@ -37,27 +37,30 @@ export type IsNullableArg<A extends Arg> = A["optional"] extends true
  * Internal parse types
  */
 
-type ParseArg_Step1<S extends string> =
+type ParseArg_Step1<Step1Token extends string> =
   // 1. fallback token
-  S extends `${infer Part2}=${infer FallbackToken}`
-    ? ParseArg_Step2<FallbackToken, Part2>
-    : ParseArg_Step2<null, S>;
+  Step1Token extends `${infer Step2Token}=${infer FallbackToken}`
+    ? ParseArg_Step2<FallbackToken, Step2Token>
+    : ParseArg_Step2<null, Step1Token>;
 
-type ParseArg_Step2<FallbackToken extends string | null, S extends string> =
+type ParseArg_Step2<
+  FallbackToken extends string | null,
+  Step2Token extends string,
+> =
   // 2. type token
-  S extends `${infer Part3}:${infer TypeToken}`
-    ? ParseArg_Step3<FallbackToken, TypeToken, Part3>
-    : ParseArg_Step3<FallbackToken, null, S>;
+  Step2Token extends `${infer Step3Token}:${infer TypeToken}`
+    ? ParseArg_Step3<FallbackToken, TypeToken, Step3Token>
+    : ParseArg_Step3<FallbackToken, null, Step2Token>;
 
 type ParseArg_Step3<
   FallbackToken extends string | null,
   TypeToken extends string | null,
-  S extends string,
+  Step3Token extends string,
 > =
   // 3. optional, name
-  S extends `${infer Name}?`
+  Step3Token extends `${infer Name}?`
     ? ParseArg_Step4<FallbackToken, TypeToken, true, Name>
-    : ParseArg_Step4<FallbackToken, TypeToken, false, S>;
+    : ParseArg_Step4<FallbackToken, TypeToken, false, Step3Token>;
 
 type ParseArg_Step4<
   FallbackToken extends string | null,
@@ -75,7 +78,7 @@ type ParseArg_Step4<
  * Parse types
  */
 
-export type ParseArg<S extends string> = ParseArg_Step1<S>;
+export type ParseArg<ArgToken extends string> = ParseArg_Step1<ArgToken>;
 
 /*
  * Errors
@@ -113,13 +116,15 @@ export class InvalidArgInputError extends Error {
  * Functions
  */
 
-export function parseArg<S extends string>(argToken: S): ParseArg<S> {
-  const parts = argToken.split(/[:=]/);
+export function parseArg<ArgToken extends string>(
+  argToken: ArgToken,
+): ParseArg<ArgToken> {
+  const tokenParts = argToken.split(/[:=]/);
   const explicitType = argToken.includes(":");
 
-  const nameOptionalToken = parts.shift()!;
-  const typeToken = explicitType ? parts.shift() : undefined;
-  const fallbackToken = argToken.includes("=") ? parts.shift() : undefined;
+  const nameOptionalToken = tokenParts.shift()!;
+  const typeToken = explicitType ? tokenParts.shift() : undefined;
+  const fallbackToken = argToken.includes("=") ? tokenParts.shift() : undefined;
 
   const optional = nameOptionalToken.endsWith("?");
   const name = optional ? nameOptionalToken.slice(0, -1) : nameOptionalToken;
@@ -138,7 +143,7 @@ export function parseArg<S extends string>(argToken: S): ParseArg<S> {
     explicitType,
     optional,
     fallback,
-  } satisfies Arg<any, any, any, any> as ParseArg<S>;
+  } satisfies Arg<any, any, any, any> as ParseArg<ArgToken>;
 }
 
 export function castArg<A extends Arg>({
@@ -158,11 +163,11 @@ export function castArg<A extends Arg>({
 }
 
 export function formatArg(arg: Arg) {
-  const parts: string[] = [];
+  const formattedParts: string[] = [];
 
-  parts.push(arg.optional ? chalk.dim(`${arg.name}?`) : arg.name);
-  if (arg.explicitType) parts.push(chalk.dim(`:${arg.type}`));
-  if (arg.fallback !== null) parts.push(chalk.dim(`=${arg.fallback}`));
+  formattedParts.push(arg.optional ? chalk.dim(`${arg.name}?`) : arg.name);
+  if (arg.explicitType) formattedParts.push(chalk.dim(`:${arg.type}`));
+  if (arg.fallback !== null) formattedParts.push(chalk.dim(`=${arg.fallback}`));
 
-  return parts.join("");
+  return formattedParts.join("");
 }

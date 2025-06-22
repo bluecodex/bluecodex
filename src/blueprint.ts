@@ -37,40 +37,47 @@ export type RecordFromBlueprint<B extends Blueprint> = {
  * Parse types
  */
 
-type ParsePart<S extends string> = S extends `-${string}`
-  ? ParseFlag<S>
-  : ParseArg<S>;
+type ParseBlueprintTokenPart<ArgOrFlagToken extends string> =
+  ArgOrFlagToken extends `-${string}`
+    ? ParseFlag<ArgOrFlagToken>
+    : ParseArg<ArgOrFlagToken>;
 
-type ParseCombinedParts<S extends string> =
-  S extends `${infer ThisPart} ${infer NextPart}`
-    ? [ParsePart<ThisPart>, ...ParseCombinedParts<NextPart>]
-    : [ParsePart<S>];
+type ParseBlueprintCombinedTokenParts<ArgAndFlagTokens extends string> =
+  ArgAndFlagTokens extends `${infer FirstToken} ${infer RemainingTokens}`
+    ? [
+        ParseBlueprintTokenPart<FirstToken>,
+        ...ParseBlueprintCombinedTokenParts<RemainingTokens>,
+      ]
+    : [ParseBlueprintTokenPart<ArgAndFlagTokens>];
 
-export type ParseBlueprint<S extends string> =
-  S extends `${infer Name} ${infer PartsInput}`
-    ? Blueprint<Name, ParseCombinedParts<PartsInput>>
-    : Blueprint<S, never>;
+export type ParseBlueprint<BlueprintToken extends string> =
+  BlueprintToken extends `${infer Name} ${infer ArgAndFlagTokens}`
+    ? Blueprint<Name, ParseBlueprintCombinedTokenParts<ArgAndFlagTokens>>
+    : Blueprint<BlueprintToken, never>;
 
 /*
  * Functions
  */
 
-export function isArgPart(part: Arg | Flag): part is Arg {
-  return !isFlagPart(part);
+export function isArg(part: Arg | Flag): part is Arg {
+  return !isFlag(part);
 }
 
-export function isFlagPart(part: Arg | Flag): part is Flag {
+export function isFlag(part: Arg | Flag): part is Flag {
   return "short" in part;
 }
 
-export function parseBlueprint<S extends string>(
-  blueprintToken: S,
-): ParseBlueprint<S> {
+export function parseBlueprint<BlueprintToken extends string>(
+  blueprintToken: BlueprintToken,
+): ParseBlueprint<BlueprintToken> {
   const [name, ...inputParts] = blueprintToken.split(" ");
 
   const parts: (Arg | Flag)[] = inputParts.map((part) =>
     part.startsWith("-") ? parseFlag(part) : parseArg(part),
   );
 
-  return { name, parts } satisfies Blueprint<any, any> as ParseBlueprint<S>;
+  return { name, parts } satisfies Blueprint<
+    any,
+    any
+  > as ParseBlueprint<BlueprintToken>;
 }
