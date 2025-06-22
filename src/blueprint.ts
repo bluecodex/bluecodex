@@ -56,11 +56,11 @@ export type ParseBlueprint<S extends string> =
  */
 
 export function isArgPart(part: Arg | Flag): part is Arg {
-  return "required" in part;
+  return !isFlagPart(part);
 }
 
 export function isFlagPart(part: Arg | Flag): part is Flag {
-  return !isArgPart(part);
+  return "short" in part;
 }
 
 export function parseBlueprint<S extends string>(input: S): ParseBlueprint<S> {
