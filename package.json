@@ -2,7 +2,7 @@
   "name": "bluecodex",
   "type": "module",
   "version": "0.0.3",
-  "description": "The knowledge toolkit for dev teams.",
+  "description": "Knowledge toolkit for dev teams.",
   "repository": "https://github.com/bluecodex/bluecodex",
   "author": "Pedro Moreira <code@pedrosm.com>",
   "license": "MIT",
