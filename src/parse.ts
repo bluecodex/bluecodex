@@ -2,7 +2,7 @@ import chalk from "chalk";
 import { parseArgs as nodeParseArgs } from "node:util";
 import type { ParseArgsOptionsConfig } from "util";
 
-import { castArg } from "./arg";
+import { InvalidArgInputError, MissingRequiredArgError, castArg } from "./arg";
 import {
   type Blueprint,
   type RecordFromBlueprint,
@@ -76,7 +76,12 @@ export function parse<B extends Blueprint>({
         input: parsedArgs.positionals[index] ?? arg.fallback ?? "",
       });
     } catch (error) {
-      errors.push(error as Error);
+      if (
+        error instanceof InvalidArgInputError ||
+        error instanceof MissingRequiredArgError
+      )
+        errors.push(error);
+      else throw error;
     }
   });
 

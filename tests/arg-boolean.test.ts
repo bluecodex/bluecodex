@@ -1,6 +1,7 @@
 import { expect, test } from "vitest";
 
 import { type ParseArg, parseArg } from "../src";
+import { argTestCase } from "./utils/arg-test-case";
 
 test("boolean arg", () => {
   const argToken = "arg_one:boolean";
@@ -15,41 +16,33 @@ test("boolean arg", () => {
 });
 
 test("boolean arg + truthy fallback", () => {
-  const argToken = "arg_one:boolean=true";
-
-  const referenceArg = parseArg(argToken);
-  expect(referenceArg).toEqual({
+  const { expectArgMatch } = argTestCase({
     name: "arg_one",
     type: "boolean",
     explicitType: true,
     optional: false,
     fallback: true,
-  } satisfies ParseArg<typeof argToken>);
+  } as const);
 
-  expect(parseArg("arg_one:boolean=t")).toEqual(referenceArg);
-  expect(parseArg("arg_one:boolean=yes")).toEqual(referenceArg);
-  expect(parseArg("arg_one:boolean=y")).toEqual(referenceArg);
-  expect(parseArg("arg_one:boolean=1")).toEqual(referenceArg);
+  expectArgMatch(parseArg("arg_one:boolean=true"));
+  expectArgMatch(parseArg("arg_one:boolean=t"));
+  expectArgMatch(parseArg("arg_one:boolean=yes"));
+  expectArgMatch(parseArg("arg_one:boolean=y"));
+  expectArgMatch(parseArg("arg_one:boolean=1"));
 });
 
 test("boolean arg + falsy fallback", () => {
-  const argToken = "arg_one:boolean=false";
-
-  const expected = {
+  const { expectArgMatch } = argTestCase({
     name: "arg_one",
     type: "boolean",
     explicitType: true,
     optional: false,
     fallback: false,
-  } satisfies ParseArg<typeof argToken>;
+  } as const);
 
-  expect(parseArg(argToken)).toEqual(expected);
-
-  // Variations
-
-  // TODO: add satisfies to also test the type parser
-  expect(parseArg("arg_one:boolean=f")).toEqual(expected);
-  expect(parseArg("arg_one:boolean=no")).toEqual(expected);
-  expect(parseArg("arg_one:boolean=n")).toEqual(expected);
-  expect(parseArg("arg_one:boolean=0")).toEqual(expected);
+  expectArgMatch(parseArg("arg_one:boolean=false"));
+  expectArgMatch(parseArg("arg_one:boolean=f"));
+  expectArgMatch(parseArg("arg_one:boolean=no"));
+  expectArgMatch(parseArg("arg_one:boolean=n"));
+  expectArgMatch(parseArg("arg_one:boolean=0"));
 });

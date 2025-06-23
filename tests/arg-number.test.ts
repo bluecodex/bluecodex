@@ -1,16 +1,18 @@
-import { expect, test } from "vitest";
+import { test } from "vitest";
 
-import { type ParseArg, parseArg } from "../src";
+import { parseArg } from "../src";
+import { argTestCase } from "./utils/arg-test-case";
 
 test("number arg", () => {
-  const argToken = "arg_one:number";
-  expect(parseArg(argToken)).toEqual({
+  const { expectArgMatch } = argTestCase({
     name: "arg_one",
     type: "number",
     explicitType: true,
     optional: false,
     fallback: null,
-  } satisfies ParseArg<typeof argToken>);
+  } as const);
+
+  expectArgMatch(parseArg("arg_one:number"));
 });
 
 test("number arg + valid fallback", () => {});
