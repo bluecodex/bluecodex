@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 
-import { type ParseFlag, parseFlag } from "../src/flag";
+import { type ParseFlag, parseFlag } from "../../src/flag";
 
 test("short name only", () => {
   const flagToken = "-p";

@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 
-import { type ParseBlueprint, parseBlueprint } from "../src/blueprint";
+import { type ParseBlueprint, parseBlueprint } from "../../src/blueprint";
 
 // Note: blueprint tests are only to assert that the integration with `parseArg`
 //       and `parseFlag` are working. Specific arg and flag cases are covered

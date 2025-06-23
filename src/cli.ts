@@ -32,7 +32,7 @@ export class UnknownInput extends Error {
  * Functions
  */
 
-export function parse<B extends Blueprint>({
+export function parseCliArgv<B extends Blueprint>({
   argv,
   blueprint,
 }: {

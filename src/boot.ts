@@ -1,10 +1,10 @@
+import { parseCliArgv } from "./cli";
 import { askToInit } from "./embeds/ask-to-init";
 import { embeddedCommands } from "./embeds/embeds";
 import { ioc } from "./ioc";
-import { parse } from "./parse";
 import { Project } from "./project";
 
-async function boot() {
+async function bootCli() {
   ioc.init({
     project: new Project({ path: process.cwd() }),
   });
@@ -30,7 +30,7 @@ async function boot() {
     return;
   }
 
-  const result = parse({
+  const result = parseCliArgv({
     argv: remainingArgv,
     blueprint: command.blueprint,
   });
@@ -43,4 +43,4 @@ async function boot() {
   await command.fn({ argv: remainingArgv, ...result.data } as any);
 }
 
-await boot();
+await bootCli();
