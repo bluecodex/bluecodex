@@ -1,9 +1,9 @@
 import { test } from "vitest";
 
-import { argTokenTestCase } from "./utils/arg-token-test-case";
+import { parseArgTestCase } from "./utils/parse-arg-test-case";
 
 test("boolean arg", () => {
-  const { expectArgTokenMatch } = argTokenTestCase({
+  const { expectParseArgMatch } = parseArgTestCase({
     name: "arg_one",
     type: "boolean",
     explicitType: true,
@@ -11,11 +11,11 @@ test("boolean arg", () => {
     fallback: null,
   } as const);
 
-  expectArgTokenMatch("arg_one:boolean");
+  expectParseArgMatch("arg_one:boolean");
 });
 
 test("boolean arg + truthy fallback", () => {
-  const { expectArgTokenMatch } = argTokenTestCase({
+  const { expectParseArgMatch } = parseArgTestCase({
     name: "arg_one",
     type: "boolean",
     explicitType: true,
@@ -23,15 +23,15 @@ test("boolean arg + truthy fallback", () => {
     fallback: true,
   } as const);
 
-  expectArgTokenMatch("arg_one:boolean=true");
-  expectArgTokenMatch("arg_one:boolean=t");
-  expectArgTokenMatch("arg_one:boolean=yes");
-  expectArgTokenMatch("arg_one:boolean=y");
-  expectArgTokenMatch("arg_one:boolean=1");
+  expectParseArgMatch("arg_one:boolean=true");
+  expectParseArgMatch("arg_one:boolean=t");
+  expectParseArgMatch("arg_one:boolean=yes");
+  expectParseArgMatch("arg_one:boolean=y");
+  expectParseArgMatch("arg_one:boolean=1");
 });
 
 test("boolean arg + falsy fallback", () => {
-  const { expectArgTokenMatch } = argTokenTestCase({
+  const { expectParseArgMatch } = parseArgTestCase({
     name: "arg_one",
     type: "boolean",
     explicitType: true,
@@ -39,9 +39,9 @@ test("boolean arg + falsy fallback", () => {
     fallback: false,
   } as const);
 
-  expectArgTokenMatch("arg_one:boolean=false");
-  expectArgTokenMatch("arg_one:boolean=f");
-  expectArgTokenMatch("arg_one:boolean=no");
-  expectArgTokenMatch("arg_one:boolean=n");
-  expectArgTokenMatch("arg_one:boolean=0");
+  expectParseArgMatch("arg_one:boolean=false");
+  expectParseArgMatch("arg_one:boolean=f");
+  expectParseArgMatch("arg_one:boolean=no");
+  expectParseArgMatch("arg_one:boolean=n");
+  expectParseArgMatch("arg_one:boolean=0");
 });

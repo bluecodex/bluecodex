@@ -1,9 +1,9 @@
 import { test } from "vitest";
 
-import { argTokenTestCase } from "./utils/arg-token-test-case";
+import { parseArgTestCase } from "./utils/parse-arg-test-case";
 
 test("just the name", () => {
-  const { expectArgTokenMatch } = argTokenTestCase({
+  const { expectParseArgMatch } = parseArgTestCase({
     name: "arg_one",
     type: "string",
     explicitType: false,
@@ -11,23 +11,23 @@ test("just the name", () => {
     fallback: null,
   } as const);
 
-  expectArgTokenMatch("arg_one");
+  expectParseArgMatch("arg_one");
 });
 
 test("no type but fallback", () => {
-  const { expectArgTokenMatch } = argTokenTestCase({
+  const { expectParseArgMatch } = parseArgTestCase({
     name: "arg_one",
     type: "string",
     explicitType: false,
     optional: false,
     fallback: "true",
-  });
+  } as const);
 
-  expectArgTokenMatch("arg_one=true");
+  expectParseArgMatch("arg_one=true");
 });
 
 test("just name with optional", () => {
-  const { expectArgTokenMatch } = argTokenTestCase({
+  const { expectParseArgMatch } = parseArgTestCase({
     name: "arg_one",
     type: "string",
     explicitType: false,
@@ -35,17 +35,17 @@ test("just name with optional", () => {
     fallback: null,
   } as const);
 
-  expectArgTokenMatch("arg_one?");
+  expectParseArgMatch("arg_one?");
 });
 
 test("name with optional + fallback", () => {
-  const { expectArgTokenMatch } = argTokenTestCase({
+  const { expectParseArgMatch } = parseArgTestCase({
     name: "arg_one",
     type: "string",
     explicitType: false,
     optional: true,
     fallback: "blue",
-  });
+  } as const);
 
-  expectArgTokenMatch("arg_one?=blue");
+  expectParseArgMatch("arg_one?=blue");
 });
