@@ -1,9 +1,9 @@
 import { test } from "vitest";
 
-import { parseArgTestCase } from "./utils/parse-arg-test-case";
+import { createParseArgMatcher } from "./utils/create-parse-arg-matcher";
 
 test("invalid type", () => {
-  const { expectParseArgMatch } = parseArgTestCase({
+  const { expectParseArgMatch } = createParseArgMatcher({
     name: "arg_one",
     type: "string",
     explicitType: true,

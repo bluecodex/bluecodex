@@ -1,17 +1,17 @@
 import { test } from "vitest";
 
-import { parseArgTestCase } from "./utils/parse-arg-test-case";
+import { createParseArgMatcher } from "./utils/create-parse-arg-matcher";
 
-test("number arg", () => {
-  const { expectParseArgMatch } = parseArgTestCase({
-    name: "arg_one",
+test("single worded name + type", () => {
+  const { expectParseArgMatch } = createParseArgMatcher({
+    name: "foo",
     type: "number",
     explicitType: true,
     optional: false,
     fallback: null,
   } as const);
 
-  expectParseArgMatch("arg_one:number");
+  expectParseArgMatch("foo:number");
 });
 
 test("number arg + valid fallback", () => {});

@@ -1,9 +1,9 @@
 import { test } from "vitest";
 
-import { parseFlagTestCase } from "./utils/parse-flag-test-case";
+import { createParseFlagMatcher } from "./utils/create-parse-flag-matcher";
 
 test("long and short name", () => {
-  const { expectParseFlagMatch } = parseFlagTestCase({
+  const { expectParseFlagMatch } = createParseFlagMatcher({
     name: "auto-pause",
     short: "P",
     type: "boolean",
@@ -16,7 +16,7 @@ test("long and short name", () => {
 });
 
 test("long name only", () => {
-  const { expectParseFlagMatch } = parseFlagTestCase({
+  const { expectParseFlagMatch } = createParseFlagMatcher({
     name: "auto-pause",
     short: null,
     type: "boolean",
@@ -29,7 +29,7 @@ test("long name only", () => {
 });
 
 test("long with fallback", () => {
-  const { expectParseFlagMatch } = parseFlagTestCase({
+  const { expectParseFlagMatch } = createParseFlagMatcher({
     name: "auto-pause",
     short: null,
     type: "boolean",
@@ -42,7 +42,7 @@ test("long with fallback", () => {
 });
 
 test("long with type and fallback", () => {
-  const { expectParseFlagMatch } = parseFlagTestCase({
+  const { expectParseFlagMatch } = createParseFlagMatcher({
     name: "auto-pause",
     short: null,
     type: "number",
@@ -55,7 +55,7 @@ test("long with type and fallback", () => {
 });
 
 test("required long with type", () => {
-  const { expectParseFlagMatch } = parseFlagTestCase({
+  const { expectParseFlagMatch } = createParseFlagMatcher({
     name: "auto-pause",
     short: null,
     type: "number",
@@ -68,7 +68,7 @@ test("required long with type", () => {
 });
 
 test("required long with alisa and type", () => {
-  const { expectParseFlagMatch } = parseFlagTestCase({
+  const { expectParseFlagMatch } = createParseFlagMatcher({
     name: "auto-pause",
     short: "a",
     type: "number",
@@ -81,7 +81,7 @@ test("required long with alisa and type", () => {
 });
 
 test("long with short containing extra invalid character", () => {
-  const { expectParseFlagMatch } = parseFlagTestCase({
+  const { expectParseFlagMatch } = createParseFlagMatcher({
     name: "auto-pause",
     short: "a",
     type: "number",
@@ -94,7 +94,7 @@ test("long with short containing extra invalid character", () => {
 });
 
 test("long with short missing dash", () => {
-  const { expectParseFlagMatch } = parseFlagTestCase({
+  const { expectParseFlagMatch } = createParseFlagMatcher({
     name: "auto-pause",
     short: null,
     type: "number",
@@ -107,7 +107,7 @@ test("long with short missing dash", () => {
 });
 
 test("long with short missing letter", () => {
-  const { expectParseFlagMatch } = parseFlagTestCase({
+  const { expectParseFlagMatch } = createParseFlagMatcher({
     name: "auto-pause",
     short: null,
     type: "number",

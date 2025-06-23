@@ -1,9 +1,9 @@
 import { test } from "vitest";
 
-import { parseFlagTestCase } from "./utils/parse-flag-test-case";
+import { createParseFlagMatcher } from "./utils/create-parse-flag-matcher";
 
 test("short name only", () => {
-  const { expectParseFlagMatch } = parseFlagTestCase({
+  const { expectParseFlagMatch } = createParseFlagMatcher({
     name: "p",
     short: true,
     type: "boolean",
@@ -16,7 +16,7 @@ test("short name only", () => {
 });
 
 test("short with fallback", () => {
-  const { expectParseFlagMatch } = parseFlagTestCase({
+  const { expectParseFlagMatch } = createParseFlagMatcher({
     name: "p",
     short: true,
     type: "boolean",
@@ -29,7 +29,7 @@ test("short with fallback", () => {
 });
 
 test("short with type and fallback", () => {
-  const { expectParseFlagMatch } = parseFlagTestCase({
+  const { expectParseFlagMatch } = createParseFlagMatcher({
     name: "p",
     short: true,
     type: "number",
@@ -42,7 +42,7 @@ test("short with type and fallback", () => {
 });
 
 test("required short with type", () => {
-  const { expectParseFlagMatch } = parseFlagTestCase({
+  const { expectParseFlagMatch } = createParseFlagMatcher({
     name: "p",
     short: true,
     type: "number",
@@ -55,7 +55,7 @@ test("required short with type", () => {
 });
 
 test("short with extra invalid character", () => {
-  const { expectParseFlagMatch } = parseFlagTestCase({
+  const { expectParseFlagMatch } = createParseFlagMatcher({
     name: "a",
     short: true,
     type: "number",

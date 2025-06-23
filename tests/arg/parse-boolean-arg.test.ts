@@ -1,9 +1,9 @@
 import { test } from "vitest";
 
-import { parseArgTestCase } from "./utils/parse-arg-test-case";
+import { createParseArgMatcher } from "./utils/create-parse-arg-matcher";
 
 test("boolean arg", () => {
-  const { expectParseArgMatch } = parseArgTestCase({
+  const { expectParseArgMatch } = createParseArgMatcher({
     name: "arg_one",
     type: "boolean",
     explicitType: true,
@@ -15,7 +15,7 @@ test("boolean arg", () => {
 });
 
 test("boolean arg + truthy fallback", () => {
-  const { expectParseArgMatch } = parseArgTestCase({
+  const { expectParseArgMatch } = createParseArgMatcher({
     name: "arg_one",
     type: "boolean",
     explicitType: true,
@@ -31,7 +31,7 @@ test("boolean arg + truthy fallback", () => {
 });
 
 test("boolean arg + falsy fallback", () => {
-  const { expectParseArgMatch } = parseArgTestCase({
+  const { expectParseArgMatch } = createParseArgMatcher({
     name: "arg_one",
     type: "boolean",
     explicitType: true,

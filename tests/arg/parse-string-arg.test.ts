@@ -1,21 +1,33 @@
 import { test } from "vitest";
 
-import { parseArgTestCase } from "./utils/parse-arg-test-case";
+import { createParseArgMatcher } from "./utils/create-parse-arg-matcher";
 
-test("just the name", () => {
-  const { expectParseArgMatch } = parseArgTestCase({
-    name: "arg_one",
-    type: "string",
-    explicitType: false,
+test("name with one word", () => {
+  const { expectParseArgMatch } = createParseArgMatcher({
+    name: "foo",
+    type: "number",
+    explicitType: true,
     optional: false,
     fallback: null,
   } as const);
 
-  expectParseArgMatch("arg_one");
+  expectParseArgMatch("foo:number");
+});
+
+test("name with underscore", () => {
+  const { expectParseArgMatch } = createParseArgMatcher({
+    name: "arg_one",
+    type: "number",
+    explicitType: true,
+    optional: false,
+    fallback: null,
+  } as const);
+
+  expectParseArgMatch("arg_one:number");
 });
 
 test("no type but fallback", () => {
-  const { expectParseArgMatch } = parseArgTestCase({
+  const { expectParseArgMatch } = createParseArgMatcher({
     name: "arg_one",
     type: "string",
     explicitType: false,
@@ -27,7 +39,7 @@ test("no type but fallback", () => {
 });
 
 test("just name with optional", () => {
-  const { expectParseArgMatch } = parseArgTestCase({
+  const { expectParseArgMatch } = createParseArgMatcher({
     name: "arg_one",
     type: "string",
     explicitType: false,
@@ -39,7 +51,7 @@ test("just name with optional", () => {
 });
 
 test("name with optional + fallback", () => {
-  const { expectParseArgMatch } = parseArgTestCase({
+  const { expectParseArgMatch } = createParseArgMatcher({
     name: "arg_one",
     type: "string",
     explicitType: false,
@@ -48,4 +60,21 @@ test("name with optional + fallback", () => {
   } as const);
 
   expectParseArgMatch("arg_one?=blue");
+});
+
+/*
+ * Failure assertions
+ */
+
+test.fails("[fails] incorrect name", () => {
+  const { expectParseArgMatch } = createParseArgMatcher({
+    name: "foo",
+    type: "string",
+    explicitType: false,
+    optional: false,
+    fallback: null,
+  } as const);
+
+  // @ts-expect-error this is incorrect, should fail
+  expectParseArgMatch("bar");
 });

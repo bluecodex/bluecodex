@@ -7,11 +7,12 @@ import { skipCustomFunctionInStackTrace } from "../../utils/test-error-utils";
 type IsLiteralFlag<F extends Flag> = F["name"] extends `${infer _}` ? F : never;
 
 /**
- * Utility for testing flag parsing. It creates a test case, so we can easily
- * assert that multiple flagTokens output the same correct result during both
- * type-checking and runtime.
+ * Utility for testing `parseFlag`.
+ *
+ * It returns a function that can be used to assert multiple times,
+ * asserting that the given `flagToken` returns proper values and types.
  */
-export function parseFlagTestCase<F extends Flag>(
+export function createParseFlagMatcher<F extends Flag>(
   expected: F & IsLiteralFlag<F>,
 ) {
   const expectParseFlagMatch = <FlagToken extends string>(
