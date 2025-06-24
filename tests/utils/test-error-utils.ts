@@ -9,8 +9,9 @@ export function skipCustomFunctionInStackTrace(
   newError.name = error.name;
 
   if (error.stack) {
-    const stackLines = error.stack.split("\n");
-    if (stackLines[0].includes(functionName)) stackLines.shift();
+    const stackLines = error.stack
+      .split("\n")
+      .filter((line) => !line.includes(functionName));
     newError.stack = [newError.toString(), ...stackLines.slice(1)].join("\n");
   }
 

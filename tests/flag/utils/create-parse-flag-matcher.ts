@@ -9,8 +9,9 @@ type IsLiteralFlag<F extends Flag> = F["name"] extends `${infer _}` ? F : never;
 /**
  * Utility for testing `parseFlag`.
  *
- * It returns a function that can be used to assert multiple times,
- * asserting that the given `flagToken` returns proper values and types.
+ * It returns a function that can be used to assert multiple times the
+ * given `flagToken` returns proper values and types, it can assert both
+ * success and failure cases, including type-checking.
  */
 export function createParseFlagMatcher<F extends Flag>(
   expected: F & IsLiteralFlag<F>,

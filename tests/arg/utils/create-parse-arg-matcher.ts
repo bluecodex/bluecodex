@@ -9,8 +9,9 @@ type IsLiteralArg<A extends Arg> = A["name"] extends `${infer _}` ? A : never;
 /**
  * Utility for testing `parseArg`.
  *
- * It returns a function that can be used to assert multiple times,
- * asserting that the given `argToken` returns proper values and types.
+ * It returns a function that can be used to assert multiple times the
+ * given `argToken` returns proper values and types, it can assert both
+ * success and failure cases, including type-checking.
  */
 export function createParseArgMatcher<A extends Arg>(
   expected: A & IsLiteralArg<A>,
@@ -27,5 +28,17 @@ export function createParseArgMatcher<A extends Arg>(
     }
   };
 
-  return { expectParseArgMatch };
+  const expectFailParseArgMatch = <ArgToken extends string>(
+    argToken: ArgToken & (ParseArg<ArgToken> extends A ? never : unknown),
+  ) => {
+    try {
+      expect(parseArg(argToken)).not.toEqual(expected);
+    } catch (error) {
+      throw error instanceof Error
+        ? skipCustomFunctionInStackTrace(error, "expectFailParseArgMatch")
+        : error;
+    }
+  };
+
+  return { expectParseArgMatch, expectFailParseArgMatch };
 }

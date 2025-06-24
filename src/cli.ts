@@ -86,10 +86,16 @@ export function parseCliArgv<B extends Blueprint>({
   });
 
   flags.forEach((flag) => {
+    let value = parsedArgs.values[flag.name];
+
+    // if the flag is provided with no value, that means true
+    // example: foo bar -d
+    if (flag.type === "boolean" && typeof value !== "undefined") value = true;
+
     try {
       dataAcc[flag.name] = castFlag({
         flag,
-        input: (parsedArgs.values[flag.name] ?? flag.fallback ?? "") as string,
+        input: value ?? flag.fallback ?? "",
       });
     } catch (error) {
       errors.push(error as Error);

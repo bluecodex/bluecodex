@@ -40,7 +40,9 @@ export type CastData<
       : DT extends "boolean"
         ? Token extends TruthyValue
           ? true
-          : false
+          : Token extends FalsyValue
+            ? false
+            : null
         : null
   : null;
 
@@ -60,17 +62,20 @@ export function castData<DT extends DataType>({
 }: {
   type: DT;
   input: string;
-}): DataTypeByName<DT> {
+}): DataTypeByName<DT> | null {
   switch (type) {
     case "string":
       return input as DataTypeByName<DT>;
-    case "number":
-      return Number(input) as DataTypeByName<DT>;
+    case "number": {
+      const numberCast = Number(input);
+      if (isNaN(numberCast)) return null;
+
+      return numberCast as DataTypeByName<DT>;
+    }
     case "boolean":
-      if (input === "") return true as DataTypeByName<DT>;
       if (truthyValues.includes(input)) return true as DataTypeByName<DT>;
       if (falsyValues.includes(input)) return false as DataTypeByName<DT>;
 
-      throw new Error(`Invalid boolean value "${input}"`);
+      return null;
   }
 }
