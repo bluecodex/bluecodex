@@ -16,11 +16,8 @@ import { castFlag } from "./flag";
  */
 
 export class UnknownInput extends Error {
-  input: string;
-
-  constructor(input: string) {
+  constructor(readonly input: string) {
     super();
-    this.input = input;
   }
 
   get message() {
@@ -54,7 +51,12 @@ export function parseCliArgv<B extends Blueprint>({
           ...acc,
           [flag.name]: {
             type: "string",
-            short: flag.short === true ? flag.name : flag.short || undefined,
+            short:
+              flag.short === true
+                ? flag.name
+                : typeof flag.short === "string"
+                  ? flag.short
+                  : undefined,
           },
         }),
         {} as ParseArgsOptionsConfig,

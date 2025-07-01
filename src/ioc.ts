@@ -1,37 +1,22 @@
 import { CommandRegistry } from "./command-registry";
 import type { Project } from "./project";
 
-let commandRegistry: CommandRegistry = new CommandRegistry();
-let project: Project;
-
 class Ioc {
+  commandRegistry: CommandRegistry = new CommandRegistry();
+  private _project?: Project;
+
   //The remaining containers are self-initialized
   init(args: { project: Project }) {
     this.project = args.project;
   }
 
-  /*
-   * Command Registry
-   */
-
-  get commandRegistry(): CommandRegistry {
-    return commandRegistry;
-  }
-
-  set commandRegistry(newCommandRegistry: CommandRegistry) {
-    commandRegistry = newCommandRegistry;
-  }
-
-  /*
-   * Project
-   */
-
-  get project(): Project {
-    return project;
+  get project() {
+    if (!this._project) throw new Error("Project not defined on ioc");
+    return this._project;
   }
 
   set project(newProject: Project) {
-    project = newProject;
+    this._project = newProject;
   }
 }
 

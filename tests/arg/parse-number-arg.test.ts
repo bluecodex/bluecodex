@@ -1,5 +1,7 @@
 import { test } from "vitest";
 
+import { ArgFallbackCastError } from "../../src/arg";
+import { CastNumberError } from "../../src/data-type";
 import { createParseArgMatcher } from "./utils/create-parse-arg-matcher";
 
 test("name + type", () => {
@@ -37,7 +39,7 @@ test("invalid fallback", () => {
       type: "number",
       explicitType: true,
       optional: false,
-      fallback: null,
+      fallback: new ArgFallbackCastError("foo", new CastNumberError("1a5")),
     } as const);
 
   expectParseArgMatch("foo:number=1a5");

@@ -2,9 +2,10 @@ import chalk from "chalk";
 
 import {
   type CastData,
-  type DataType,
-  type DataTypeByName,
-  type ValidDataType,
+  type DataTypeByToken,
+  type DataTypeCastError,
+  type DataTypeToken,
+  type ValidDataTypeToken,
   castData,
   isValidDataType,
 } from "./data-type";
@@ -16,9 +17,14 @@ import {
 export type Arg<
   Name extends string = string,
   Optional extends boolean = boolean,
-  Type extends DataType = DataType,
+  Type extends DataTypeToken | InvalidArgTypeError<Name, string> =
+    | DataTypeToken
+    | InvalidArgTypeError<Name, string>,
   ExplicitType extends boolean = boolean,
-  Fallback extends any | null = any | null,
+  Fallback extends
+    | any
+    | null
+    | ArgFallbackCastError<Name, DataTypeCastError> = any,
 > = {
   name: Name;
   optional: Optional;
@@ -69,10 +75,23 @@ type ParseArg_Step4<
   Name extends string,
   // -- computed
   ExplicitType extends boolean = TypeToken extends null ? false : true,
-  Type extends DataType = ValidDataType<TypeToken, "string">,
+  Type extends
+    | DataTypeToken
+    | InvalidArgTypeError<Name, TypeToken & string> = TypeToken extends string
+    ? ValidDataTypeToken<TypeToken, InvalidArgTypeError<Name, TypeToken>>
+    : "string",
+  Fallback = Type extends DataTypeToken ? CastData<Type, FallbackToken> : null,
 > =
   // 4. Combine into Arg<...>
-  Arg<Name, Optional, Type, ExplicitType, CastData<Type, FallbackToken>>;
+  Arg<
+    Name,
+    Optional,
+    Type,
+    ExplicitType,
+    Fallback extends DataTypeCastError
+      ? ArgFallbackCastError<Name, Fallback>
+      : Fallback
+  >;
 
 /*
  * Type parser
@@ -84,12 +103,41 @@ export type ParseArg<ArgToken extends string> = ParseArg_Step1<ArgToken>;
  * Errors
  */
 
-export class MissingRequiredArgError extends Error {
-  arg: Arg;
-
-  constructor(arg: Arg) {
+export class InvalidArgTypeError<
+  ArgName extends string,
+  TypeToken extends string,
+> extends Error {
+  constructor(
+    readonly argName: ArgName,
+    readonly typeToken: TypeToken,
+  ) {
     super();
-    this.arg = arg;
+  }
+
+  get message() {
+    return `Invalid type "${this.typeToken}" for arg "${this.argName}"`;
+  }
+}
+
+export class ArgFallbackCastError<
+  ArgName extends string,
+  Err extends DataTypeCastError,
+> extends Error {
+  constructor(
+    readonly argName: ArgName,
+    readonly error: Err,
+  ) {
+    super();
+  }
+
+  get message() {
+    return `In arg "${this.argName}": ${this.error.message}`;
+  }
+}
+
+export class MissingRequiredArgError extends Error {
+  constructor(readonly arg: Arg) {
+    super();
   }
 
   get message() {
@@ -98,10 +146,10 @@ export class MissingRequiredArgError extends Error {
 }
 
 export class InvalidArgInputError extends Error {
-  arg: Arg;
-  input: string;
-
-  constructor(arg: Arg, input: string) {
+  constructor(
+    readonly arg: Arg,
+    readonly input: string,
+  ) {
     super();
     this.arg = arg;
     this.input = input;
@@ -129,7 +177,7 @@ export function parseArg<ArgToken extends string>(
   const optional = nameOptionalToken.endsWith("?");
   const name = optional ? nameOptionalToken.slice(0, -1) : nameOptionalToken;
 
-  const type: DataType =
+  const type: DataTypeToken =
     typeToken && isValidDataType(typeToken) ? typeToken : "string";
 
   const fallback =
@@ -152,11 +200,17 @@ export function castArg<A extends Arg>({
 }: {
   arg: A;
   input: string;
-}): DataTypeByName<A["type"]> {
-  if (!arg.optional && !input) throw new MissingRequiredArgError(arg);
+}): A["type"] extends DataTypeToken ? DataTypeByToken<A["type"]> : A["type"] {
+  if (arg.type instanceof InvalidArgTypeError) {
+    throw arg.type;
+  }
+
+  if (!arg.optional && !input) {
+    throw new MissingRequiredArgError(arg);
+  }
 
   try {
-    return castData({ type: arg.type, input }) as DataTypeByName<A["type"]>;
+    return castData({ type: arg.type, input }) as any;
   } catch {
     throw new InvalidArgInputError(arg, input);
   }

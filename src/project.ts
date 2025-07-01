@@ -2,14 +2,10 @@ import fs from "node:fs";
 import path from "node:path";
 
 export class Project {
-  path: string;
-
-  constructor(args: { path: string }) {
-    this.path = args.path;
-  }
+  constructor(readonly config: { path: string }) {}
 
   get bluecodexFilePath() {
-    return path.join(this.path, "bluecodex.ts");
+    return path.join(this.config.path, "bluecodex.ts");
   }
 
   get bluecodexFileExists() {

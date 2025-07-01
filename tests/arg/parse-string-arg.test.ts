@@ -44,18 +44,6 @@ test("name with dash", () => {
   expectFailParseArgMatch("arg_one");
 });
 
-test("invalid type defaults to string", () => {
-  const { expectParseArgMatch } = createParseArgMatcher({
-    name: "arg_one",
-    type: "string",
-    explicitType: true,
-    optional: false,
-    fallback: null,
-  } as const);
-
-  expectParseArgMatch("arg_one:invalid");
-});
-
 test("no type + fallback", () => {
   const { expectParseArgMatch, expectFailParseArgMatch } =
     createParseArgMatcher({

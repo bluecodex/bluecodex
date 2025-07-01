@@ -1,5 +1,9 @@
 import { test } from "vitest";
 
+import {
+  FlagShortHasMoreThanOneCharError,
+  FlagShortMalformattedError,
+} from "../../src/flag";
 import { createParseFlagMatcher } from "./utils/create-parse-flag-matcher";
 
 test("long and short name", () => {
@@ -83,7 +87,7 @@ test("required long with alisa and type", () => {
 test("long with short containing extra invalid character", () => {
   const { expectParseFlagMatch } = createParseFlagMatcher({
     name: "auto-pause",
-    short: "a",
+    short: new FlagShortHasMoreThanOneCharError("auto-pause", "(-ab)"),
     type: "number",
     explicitType: true,
     required: true,
@@ -96,7 +100,7 @@ test("long with short containing extra invalid character", () => {
 test("long with short missing dash", () => {
   const { expectParseFlagMatch } = createParseFlagMatcher({
     name: "auto-pause",
-    short: null,
+    short: new FlagShortMalformattedError("auto-pause", "(a)"),
     type: "number",
     explicitType: true,
     required: true,
@@ -109,7 +113,7 @@ test("long with short missing dash", () => {
 test("long with short missing letter", () => {
   const { expectParseFlagMatch } = createParseFlagMatcher({
     name: "auto-pause",
-    short: null,
+    short: new FlagShortMalformattedError("auto-pause", "(-)"),
     type: "number",
     explicitType: true,
     required: true,
@@ -117,4 +121,17 @@ test("long with short missing letter", () => {
   } as const);
 
   expectParseFlagMatch("--auto-pause(-)!:number");
+});
+
+test("missing closing parenthesis", () => {
+  const { expectParseFlagMatch } = createParseFlagMatcher({
+    name: "auto-pause",
+    short: new FlagShortMalformattedError("auto-pause", "(-a"),
+    type: "number",
+    explicitType: true,
+    required: true,
+    fallback: null,
+  } as const);
+
+  expectParseFlagMatch("--auto-pause(-a!:number");
 });

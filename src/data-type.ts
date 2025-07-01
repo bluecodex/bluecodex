@@ -4,7 +4,7 @@
 import type { StringToNumber } from "./types/string-type-utils";
 
 export const dataTypes = ["string", "boolean", "number"] as const;
-export type DataType = (typeof dataTypes)[number];
+export type DataTypeToken = (typeof dataTypes)[number];
 
 export const truthyValues = ["true", "t", "yes", "y", "1"] as const;
 export type TruthyValue = (typeof truthyValues)[number];
@@ -13,10 +13,36 @@ export const falsyValues = ["false", "f", "no", "n", "0"] as const;
 export type FalsyValue = (typeof falsyValues)[number];
 
 /*
+ * Errors
+ */
+
+export class CastBooleanError<Token extends string = string> extends Error {
+  constructor(readonly token: Token) {
+    super();
+  }
+
+  get message() {
+    return `Unable to cast "${this.token}" to boolean`;
+  }
+}
+
+export class CastNumberError<Token extends string = string> extends Error {
+  constructor(readonly token: Token) {
+    super();
+  }
+
+  get message() {
+    return `Unable to cast "${this.token}" to number`;
+  }
+}
+
+/*
  * Types
  */
 
-export type DataTypeByName<DT extends DataType> = DT extends "string"
+export type DataTypeCastError = CastBooleanError | CastNumberError;
+
+export type DataTypeByToken<DT extends DataTypeToken> = DT extends "string"
   ? string
   : DT extends "boolean"
     ? boolean
@@ -24,26 +50,26 @@ export type DataTypeByName<DT extends DataType> = DT extends "string"
       ? number
       : unknown;
 
-export type ValidDataType<
-  DT extends string | null,
-  Fallback extends DataType,
-> = DT extends DataType ? DT : Fallback;
+export type ValidDataTypeToken<
+  RawDataType extends string,
+  ErrorClass extends Error,
+> = RawDataType extends DataTypeToken ? RawDataType : ErrorClass;
 
 export type CastData<
-  DT extends DataType,
-  Token extends string | null,
-> = Token extends string
+  DT extends DataTypeToken,
+  ValueToken extends string | null,
+> = ValueToken extends string
   ? DT extends "string"
-    ? Token
+    ? ValueToken
     : DT extends "number"
-      ? StringToNumber<Token>
+      ? StringToNumber<ValueToken, CastNumberError<ValueToken>>
       : DT extends "boolean"
-        ? Token extends TruthyValue
+        ? ValueToken extends TruthyValue
           ? true
-          : Token extends FalsyValue
+          : ValueToken extends FalsyValue
             ? false
-            : null
-        : null
+            : CastBooleanError<ValueToken>
+        : never
   : null;
 
 /*
@@ -52,29 +78,29 @@ export type CastData<
 
 export function isValidDataType(
   dataTypeToken: string,
-): dataTypeToken is DataType {
+): dataTypeToken is DataTypeToken {
   return dataTypes.includes(dataTypeToken);
 }
 
-export function castData<DT extends DataType>({
+export function castData<DT extends DataTypeToken>({
   type,
   input,
 }: {
   type: DT;
   input: string;
-}): DataTypeByName<DT> | null {
+}): DataTypeByToken<DT> | null {
   switch (type) {
     case "string":
-      return input as DataTypeByName<DT>;
+      return input as DataTypeByToken<DT>;
     case "number": {
       const numberCast = Number(input);
       if (isNaN(numberCast)) return null;
 
-      return numberCast as DataTypeByName<DT>;
+      return numberCast as DataTypeByToken<DT>;
     }
     case "boolean":
-      if (truthyValues.includes(input)) return true as DataTypeByName<DT>;
-      if (falsyValues.includes(input)) return false as DataTypeByName<DT>;
+      if (truthyValues.includes(input)) return true as DataTypeByToken<DT>;
+      if (falsyValues.includes(input)) return false as DataTypeByToken<DT>;
 
       return null;
   }

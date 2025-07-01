@@ -1,5 +1,5 @@
 import { type Arg, type IsNullableArg, type ParseArg, parseArg } from "./arg";
-import type { DataTypeByName } from "./data-type";
+import type { DataTypeByToken, DataTypeToken } from "./data-type";
 import {
   type Flag,
   type IsNullableFlag,
@@ -28,9 +28,11 @@ type IsNullablePart<P extends Arg | Flag> = P extends Arg
     : false;
 
 export type RecordFromBlueprint<B extends Blueprint> = {
-  [P in B["parts"][number] as P["name"]]: IsNullablePart<P> extends true
-    ? DataTypeByName<P["type"]> | null
-    : DataTypeByName<P["type"]>;
+  [P in B["parts"][number] as P["name"]]: P["type"] extends DataTypeToken
+    ? IsNullablePart<P> extends true
+      ? DataTypeByToken<P["type"]> | null
+      : DataTypeByToken<P["type"]>
+    : P["type"];
 };
 
 /*

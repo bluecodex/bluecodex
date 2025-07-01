@@ -3,8 +3,8 @@ export { type ExpandObject } from "./types/object-type-utils";
 
 // Export data type
 export {
-  type DataType,
-  type ValidDataType,
+  type DataTypeToken,
+  type ValidDataTypeToken,
   type TruthyValue,
   truthyValues,
   type FalsyValue,
@@ -13,7 +13,7 @@ export {
   type CastData,
   dataTypes,
   isValidDataType,
-  type DataTypeByName,
+  type DataTypeByToken,
 } from "./data-type";
 
 // Export arg, flag and blueprint
