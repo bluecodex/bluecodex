@@ -1,0 +1,12 @@
+import { type DataTypeToken, dataTypeTokens } from "./data-type-constants";
+
+export type ValidDataTypeToken<
+  RawDataType extends string,
+  ErrorClass extends Error,
+> = RawDataType extends DataTypeToken ? RawDataType : ErrorClass;
+
+export function isValidDataType(
+  dataTypeToken: string,
+): dataTypeToken is DataTypeToken {
+  return dataTypeTokens.includes(dataTypeToken);
+}

@@ -1,9 +1,7 @@
 import { test } from "vitest";
 
-import {
-  FlagShortHasMoreThanOneCharError,
-  FlagShortMalformattedError,
-} from "../../src/flag";
+import { FlagShortHasMoreThanOneCharError } from "../../src/flag/errors/flag-short-has-more-than-one-char-error";
+import { FlagShortMalformattedError } from "../../src/flag/errors/flag-short-malformed-error";
 import { createParseFlagMatcher } from "./utils/create-parse-flag-matcher";
 
 test("long and short name", () => {

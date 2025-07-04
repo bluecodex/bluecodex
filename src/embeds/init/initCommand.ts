@@ -6,7 +6,7 @@ import { command } from "../../command";
 export const initCommand = command("init", () => {
   const contents = fs
     .readFileSync(path.join(__dirname, "bluecodex.template.ts"), "utf-8")
-    .replace('from "../../index";', 'from "bluecodex";');
+    .replace('from "../../out/main";', 'from "bluecodex";');
 
   const destination = path.join(process.cwd(), "bluecodex.ts");
   fs.writeFileSync(destination, contents);

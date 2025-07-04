@@ -1,11 +1,13 @@
-import { type Arg, type IsNullableArg, type ParseArg, parseArg } from "./arg";
-import type { DataTypeByToken, DataTypeToken } from "./data-type";
-import {
-  type Flag,
-  type IsNullableFlag,
-  type ParseFlag,
-  parseFlag,
-} from "./flag";
+import type { Arg } from "./arg/arg";
+import type { IsNullableArg } from "./arg/is-nullable-arg";
+import { type ParseArg, parseArg } from "./arg/parse-arg";
+import type {
+  DataTypeByToken,
+  DataTypeToken,
+} from "./data-type/data-type-constants";
+import type { Flag } from "./flag/flag";
+import type { IsNullableFlag } from "./flag/is-nullable-flag";
+import { type ParseFlag, parseFlag } from "./flag/parse-flag";
 
 /* Types */
 

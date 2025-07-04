@@ -1,4 +1,4 @@
-import { command, prompt } from "../../index";
+import { command, prompt } from "../../out/main";
 
 command("ask name", async ({ name }) => {
   let sure = false;

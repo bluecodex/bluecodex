@@ -1,10 +1,10 @@
 import { casex } from "casex";
 import chalk from "chalk";
 
-import { formatArg } from "../../arg";
+import { formatArg } from "../../arg/format-arg";
 import { isFlag } from "../../blueprint";
 import { type Command, command } from "../../command";
-import { formatFlag } from "../../flag";
+import { formatFlag } from "../../flag/format-flag";
 import { ioc } from "../../ioc";
 import { embeddedCommands } from "../embeds";
 

@@ -1,61 +1,15 @@
-import chalk from "chalk";
-
+import { type CastData, castData } from "../data-type/cast-data";
+import type { DataTypeToken } from "../data-type/data-type-constants";
+import type { DataTypeCastError } from "../data-type/errors/data-type-cast-error";
 import {
-  type CastData,
-  type DataTypeByToken,
-  type DataTypeCastError,
-  type DataTypeToken,
   type ValidDataTypeToken,
-  castData,
   isValidDataType,
-} from "./data-type";
-
-/*
- * Types
- */
-
-export type Flag<
-  Name extends string = string,
-  Short extends
-    | string
-    | true
-    | null
-    | FlagShortMalformattedError<Name, string>
-    | FlagShortHasMoreThanOneCharError<Name, string> =
-    | string
-    | true
-    | null
-    | FlagShortMalformattedError<Name, string>
-    | FlagShortHasMoreThanOneCharError<Name, string>,
-  Required extends boolean = boolean,
-  Type extends DataTypeToken | InvalidFlagTypeError<Name, string> =
-    | DataTypeToken
-    | InvalidFlagTypeError<Name, string>,
-  ExplicitType extends boolean = boolean,
-  Fallback extends
-    | any
-    | null
-    | FlagFallbackCastError<Name, DataTypeCastError> = any | null,
-> = {
-  name: Name;
-  short: Short;
-  required: Required;
-  type: Type;
-  explicitType: ExplicitType;
-  fallback: Fallback;
-};
-
-/*
- * Utility types
- */
-
-export type IsNullableFlag<F extends Flag> = F["type"] extends "boolean"
-  ? false
-  : F["required"] extends true
-    ? false
-    : F["fallback"] extends null
-      ? true
-      : false;
+} from "../data-type/is-valid-data-type";
+import type { FlagFallbackCastError } from "./errors/flag-fallback-cast-error";
+import type { FlagShortHasMoreThanOneCharError } from "./errors/flag-short-has-more-than-one-char-error";
+import type { FlagShortMalformattedError } from "./errors/flag-short-malformed-error";
+import type { InvalidFlagTypeError } from "./errors/invalid-flag-type-error";
+import { type Flag } from "./flag";
 
 /*
  * Internal parse long types
@@ -194,10 +148,6 @@ type ParseShortFlag_Step4<
       : Fallback
   >;
 
-/*
- * Type parser
- */
-
 export type ParseFlag<FlagToken extends string> =
   FlagToken extends `--${infer Long_Part1}`
     ? ParseLongFlag_Step1<Long_Part1>
@@ -206,101 +156,10 @@ export type ParseFlag<FlagToken extends string> =
       : never;
 
 /*
- * Errors
+ * Function
  */
 
-export class InvalidFlagTypeError<
-  FlagName extends string,
-  TypeToken extends string,
-> extends Error {
-  constructor(
-    readonly flagName: FlagName,
-    readonly typeToken: TypeToken,
-  ) {
-    super();
-  }
-
-  get message() {
-    return `Invalid type "${this.typeToken}" for flag "${this.flagName}"`;
-  }
-}
-
-export class FlagShortMalformattedError<
-  FlagName extends string,
-  ShortToken extends string,
-> extends Error {
-  constructor(
-    readonly flagName: FlagName,
-    readonly shortToken: ShortToken,
-  ) {
-    super();
-  }
-
-  get message() {
-    return `Invalid short format "${this.shortToken}" for flag "${this.flagName}"`;
-  }
-}
-
-export class FlagShortHasMoreThanOneCharError<
-  FlagName extends string,
-  ShortToken extends string,
-> extends Error {
-  constructor(
-    readonly flagName: FlagName,
-    readonly shortToken: ShortToken,
-  ) {
-    super();
-  }
-
-  get message() {
-    return `Flag short can only have one character, given "${this.shortToken}" for flag "${this.flagName}"`;
-  }
-}
-
-export class FlagFallbackCastError<
-  FlagName extends string,
-  Err extends DataTypeCastError,
-> extends Error {
-  constructor(
-    readonly flagName: FlagName,
-    readonly error: Err,
-  ) {
-    super();
-  }
-
-  get message() {
-    return `In flag "${this.flagName}": ${this.error.message}`;
-  }
-}
-
-export class MissingRequiredFlagError extends Error {
-  constructor(readonly flag: Flag) {
-    super();
-  }
-
-  get message() {
-    return `Flag ${chalk.bold(`${this.flag.name}:${this.flag.type}`)} is not optional and was not provided.`;
-  }
-}
-
-export class InvalidFlagInputError extends Error {
-  constructor(
-    readonly flag: Flag,
-    readonly input: string,
-  ) {
-    super();
-  }
-
-  get message() {
-    return `Invalid input ${chalk.redBright(this.input)} for flag ${chalk.bold(`${this.flag.name}:${this.flag.type}`)}`;
-  }
-}
-
-/*
- * Functions
- */
-
-export function extractFlagShortFromNameInput(nameShortToken: string) {
+function extractFlagShortFromNameInput(nameShortToken: string) {
   const index = nameShortToken.indexOf("(");
   if (index === -1) return { name: nameShortToken, short: null };
 
@@ -355,44 +214,4 @@ export function parseFlag<FlagToken extends string>(
     required,
     fallback,
   } satisfies Flag<any, any, any, any, any> as ParseFlag<FlagToken>;
-}
-
-export function castFlag<F extends Flag>({
-  flag,
-  input,
-}: {
-  flag: F;
-  input: string;
-}): DataTypeByToken<F["type"] & DataTypeToken> {
-  if (flag.type instanceof InvalidFlagTypeError) {
-    throw flag.type;
-  }
-
-  if (flag.required && !input) {
-    throw new MissingRequiredFlagError(flag);
-  }
-
-  try {
-    return castData({ type: flag.type, input }) as DataTypeByToken<
-      F["type"] & DataTypeToken
-    >;
-  } catch {
-    throw new InvalidFlagInputError(flag, input);
-  }
-}
-
-export function formatFlag(flag: Flag) {
-  const formattedParts: string[] = [];
-
-  formattedParts.push(chalk(`${flag.short === true ? "-" : "--"}${flag.name}`));
-
-  if (typeof flag.short === "string")
-    formattedParts.push(chalk.dim(`(-${flag.short})`));
-
-  if (flag.explicitType) formattedParts.push(chalk.dim(`:${flag.type}`));
-
-  if (flag.fallback !== null)
-    formattedParts.push(chalk.dim(`=${flag.fallback}`));
-
-  return formattedParts.join("");
 }

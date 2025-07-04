@@ -1,6 +1,7 @@
 import { expect } from "vitest";
 
-import { type Flag, type ParseFlag, parseFlag } from "../../../src";
+import { type Flag } from "../../../src/flag/flag";
+import { type ParseFlag, parseFlag } from "../../../src/flag/parse-flag";
 import { skipCustomFunctionInStackTrace } from "../../utils/test-error-utils";
 
 // Ensure the flag is passed with `as const` to avoid attribute types being too broad

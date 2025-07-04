@@ -6,7 +6,7 @@
   "repository": "https://github.com/bluecodex/bluecodex",
   "author": "Pedro Moreira <code@pedrosm.com>",
   "license": "MIT",
-  "main": "src/index.ts",
+  "main": "src/out/main.ts",
   "files": [
     "src"
   ],

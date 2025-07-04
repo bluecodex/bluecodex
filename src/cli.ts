@@ -2,14 +2,16 @@ import chalk from "chalk";
 import { parseArgs as nodeParseArgs } from "node:util";
 import type { ParseArgsOptionsConfig } from "util";
 
-import { InvalidArgInputError, MissingRequiredArgError, castArg } from "./arg";
+import { castArg } from "./arg/cast-arg";
+import { InvalidArgInputError } from "./arg/errors/invalid-arg-input-error";
+import { MissingRequiredArgError } from "./arg/errors/missing-required-arg-error";
 import {
   type Blueprint,
   type RecordFromBlueprint,
   isArg,
   isFlag,
 } from "./blueprint";
-import { castFlag } from "./flag";
+import { castFlag } from "./flag/cast-flag";
 
 /*
  * Errors

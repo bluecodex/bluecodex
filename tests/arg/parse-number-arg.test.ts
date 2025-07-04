@@ -1,7 +1,7 @@
 import { test } from "vitest";
 
-import { ArgFallbackCastError } from "../../src/arg";
-import { CastNumberError } from "../../src/data-type";
+import { ArgFallbackCastError } from "../../src/arg/errors/arg-fallback-cast-error";
+import { CastNumberError } from "../../src/data-type/errors/cast-number-error";
 import { createParseArgMatcher } from "./utils/create-parse-arg-matcher";
 
 test("name + type", () => {
