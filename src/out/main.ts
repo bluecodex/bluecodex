@@ -13,7 +13,7 @@ export {
   type DataTypeByToken,
 } from "../data-type/data-type-constants";
 export {
-  type ValidDataTypeToken,
+  type IsValidDataTypeToken,
   isValidDataType,
 } from "../data-type/is-valid-data-type";
 

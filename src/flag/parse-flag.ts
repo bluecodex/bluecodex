@@ -2,7 +2,7 @@ import { type CastData, castData } from "../data-type/cast-data";
 import type { DataTypeToken } from "../data-type/data-type-constants";
 import type { DataTypeCastError } from "../data-type/errors/data-type-cast-error";
 import {
-  type ValidDataTypeToken,
+  type IsValidDataTypeToken,
   isValidDataType,
 } from "../data-type/is-valid-data-type";
 import type { FlagFallbackCastError } from "./errors/flag-fallback-cast-error";
@@ -78,7 +78,7 @@ type ParseLongFlag_Step5<
   Type extends
     | DataTypeToken
     | InvalidFlagTypeError<Name, TypeToken & string> = TypeToken extends string
-    ? ValidDataTypeToken<TypeToken, InvalidFlagTypeError<Name, TypeToken>>
+    ? IsValidDataTypeToken<TypeToken, InvalidFlagTypeError<Name, TypeToken>>
     : "boolean",
   Fallback = Type extends DataTypeToken ? CastData<Type, FallbackToken> : null,
 > =
@@ -132,7 +132,7 @@ type ParseShortFlag_Step4<
   Type extends
     | DataTypeToken
     | InvalidFlagTypeError<Name, TypeToken & string> = TypeToken extends string
-    ? ValidDataTypeToken<TypeToken, InvalidFlagTypeError<Name, TypeToken>>
+    ? IsValidDataTypeToken<TypeToken, InvalidFlagTypeError<Name, TypeToken>>
     : "boolean",
   Fallback = Type extends DataTypeToken ? CastData<Type, FallbackToken> : null,
 > =

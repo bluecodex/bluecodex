@@ -8,7 +8,7 @@ import {
   truthyValues,
 } from "./data-type-constants";
 import type { CastBooleanError } from "./errors/cast-boolean-error";
-import type { CastNumberError } from "./errors/cast-number-error";
+import type { DataTypeCastNumberError } from "./errors/data-type-cast-number-error";
 
 export type CastData<
   DT extends DataTypeToken,
@@ -17,7 +17,7 @@ export type CastData<
   ? DT extends "string"
     ? ValueToken
     : DT extends "number"
-      ? StringToNumber<ValueToken, CastNumberError<ValueToken>>
+      ? StringToNumber<ValueToken, DataTypeCastNumberError<ValueToken>>
       : DT extends "boolean"
         ? ValueToken extends TruthyValue
           ? true

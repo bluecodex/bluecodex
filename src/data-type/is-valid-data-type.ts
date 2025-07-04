@@ -1,6 +1,6 @@
 import { type DataTypeToken, dataTypeTokens } from "./data-type-constants";
 
-export type ValidDataTypeToken<
+export type IsValidDataTypeToken<
   RawDataType extends string,
   ErrorClass extends Error,
 > = RawDataType extends DataTypeToken ? RawDataType : ErrorClass;

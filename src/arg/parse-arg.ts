@@ -2,7 +2,7 @@ import { type CastData, castData } from "../data-type/cast-data";
 import type { DataTypeToken } from "../data-type/data-type-constants";
 import type { DataTypeCastError } from "../data-type/errors/data-type-cast-error";
 import {
-  type ValidDataTypeToken,
+  type IsValidDataTypeToken,
   isValidDataType,
 } from "../data-type/is-valid-data-type";
 import { type Arg } from "./arg";
@@ -44,7 +44,7 @@ type ParseArg_Step4<
   Type extends
     | DataTypeToken
     | InvalidArgTypeError<Name, TypeToken & string> = TypeToken extends string
-    ? ValidDataTypeToken<TypeToken, InvalidArgTypeError<Name, TypeToken>>
+    ? IsValidDataTypeToken<TypeToken, InvalidArgTypeError<Name, TypeToken>>
     : "string",
   Fallback = Type extends DataTypeToken ? CastData<Type, FallbackToken> : null,
 > =
