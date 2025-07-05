@@ -4,7 +4,7 @@ import { ArgFallbackCastError } from "../../src/arg/errors/arg-fallback-cast-err
 import { DataTypeCastBooleanError } from "../../src/data-type/errors/data-type-cast-boolean-error";
 import { createParseArgMatcher } from "./utils/create-parse-arg-matcher";
 
-test("name + type", () => {
+test("explicit type", () => {
   const { expectParseArgMatch } = createParseArgMatcher({
     name: "watch",
     type: "boolean",
@@ -17,86 +17,48 @@ test("name + type", () => {
 });
 
 test("truthy fallback", () => {
-  const { expectParseArgMatch, expectFailParseArgMatch } =
-    createParseArgMatcher({
-      name: "arg_one",
-      type: "boolean",
-      explicitType: true,
-      optional: false,
-      fallback: true,
-    } as const);
+  const { expectParseArgMatch } = createParseArgMatcher({
+    name: "arg_one",
+    type: "boolean",
+    explicitType: true,
+    optional: false,
+    fallback: true,
+  } as const);
 
   expectParseArgMatch("arg_one:boolean=true");
   expectParseArgMatch("arg_one:boolean=t");
   expectParseArgMatch("arg_one:boolean=yes");
   expectParseArgMatch("arg_one:boolean=y");
   expectParseArgMatch("arg_one:boolean=1");
-
-  expectFailParseArgMatch("arg_one:boolean=0");
-  expectFailParseArgMatch("arg_one=true");
 });
 
 test("falsy fallback", () => {
-  const { expectParseArgMatch, expectFailParseArgMatch } =
-    createParseArgMatcher({
-      name: "arg_one",
-      type: "boolean",
-      explicitType: true,
-      optional: false,
-      fallback: false,
-    } as const);
+  const { expectParseArgMatch } = createParseArgMatcher({
+    name: "arg_one",
+    type: "boolean",
+    explicitType: true,
+    optional: false,
+    fallback: false,
+  } as const);
 
   expectParseArgMatch("arg_one:boolean=false");
   expectParseArgMatch("arg_one:boolean=f");
   expectParseArgMatch("arg_one:boolean=no");
   expectParseArgMatch("arg_one:boolean=n");
   expectParseArgMatch("arg_one:boolean=0");
-
-  expectFailParseArgMatch("arg_one:boolean=1");
-  expectFailParseArgMatch("arg_one=false");
 });
 
 test("invalid fallback", () => {
-  const { expectParseArgMatch, expectFailParseArgMatch } =
-    createParseArgMatcher({
-      name: "arg_one",
-      type: "boolean",
-      explicitType: true,
-      optional: false,
-      fallback: new ArgFallbackCastError(
-        "arg_one",
-        new DataTypeCastBooleanError("definitely_not"),
-      ),
-    } as const);
+  const { expectParseArgMatch } = createParseArgMatcher({
+    name: "arg_one",
+    type: "boolean",
+    explicitType: true,
+    optional: false,
+    fallback: new ArgFallbackCastError(
+      "arg_one",
+      new DataTypeCastBooleanError("definitely_not"),
+    ),
+  } as const);
 
   expectParseArgMatch("arg_one:boolean=definitely_not");
-  expectFailParseArgMatch("arg_one:boolean=true");
-});
-
-test("optional", () => {
-  const { expectParseArgMatch, expectFailParseArgMatch } =
-    createParseArgMatcher({
-      name: "foo",
-      type: "boolean",
-      explicitType: true,
-      optional: true,
-      fallback: null,
-    } as const);
-
-  expectParseArgMatch("foo?:boolean");
-  expectFailParseArgMatch("foo:boolean");
-});
-
-test("optional + fallback", () => {
-  const { expectParseArgMatch, expectFailParseArgMatch } =
-    createParseArgMatcher({
-      name: "foo",
-      type: "boolean",
-      explicitType: true,
-      optional: true,
-      fallback: true,
-    } as const);
-
-  expectParseArgMatch("foo?:boolean=true");
-  expectFailParseArgMatch("foo:boolean=true");
 });

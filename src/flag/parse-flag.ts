@@ -120,14 +120,34 @@ type ParseShortFlag_Step3<
   FallbackToken extends string | null,
   TypeToken extends string | null,
   Step3Token extends string,
-> = Step3Token extends `${infer Name}${string}!`
-  ? ParseShortFlag_Step4<FallbackToken, TypeToken, true, Name>
+> = Step3Token extends `${infer NameToken}!`
+  ? ParseShortFlag_Step4<FallbackToken, TypeToken, true, NameToken>
   : ParseShortFlag_Step4<FallbackToken, TypeToken, false, Step3Token>;
 
 type ParseShortFlag_Step4<
   FallbackToken extends string | null,
   TypeToken extends string | null,
   Required extends boolean,
+  NameToken extends string,
+> =
+  // 4. Check if name has extra chars
+  NameToken extends `${infer Name}${infer ExtraChars}`
+    ? ExtraChars extends ""
+      ? ParseShortFlag_Step5<FallbackToken, TypeToken, Required, true, Name>
+      : ParseShortFlag_Step5<
+          FallbackToken,
+          TypeToken,
+          Required,
+          FlagShortHasMoreThanOneCharError<Name, NameToken>,
+          Name
+        >
+    : never;
+
+type ParseShortFlag_Step5<
+  FallbackToken extends string | null,
+  TypeToken extends string | null,
+  Required extends boolean,
+  Short extends true | FlagShortHasMoreThanOneCharError<Name, string>,
   Name extends string,
   // -- computed
   ExplicitType extends boolean = TypeToken extends null ? false : true,
@@ -138,10 +158,10 @@ type ParseShortFlag_Step4<
     : "boolean",
   Fallback = Type extends DataTypeToken ? CastData<Type, FallbackToken> : null,
 > =
-  // 4. Combine into Flag<...>
+  // 5. Combine into Flag<...>
   Flag<
     Name,
-    true,
+    Short,
     Required,
     Type,
     ExplicitType,
@@ -214,7 +234,13 @@ export function parseFlag<FlagToken extends string>(
 
   const { name, short } =
     dashCount === 1
-      ? { name: nameToken[0], short: true }
+      ? {
+          name: nameToken[0],
+          short:
+            nameToken.length === 1
+              ? true
+              : new FlagShortHasMoreThanOneCharError(nameToken[0], nameToken),
+        }
       : extractFlagShortFromNameInput(nameToken);
 
   const type: DataTypeToken | InvalidFlagTypeError = (() => {

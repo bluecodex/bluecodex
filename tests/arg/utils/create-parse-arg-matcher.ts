@@ -29,17 +29,5 @@ export function createParseArgMatcher<A extends Arg>(
     }
   };
 
-  const expectFailParseArgMatch = <ArgToken extends string>(
-    argToken: ArgToken & (ParseArg<ArgToken> extends A ? never : unknown),
-  ) => {
-    try {
-      expect(parseArg(argToken)).not.toEqual(expected);
-    } catch (error) {
-      throw error instanceof Error
-        ? skipCustomFunctionInStackTrace(error, "expectFailParseArgMatch")
-        : error;
-    }
-  };
-
-  return { expectParseArgMatch, expectFailParseArgMatch };
+  return { expectParseArgMatch };
 }

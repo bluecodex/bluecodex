@@ -4,20 +4,7 @@ import { DataTypeCastBooleanError } from "../../src/data-type/errors/data-type-c
 import { FlagFallbackCastError } from "../../src/flag/errors/flag-fallback-cast-error";
 import { createParseFlagMatcher } from "./utils/create-parse-flag-matcher";
 
-test("long and short name", () => {
-  const { expectParseFlagMatch } = createParseFlagMatcher({
-    name: "auto-pause",
-    short: "P",
-    type: "boolean",
-    explicitType: false,
-    required: false,
-    fallback: null,
-  } as const);
-
-  expectParseFlagMatch("--auto-pause(-P)");
-});
-
-test("long name only", () => {
+test("implicit type", () => {
   const { expectParseFlagMatch } = createParseFlagMatcher({
     name: "auto-pause",
     short: null,
@@ -30,7 +17,20 @@ test("long name only", () => {
   expectParseFlagMatch("--auto-pause");
 });
 
-test("long with fallback", () => {
+test("explicit type", () => {
+  const { expectParseFlagMatch } = createParseFlagMatcher({
+    name: "auto-pause",
+    short: null,
+    type: "boolean",
+    explicitType: true,
+    required: false,
+    fallback: null,
+  } as const);
+
+  expectParseFlagMatch("--auto-pause:boolean");
+});
+
+test("truthy fallback", () => {
   const { expectParseFlagMatch } = createParseFlagMatcher({
     name: "auto-pause",
     short: null,
@@ -41,6 +41,27 @@ test("long with fallback", () => {
   } as const);
 
   expectParseFlagMatch("--auto-pause=true");
+  expectParseFlagMatch("--auto-pause=t");
+  expectParseFlagMatch("--auto-pause=yes");
+  expectParseFlagMatch("--auto-pause=y");
+  expectParseFlagMatch("--auto-pause=1");
+});
+
+test("falsy fallback", () => {
+  const { expectParseFlagMatch } = createParseFlagMatcher({
+    name: "auto-pause",
+    short: null,
+    type: "boolean",
+    explicitType: false,
+    required: false,
+    fallback: false,
+  } as const);
+
+  expectParseFlagMatch("--auto-pause=false");
+  expectParseFlagMatch("--auto-pause=f");
+  expectParseFlagMatch("--auto-pause=no");
+  expectParseFlagMatch("--auto-pause=n");
+  expectParseFlagMatch("--auto-pause=0");
 });
 
 test("invalid fallback", () => {

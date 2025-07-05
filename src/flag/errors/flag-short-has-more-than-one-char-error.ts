@@ -10,6 +10,6 @@ export class FlagShortHasMoreThanOneCharError<
   }
 
   get message() {
-    return `Flag short can only have one character, given "${this.shortToken}" for flag "${this.flagName}"`;
+    return `The short of a long flag can only have one character, given "${this.shortToken}" for flag "${this.flagName}"`;
   }
 }

@@ -1,5 +1,5 @@
 import { test } from "vitest";
 
-test("TODO", () => {
+test.todo("TODO", () => {
   // TODO
 });
