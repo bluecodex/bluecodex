@@ -8,9 +8,7 @@ import { MissingRequiredArgError } from "./arg/errors/missing-required-arg-error
 import {
   type Blueprint,
   type RecordFromBlueprint,
-  isArg,
-  isFlag,
-} from "./blueprint";
+} from "./blueprint/blueprint";
 import { castFlag } from "./flag/cast-flag";
 
 /*
@@ -42,8 +40,11 @@ export function parseCliArgv<B extends Blueprint>({
   | { type: "data"; data: RecordFromBlueprint<B> } {
   let parsedArgs: ReturnType<typeof nodeParseArgs>;
 
-  const flags = blueprint.parts.filter(isFlag);
-  const args = blueprint.parts.filter(isArg);
+  const flags = blueprint.parts.filter(
+    (part) => part.__objectType__ === "flag",
+  );
+
+  const args = blueprint.parts.filter((part) => part.__objectType__ === "arg");
 
   try {
     parsedArgs = nodeParseArgs({

@@ -5,6 +5,7 @@ import { createParseArgMatcher } from "./utils/create-parse-arg-matcher";
 
 test("single word name", () => {
   const { expectParseArgMatch } = createParseArgMatcher({
+    __objectType__: "arg",
     name: "foo",
     type: "string",
     explicitType: false,
@@ -17,6 +18,7 @@ test("single word name", () => {
 
 test("name with underscore", () => {
   const { expectParseArgMatch } = createParseArgMatcher({
+    __objectType__: "arg",
     name: "arg_one",
     type: "string",
     explicitType: false,
@@ -29,6 +31,7 @@ test("name with underscore", () => {
 
 test("name with dash", () => {
   const { expectParseArgMatch } = createParseArgMatcher({
+    __objectType__: "arg",
     name: "arg-one",
     type: "string",
     explicitType: false,
@@ -41,6 +44,7 @@ test("name with dash", () => {
 
 test("invalid type", () => {
   const { expectParseArgMatch } = createParseArgMatcher({
+    __objectType__: "arg",
     name: "arg_one",
     type: new InvalidArgTypeError("arg_one", "foobar"),
     explicitType: true,
@@ -53,6 +57,7 @@ test("invalid type", () => {
 
 test("optional", () => {
   const { expectParseArgMatch } = createParseArgMatcher({
+    __objectType__: "arg",
     name: "arg_one",
     type: "string",
     explicitType: false,
@@ -65,6 +70,7 @@ test("optional", () => {
 
 test("implicit type + optional + fallback", () => {
   const { expectParseArgMatch } = createParseArgMatcher({
+    __objectType__: "arg",
     name: "arg_one",
     type: "string",
     explicitType: false,
@@ -77,6 +83,7 @@ test("implicit type + optional + fallback", () => {
 
 test("explicit type + optional + fallback", () => {
   const { expectParseArgMatch } = createParseArgMatcher({
+    __objectType__: "arg",
     name: "arg_one",
     type: "number",
     explicitType: true,

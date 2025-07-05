@@ -267,6 +267,7 @@ export function parseFlag<FlagToken extends string>(
   })();
 
   return {
+    __objectType__: "flag",
     name,
     short,
     type,

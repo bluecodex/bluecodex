@@ -6,6 +6,7 @@ import { createParseArgMatcher } from "./utils/create-parse-arg-matcher";
 
 test("explicit type", () => {
   const { expectParseArgMatch } = createParseArgMatcher({
+    __objectType__: "arg",
     name: "watch",
     type: "boolean",
     explicitType: true,
@@ -18,6 +19,7 @@ test("explicit type", () => {
 
 test("truthy fallback", () => {
   const { expectParseArgMatch } = createParseArgMatcher({
+    __objectType__: "arg",
     name: "arg_one",
     type: "boolean",
     explicitType: true,
@@ -34,6 +36,7 @@ test("truthy fallback", () => {
 
 test("falsy fallback", () => {
   const { expectParseArgMatch } = createParseArgMatcher({
+    __objectType__: "arg",
     name: "arg_one",
     type: "boolean",
     explicitType: true,
@@ -50,6 +53,7 @@ test("falsy fallback", () => {
 
 test("invalid fallback", () => {
   const { expectParseArgMatch } = createParseArgMatcher({
+    __objectType__: "arg",
     name: "arg_one",
     type: "boolean",
     explicitType: true,

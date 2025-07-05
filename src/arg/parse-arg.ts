@@ -100,6 +100,7 @@ export function parseArg<ArgToken extends string>(
   })();
 
   return {
+    __objectType__: "arg",
     name,
     type,
     explicitType,

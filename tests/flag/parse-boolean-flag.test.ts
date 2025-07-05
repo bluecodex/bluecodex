@@ -6,6 +6,7 @@ import { createParseFlagMatcher } from "./utils/create-parse-flag-matcher";
 
 test("implicit type", () => {
   const { expectParseFlagMatch } = createParseFlagMatcher({
+    __objectType__: "flag",
     name: "auto-pause",
     short: null,
     type: "boolean",
@@ -19,6 +20,7 @@ test("implicit type", () => {
 
 test("explicit type", () => {
   const { expectParseFlagMatch } = createParseFlagMatcher({
+    __objectType__: "flag",
     name: "auto-pause",
     short: null,
     type: "boolean",
@@ -32,6 +34,7 @@ test("explicit type", () => {
 
 test("truthy fallback", () => {
   const { expectParseFlagMatch } = createParseFlagMatcher({
+    __objectType__: "flag",
     name: "auto-pause",
     short: null,
     type: "boolean",
@@ -49,6 +52,7 @@ test("truthy fallback", () => {
 
 test("falsy fallback", () => {
   const { expectParseFlagMatch } = createParseFlagMatcher({
+    __objectType__: "flag",
     name: "auto-pause",
     short: null,
     type: "boolean",
@@ -66,6 +70,7 @@ test("falsy fallback", () => {
 
 test("invalid fallback", () => {
   const { expectParseFlagMatch } = createParseFlagMatcher({
+    __objectType__: "flag",
     name: "auto-pause",
     short: null,
     type: "boolean",

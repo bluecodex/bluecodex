@@ -4,6 +4,7 @@ import { createParseArgMatcher } from "./utils/create-parse-arg-matcher";
 
 test("implicit type", () => {
   const { expectParseArgMatch } = createParseArgMatcher({
+    __objectType__: "arg",
     name: "arg_one",
     type: "string",
     explicitType: false,
@@ -16,6 +17,7 @@ test("implicit type", () => {
 
 test("explicit type", () => {
   const { expectParseArgMatch } = createParseArgMatcher({
+    __objectType__: "arg",
     name: "arg_one",
     type: "string",
     explicitType: true,
@@ -28,6 +30,7 @@ test("explicit type", () => {
 
 test("string-looking fallback", () => {
   const { expectParseArgMatch } = createParseArgMatcher({
+    __objectType__: "arg",
     name: "arg_one",
     type: "string",
     explicitType: false,
@@ -40,6 +43,7 @@ test("string-looking fallback", () => {
 
 test("boolean-looking fallback", () => {
   const { expectParseArgMatch } = createParseArgMatcher({
+    __objectType__: "arg",
     name: "arg_one",
     type: "string",
     explicitType: false,
@@ -52,6 +56,7 @@ test("boolean-looking fallback", () => {
 
 test("number-looking fallback", () => {
   const { expectParseArgMatch } = createParseArgMatcher({
+    __objectType__: "arg",
     name: "arg_one",
     type: "string",
     explicitType: false,

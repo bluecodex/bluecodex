@@ -6,6 +6,7 @@ import { createParseArgMatcher } from "./utils/create-parse-arg-matcher";
 
 test("name + type", () => {
   const { expectParseArgMatch } = createParseArgMatcher({
+    __objectType__: "arg",
     name: "foo",
     type: "number",
     explicitType: true,
@@ -18,6 +19,7 @@ test("name + type", () => {
 
 test("valid fallback", () => {
   const { expectParseArgMatch } = createParseArgMatcher({
+    __objectType__: "arg",
     name: "foo",
     type: "number",
     explicitType: true,
@@ -30,6 +32,7 @@ test("valid fallback", () => {
 
 test("invalid fallback", () => {
   const { expectParseArgMatch } = createParseArgMatcher({
+    __objectType__: "arg",
     name: "foo",
     type: "number",
     explicitType: true,

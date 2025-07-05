@@ -6,6 +6,7 @@ import { createParseFlagMatcher } from "./utils/create-parse-flag-matcher";
 
 test("name + type", () => {
   const { expectParseFlagMatch } = createParseFlagMatcher({
+    __objectType__: "flag",
     name: "count",
     short: null,
     type: "number",
@@ -19,6 +20,7 @@ test("name + type", () => {
 
 test("valid fallback", () => {
   const { expectParseFlagMatch } = createParseFlagMatcher({
+    __objectType__: "flag",
     name: "count",
     short: null,
     type: "number",
@@ -32,6 +34,7 @@ test("valid fallback", () => {
 
 test("invalid fallback", () => {
   const { expectParseFlagMatch } = createParseFlagMatcher({
+    __objectType__: "flag",
     name: "count",
     short: null,
     type: "number",

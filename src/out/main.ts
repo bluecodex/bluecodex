@@ -30,12 +30,12 @@ export { formatFlag } from "../flag/format-flag";
 
 export {
   type Blueprint,
+  type RecordFromBlueprint,
+} from "../blueprint/blueprint";
+export {
   type ParseBlueprint,
   parseBlueprint,
-  type RecordFromBlueprint,
-  isArg,
-  isFlag,
-} from "../blueprint";
+} from "../blueprint/parse-blueprint";
 
 // Export command
 export { command } from "../command";

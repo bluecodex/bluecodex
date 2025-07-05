@@ -2,7 +2,6 @@ import { casex } from "casex";
 import chalk from "chalk";
 
 import { formatArg } from "../../arg/format-arg";
-import { isFlag } from "../../blueprint";
 import { type Command, command } from "../../command";
 import { formatFlag } from "../../flag/format-flag";
 import { ioc } from "../../ioc";
@@ -40,7 +39,9 @@ function printGroup({
   commands.forEach(({ blueprint }) => {
     const formattedName = chalk.blueBright(blueprint.name);
     const formattedParts = blueprint.parts
-      .map((part) => (isFlag(part) ? formatFlag(part) : formatArg(part)))
+      .map((part) =>
+        part.__objectType__ === "flag" ? formatFlag(part) : formatArg(part),
+      )
       .join(" ");
 
     console.log(`  ${formattedName} ${chalk.white(formattedParts)}`);

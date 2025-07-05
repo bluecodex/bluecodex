@@ -32,6 +32,7 @@ export type Flag<
     | null
     | FlagFallbackCastError<Name, DataTypeCastError> = any | null,
 > = {
+  __objectType__: "flag";
   name: Name;
   short: Short;
   required: Required;

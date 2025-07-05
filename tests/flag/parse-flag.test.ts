@@ -6,6 +6,7 @@ import { createParseFlagMatcher } from "./utils/create-parse-flag-matcher";
 
 test("long name with a single word", () => {
   const { expectParseFlagMatch } = createParseFlagMatcher({
+    __objectType__: "flag",
     name: "dev",
     short: null,
     type: "boolean",
@@ -19,6 +20,7 @@ test("long name with a single word", () => {
 
 test("long name with dash", () => {
   const { expectParseFlagMatch } = createParseFlagMatcher({
+    __objectType__: "flag",
     name: "auto-pause",
     short: null,
     type: "boolean",
@@ -34,6 +36,7 @@ test("long name with underscore", () => {});
 
 test("short name", () => {
   const { expectParseFlagMatch } = createParseFlagMatcher({
+    __objectType__: "flag",
     name: "p",
     short: true,
     type: "boolean",
@@ -47,6 +50,7 @@ test("short name", () => {
 
 test("long name + short", () => {
   const { expectParseFlagMatch } = createParseFlagMatcher({
+    __objectType__: "flag",
     name: "auto-pause",
     short: "p",
     type: "boolean",
@@ -60,6 +64,7 @@ test("long name + short", () => {
 
 test("long name + short + type + required + fallback", () => {
   const { expectParseFlagMatch } = createParseFlagMatcher({
+    __objectType__: "flag",
     name: "auto-pause",
     short: "p",
     type: "number",
@@ -73,6 +78,7 @@ test("long name + short + type + required + fallback", () => {
 
 test("short name + type + required + fallback", () => {
   const { expectParseFlagMatch } = createParseFlagMatcher({
+    __objectType__: "flag",
     name: "p",
     short: true,
     type: "number",
@@ -86,6 +92,7 @@ test("short name + type + required + fallback", () => {
 
 test("long name with short containing extra invalid character", () => {
   const { expectParseFlagMatch } = createParseFlagMatcher({
+    __objectType__: "flag",
     name: "auto-pause",
     short: new FlagShortHasMoreThanOneCharError("auto-pause", "(-pb)"),
     type: "boolean",
@@ -99,6 +106,7 @@ test("long name with short containing extra invalid character", () => {
 
 test("long name with short missing dash", () => {
   const { expectParseFlagMatch } = createParseFlagMatcher({
+    __objectType__: "flag",
     name: "auto-pause",
     short: new FlagShortMalformattedError("auto-pause", "(a)"),
     type: "boolean",
@@ -112,6 +120,7 @@ test("long name with short missing dash", () => {
 
 test("long name with short missing letter", () => {
   const { expectParseFlagMatch } = createParseFlagMatcher({
+    __objectType__: "flag",
     name: "auto-pause",
     short: new FlagShortMalformattedError("auto-pause", "(-)"),
     type: "boolean",
@@ -125,6 +134,7 @@ test("long name with short missing letter", () => {
 
 test("long name with short missing closing parenthesis", () => {
   const { expectParseFlagMatch } = createParseFlagMatcher({
+    __objectType__: "flag",
     name: "auto-pause",
     short: new FlagShortMalformattedError("auto-pause", "(-p"),
     type: "boolean",
@@ -138,6 +148,7 @@ test("long name with short missing closing parenthesis", () => {
 
 test("missing closing parenthesis + required + type", () => {
   const { expectParseFlagMatch } = createParseFlagMatcher({
+    __objectType__: "flag",
     name: "auto-pause",
     short: new FlagShortMalformattedError("auto-pause", "(-p"),
     type: "number",
@@ -151,6 +162,7 @@ test("missing closing parenthesis + required + type", () => {
 
 test("short name with two letters", () => {
   const { expectParseFlagMatch } = createParseFlagMatcher({
+    __objectType__: "flag",
     name: "p",
     short: new FlagShortHasMoreThanOneCharError("p", "pb"),
     type: "boolean",

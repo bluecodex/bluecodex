@@ -15,6 +15,7 @@ export type Arg<
     | null
     | ArgFallbackCastError<Name, DataTypeCastError> = any,
 > = {
+  __objectType__: "arg";
   name: Name;
   optional: Optional;
   type: Type;

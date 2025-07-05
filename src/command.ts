@@ -1,9 +1,11 @@
 import {
   type Blueprint,
-  type ParseBlueprint,
   type RecordFromBlueprint,
+} from "./blueprint/blueprint";
+import {
+  type ParseBlueprint,
   parseBlueprint,
-} from "./blueprint";
+} from "./blueprint/parse-blueprint";
 import { ioc } from "./ioc";
 import type { ExpandObject } from "./types/object-type-utils";
 
