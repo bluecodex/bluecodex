@@ -7,7 +7,7 @@ import {
   falsyValues,
   truthyValues,
 } from "./data-type-constants";
-import type { CastBooleanError } from "./errors/cast-boolean-error";
+import type { DataTypeCastBooleanError } from "./errors/data-type-cast-boolean-error";
 import type { DataTypeCastNumberError } from "./errors/data-type-cast-number-error";
 
 export type CastData<
@@ -23,7 +23,7 @@ export type CastData<
           ? true
           : ValueToken extends FalsyValue
             ? false
-            : CastBooleanError<ValueToken>
+            : DataTypeCastBooleanError<ValueToken>
         : never
   : null;
 

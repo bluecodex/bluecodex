@@ -1,4 +1,6 @@
-export class CastBooleanError<Token extends string = string> extends Error {
+export class DataTypeCastBooleanError<
+  Token extends string = string,
+> extends Error {
   constructor(readonly token: Token) {
     super();
   }

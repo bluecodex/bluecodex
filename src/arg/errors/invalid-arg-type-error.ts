@@ -1,6 +1,6 @@
 export class InvalidArgTypeError<
-  ArgName extends string,
-  TypeToken extends string,
+  ArgName extends string = string,
+  TypeToken extends string = string,
 > extends Error {
   constructor(
     readonly argName: ArgName,

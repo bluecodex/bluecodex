@@ -1,6 +1,6 @@
 export class InvalidFlagTypeError<
-  FlagName extends string,
-  TypeToken extends string,
+  FlagName extends string = string,
+  TypeToken extends string = string,
 > extends Error {
   constructor(
     readonly flagName: FlagName,

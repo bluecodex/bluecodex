@@ -1,4 +1,6 @@
-import type { CastBooleanError } from "./cast-boolean-error";
+import type { DataTypeCastBooleanError } from "./data-type-cast-boolean-error";
 import type { DataTypeCastNumberError } from "./data-type-cast-number-error";
 
-export type DataTypeCastError = CastBooleanError | DataTypeCastNumberError;
+export type DataTypeCastError =
+  | DataTypeCastBooleanError
+  | DataTypeCastNumberError;

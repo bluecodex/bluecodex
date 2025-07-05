@@ -1,8 +1,8 @@
 import type { DataTypeCastError } from "../../data-type/errors/data-type-cast-error";
 
 export class ArgFallbackCastError<
-  ArgName extends string,
-  Err extends DataTypeCastError,
+  ArgName extends string = string,
+  Err extends DataTypeCastError = DataTypeCastError,
 > extends Error {
   constructor(
     readonly argName: ArgName,

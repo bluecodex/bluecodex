@@ -1,7 +1,7 @@
 import { test } from "vitest";
 
 import { ArgFallbackCastError } from "../../src/arg/errors/arg-fallback-cast-error";
-import { CastBooleanError } from "../../src/data-type/errors/cast-boolean-error";
+import { DataTypeCastBooleanError } from "../../src/data-type/errors/data-type-cast-boolean-error";
 import { createParseArgMatcher } from "./utils/create-parse-arg-matcher";
 
 test("name + type", () => {
@@ -65,7 +65,7 @@ test("invalid fallback", () => {
       optional: false,
       fallback: new ArgFallbackCastError(
         "arg_one",
-        new CastBooleanError("definitely_not"),
+        new DataTypeCastBooleanError("definitely_not"),
       ),
     } as const);
 

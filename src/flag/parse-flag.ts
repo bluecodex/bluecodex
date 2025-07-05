@@ -6,9 +6,9 @@ import {
   isValidDataType,
 } from "../data-type/is-valid-data-type";
 import type { FlagFallbackCastError } from "./errors/flag-fallback-cast-error";
-import type { FlagShortHasMoreThanOneCharError } from "./errors/flag-short-has-more-than-one-char-error";
-import type { FlagShortMalformattedError } from "./errors/flag-short-malformed-error";
-import type { InvalidFlagTypeError } from "./errors/invalid-flag-type-error";
+import { FlagShortHasMoreThanOneCharError } from "./errors/flag-short-has-more-than-one-char-error";
+import { FlagShortMalformattedError } from "./errors/flag-short-malformed-error";
+import { InvalidFlagTypeError } from "./errors/invalid-flag-type-error";
 import { type Flag } from "./flag";
 
 /*
@@ -159,7 +159,14 @@ export type ParseFlag<FlagToken extends string> =
  * Function
  */
 
-function extractFlagShortFromNameInput(nameShortToken: string) {
+function extractFlagShortFromNameInput(nameShortToken: string): {
+  name: string;
+  short:
+    | string
+    | null
+    | FlagShortMalformattedError
+    | FlagShortHasMoreThanOneCharError;
+} {
   const index = nameShortToken.indexOf("(");
   if (index === -1) return { name: nameShortToken, short: null };
 
@@ -167,13 +174,23 @@ function extractFlagShortFromNameInput(nameShortToken: string) {
   const shortToken = nameShortToken.slice(index);
   const short = shortToken[2];
 
-  const isValidShortLetter = /^[a-zA-Z]$/.test(short);
-  const isValidShort =
-    shortToken.startsWith("(-") &&
-    shortToken.endsWith(")") &&
-    isValidShortLetter;
+  if (shortToken.length > 4) {
+    return {
+      name,
+      short: new FlagShortHasMoreThanOneCharError(name, shortToken),
+    };
+  }
 
-  return { name, short: isValidShort ? short : null };
+  const isShortALetter = /^[a-zA-Z]$/.test(short);
+  const isValidShort =
+    shortToken.startsWith("(-") && shortToken.endsWith(")") && isShortALetter;
+
+  return {
+    name,
+    short: isValidShort
+      ? short
+      : new FlagShortMalformattedError(name, shortToken),
+  };
 }
 
 export function parseFlag<FlagToken extends string>(
@@ -198,11 +215,15 @@ export function parseFlag<FlagToken extends string>(
       ? { name: nameToken[0], short: true }
       : extractFlagShortFromNameInput(nameToken);
 
-  const type: DataTypeToken =
-    typeToken && isValidDataType(typeToken) ? typeToken : "boolean";
+  const type: DataTypeToken | InvalidFlagTypeError = (() => {
+    if (!typeToken) return "boolean";
+    if (isValidDataType(typeToken)) return typeToken;
+
+    return new InvalidFlagTypeError(name, typeToken);
+  })();
 
   const fallback =
-    typeof fallbackToken === "undefined"
+    typeof fallbackToken === "undefined" || type instanceof Error
       ? null
       : castData({ type, input: fallbackToken });
 

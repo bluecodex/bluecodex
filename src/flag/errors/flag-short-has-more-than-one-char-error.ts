@@ -1,6 +1,6 @@
 export class FlagShortHasMoreThanOneCharError<
-  FlagName extends string,
-  ShortToken extends string,
+  FlagName extends string = string,
+  ShortToken extends string = string,
 > extends Error {
   constructor(
     readonly flagName: FlagName,
