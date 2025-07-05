@@ -1,11 +1,13 @@
 import { type CastData, castData } from "../data-type/cast-data";
 import type { DataTypeToken } from "../data-type/data-type-constants";
+import { DataTypeCastBooleanError } from "../data-type/errors/data-type-cast-boolean-error";
 import type { DataTypeCastError } from "../data-type/errors/data-type-cast-error";
+import { DataTypeCastNumberError } from "../data-type/errors/data-type-cast-number-error";
 import {
   type IsValidDataTypeToken,
   isValidDataType,
 } from "../data-type/is-valid-data-type";
-import type { FlagFallbackCastError } from "./errors/flag-fallback-cast-error";
+import { FlagFallbackCastError } from "./errors/flag-fallback-cast-error";
 import { FlagShortHasMoreThanOneCharError } from "./errors/flag-short-has-more-than-one-char-error";
 import { FlagShortMalformattedError } from "./errors/flag-short-malformed-error";
 import { InvalidFlagTypeError } from "./errors/invalid-flag-type-error";
@@ -222,10 +224,21 @@ export function parseFlag<FlagToken extends string>(
     return new InvalidFlagTypeError(name, typeToken);
   })();
 
-  const fallback =
-    typeof fallbackToken === "undefined" || type instanceof Error
-      ? null
-      : castData({ type, input: fallbackToken });
+  const fallback = (() => {
+    if (typeof fallbackToken === "undefined" || type instanceof Error)
+      return null;
+
+    const value = castData({ type, input: fallbackToken });
+
+    if (
+      value instanceof DataTypeCastBooleanError ||
+      value instanceof DataTypeCastNumberError
+    ) {
+      return new FlagFallbackCastError(name, value);
+    }
+
+    return value;
+  })();
 
   return {
     name,

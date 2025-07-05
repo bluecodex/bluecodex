@@ -1,13 +1,15 @@
 import { type CastData, castData } from "../data-type/cast-data";
 import type { DataTypeToken } from "../data-type/data-type-constants";
+import { DataTypeCastBooleanError } from "../data-type/errors/data-type-cast-boolean-error";
 import type { DataTypeCastError } from "../data-type/errors/data-type-cast-error";
+import { DataTypeCastNumberError } from "../data-type/errors/data-type-cast-number-error";
 import {
   type IsValidDataTypeToken,
   isValidDataType,
 } from "../data-type/is-valid-data-type";
 import { type Arg } from "./arg";
-import type { ArgFallbackCastError } from "./errors/arg-fallback-cast-error";
-import type { InvalidArgTypeError } from "./errors/invalid-arg-type-error";
+import { ArgFallbackCastError } from "./errors/arg-fallback-cast-error";
+import { InvalidArgTypeError } from "./errors/invalid-arg-type-error";
 
 type ParseArg_Step1<Step1Token extends string> =
   // 1. fallback token
@@ -74,13 +76,28 @@ export function parseArg<ArgToken extends string>(
   const optional = nameOptionalToken.endsWith("?");
   const name = optional ? nameOptionalToken.slice(0, -1) : nameOptionalToken;
 
-  const type: DataTypeToken =
-    typeToken && isValidDataType(typeToken) ? typeToken : "string";
+  const type: DataTypeToken | InvalidArgTypeError = (() => {
+    if (!typeToken) return "string";
+    if (isValidDataType(typeToken)) return typeToken;
 
-  const fallback =
-    typeof fallbackToken === "undefined"
-      ? null
-      : castData({ type, input: fallbackToken });
+    return new InvalidArgTypeError(name, typeToken);
+  })();
+
+  const fallback = (() => {
+    if (typeof fallbackToken === "undefined" || type instanceof Error)
+      return null;
+
+    const value = castData({ type, input: fallbackToken });
+
+    if (
+      value instanceof DataTypeCastBooleanError ||
+      value instanceof DataTypeCastNumberError
+    ) {
+      return new ArgFallbackCastError(name, value);
+    }
+
+    return value;
+  })();
 
   return {
     name,
