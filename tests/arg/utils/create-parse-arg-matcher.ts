@@ -11,8 +11,7 @@ type IsLiteralArg<A extends Arg> = A["name"] extends `${infer _}` ? A : never;
  * Utility for testing `parseArg`.
  *
  * It returns a function that can be used to assert multiple times the
- * given `argToken` returns proper values and types, it can assert both
- * success and failure cases, including type-checking.
+ * given `argToken` returns proper values and types.
  */
 export function createParseArgMatcher<A extends Arg>(
   expected: A & IsLiteralArg<A>,

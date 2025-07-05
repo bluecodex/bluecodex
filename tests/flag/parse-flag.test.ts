@@ -4,7 +4,20 @@ import { FlagShortHasMoreThanOneCharError } from "../../src/flag/errors/flag-sho
 import { FlagShortMalformattedError } from "../../src/flag/errors/flag-short-malformed-error";
 import { createParseFlagMatcher } from "./utils/create-parse-flag-matcher";
 
-test("long name", () => {
+test("long name with a single word", () => {
+  const { expectParseFlagMatch } = createParseFlagMatcher({
+    name: "dev",
+    short: null,
+    type: "boolean",
+    explicitType: false,
+    required: false,
+    fallback: null,
+  } as const);
+
+  expectParseFlagMatch("--dev");
+});
+
+test("long name with dash", () => {
   const { expectParseFlagMatch } = createParseFlagMatcher({
     name: "auto-pause",
     short: null,
@@ -16,6 +29,8 @@ test("long name", () => {
 
   expectParseFlagMatch("--auto-pause");
 });
+
+test("long name with underscore", () => {});
 
 test("short name", () => {
   const { expectParseFlagMatch } = createParseFlagMatcher({
@@ -134,7 +149,7 @@ test("missing closing parenthesis + required + type", () => {
   expectParseFlagMatch("--auto-pause(-p!:number");
 });
 
-test.todo("short name with two letters", () => {
+test("short name with two letters", () => {
   const { expectParseFlagMatch } = createParseFlagMatcher({
     name: "p",
     short: new FlagShortHasMoreThanOneCharError("p", "pb"),
