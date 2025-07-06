@@ -42,3 +42,4 @@ export { command } from "../command/command";
 
 // Export kit
 export { prompt } from "../kit/prompt";
+export { run } from "../kit/run";
