@@ -1,4 +1,3 @@
-import { casex } from "casex";
 import chalk from "chalk";
 
 import { formatArg } from "../../arg/format-arg";
@@ -10,12 +9,30 @@ import { embeddedCommands } from "../embeds";
 function groupCommands(commands: Command[]) {
   const groups: Record<string, Command[]> = {};
 
+  const ungroupedCommands: Command[] = [];
+
   commands.forEach((command) => {
     const [first, ...rest] = command.blueprint.name.split(":");
 
+    if (rest.length === 0) {
+      ungroupedCommands.push(command);
+      return;
+    }
+
     const groupName = rest.length > 0 ? first : "";
-    groups[groupName] ||= [];
+    groups[groupName] ??= [];
     groups[groupName].push(command);
+  });
+
+  // Include command that has the same name as the group
+  // Example: "lint", "lint:css", "lint:js"
+  ungroupedCommands.forEach((command) => {
+    if (groups[command.blueprint.name]) {
+      groups[command.blueprint.name].unshift(command);
+    } else {
+      groups[""] ??= [];
+      groups[""].push(command);
+    }
   });
 
   return groups;
@@ -61,20 +78,17 @@ export const helpCommand = command("help", () => {
   const titles = Object.keys(groupedProjectCommands).sort();
 
   printGroup({
-    title: "Bluecodex",
+    title: "bluecodex",
     titleSuffix: "(embedded)",
     commands: embeddedCommands,
   });
 
   titles.forEach((title) => {
     if (title) {
-      printGroup({
-        title: casex({ text: title, pattern: "Ca Se" }),
-        commands: groupedProjectCommands[title],
-      });
+      printGroup({ title, commands: groupedProjectCommands[title] });
     } else {
       printGroup({
-        title: "Project",
+        title: "project",
         titleSuffix: "(no group)",
         commands: groupedProjectCommands[title],
       });

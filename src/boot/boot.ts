@@ -1,4 +1,5 @@
 import { parseCliArgv } from "../cli/parse-cli-argv";
+import { runCommand } from "../command/run-command";
 import { askToInit } from "../embeds/ask-to-init";
 import { embeddedCommands } from "../embeds/embeds";
 import { ioc } from "../ioc";
@@ -24,23 +25,7 @@ async function bootCli() {
 
   const name = firstArgv ?? "help";
 
-  const command = ioc.commandRegistry.find(name || "list");
-  if (!command) {
-    console.error("Command not found");
-    return;
-  }
-
-  const result = parseCliArgv({
-    argv: remainingArgv,
-    blueprint: command.blueprint,
-  });
-
-  if (result.type === "error") {
-    console.log(result.errors.map((error) => error.message).join("\n"));
-    return;
-  }
-
-  await command.fn({ argv: remainingArgv, ...result.data } as any);
+  await runCommand(name, remainingArgv);
 }
 
 await bootCli();

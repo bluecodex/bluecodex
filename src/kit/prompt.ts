@@ -14,12 +14,12 @@ function logPreviousWithAnswer(args: {
   process.stdout.write(`${chalk.dim(question)} ${highlightedAnswer}\n`);
 }
 
-type Prompt = {
+type PromptFn = {
   (question: string): Promise<string>;
   bool(question: string, options?: { initial?: boolean }): Promise<boolean>;
 };
 
-export const prompt: Prompt = async (question) => {
+export const prompt: PromptFn = async (question) => {
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
