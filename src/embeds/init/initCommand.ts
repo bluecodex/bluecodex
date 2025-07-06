@@ -1,7 +1,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 
-import { command } from "../../command";
+import { command } from "../../command/command";
 
 export const initCommand = command("init", () => {
   const contents = fs

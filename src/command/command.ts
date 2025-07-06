@@ -1,13 +1,13 @@
 import {
   type Blueprint,
   type RecordFromBlueprint,
-} from "./blueprint/blueprint";
+} from "../blueprint/blueprint";
 import {
   type ParseBlueprint,
   parseBlueprint,
-} from "./blueprint/parse-blueprint";
-import { ioc } from "./ioc";
-import type { ExpandObject } from "./types/object-type-utils";
+} from "../blueprint/parse-blueprint";
+import { ioc } from "../ioc";
+import type { ExpandObject } from "../types/object-type-utils";
 
 /*
  * Types

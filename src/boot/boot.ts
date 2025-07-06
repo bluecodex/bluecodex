@@ -1,8 +1,8 @@
-import { parseCliArgv } from "./cli";
-import { askToInit } from "./embeds/ask-to-init";
-import { embeddedCommands } from "./embeds/embeds";
-import { ioc } from "./ioc";
-import { Project } from "./project";
+import { parseCliArgv } from "../cli/parse-cli-argv";
+import { askToInit } from "../embeds/ask-to-init";
+import { embeddedCommands } from "../embeds/embeds";
+import { ioc } from "../ioc";
+import { Project } from "../project/project";
 
 async function bootCli() {
   ioc.init({

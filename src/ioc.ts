@@ -1,5 +1,5 @@
-import { CommandRegistry } from "./command-registry";
-import type { Project } from "./project";
+import { CommandRegistry } from "./command/command-registry";
+import type { Project } from "./project/project";
 
 class Ioc {
   commandRegistry: CommandRegistry = new CommandRegistry();

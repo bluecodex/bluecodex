@@ -38,7 +38,7 @@ export {
 } from "../blueprint/parse-blueprint";
 
 // Export command
-export { command } from "../command";
+export { command } from "../command/command";
 
 // Export kit
 export { prompt } from "../kit/prompt";

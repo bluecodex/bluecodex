@@ -1,33 +1,11 @@
-import chalk from "chalk";
 import { parseArgs as nodeParseArgs } from "node:util";
 import type { ParseArgsOptionsConfig } from "util";
 
-import { castArg } from "./arg/cast-arg";
-import { InvalidArgInputError } from "./arg/errors/invalid-arg-input-error";
-import { MissingRequiredArgError } from "./arg/errors/missing-required-arg-error";
-import {
-  type Blueprint,
-  type RecordFromBlueprint,
-} from "./blueprint/blueprint";
-import { castFlag } from "./flag/cast-flag";
-
-/*
- * Errors
- */
-
-export class UnknownInput extends Error {
-  constructor(readonly input: string) {
-    super();
-  }
-
-  get message() {
-    return `${chalk.redBright(this.input)} is not recognized as an arg or flag.`;
-  }
-}
-
-/*
- * Functions
- */
+import { castArg } from "../arg/cast-arg";
+import { InvalidArgInputError } from "../arg/errors/invalid-arg-input-error";
+import { MissingRequiredArgError } from "../arg/errors/missing-required-arg-error";
+import type { Blueprint, RecordFromBlueprint } from "../blueprint/blueprint";
+import { castFlag } from "../flag/cast-flag";
 
 export function parseCliArgv<B extends Blueprint>({
   argv,

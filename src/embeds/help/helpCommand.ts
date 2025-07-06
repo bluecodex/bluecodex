@@ -2,7 +2,7 @@ import { casex } from "casex";
 import chalk from "chalk";
 
 import { formatArg } from "../../arg/format-arg";
-import { type Command, command } from "../../command";
+import { type Command, command } from "../../command/command";
 import { formatFlag } from "../../flag/format-flag";
 import { ioc } from "../../ioc";
 import { embeddedCommands } from "../embeds";
