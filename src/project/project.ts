@@ -19,15 +19,21 @@ export class Project {
   }
 
   get defaultSourcesPattern() {
-    return [".bluecodex/bluecodex.ts", ".bluecodex/**/*.bcx.(ts|tsx)"];
+    return [".bluecodex/bluecodex.{ts,tsx}", ".bluecodex/**/*.bcx.{ts,tsx}"];
   }
 
   get defaultSources() {
-    return fs.globSync(
-      this.defaultSourcesPattern.map((pattern) =>
+    const files = new Set<string>();
+
+    this.defaultSourcesPattern.forEach((pattern) => {
+      const globbedFiles = fs.globSync(
         path.join(ioc.project.config.path, pattern),
-      ),
-    );
+      );
+
+      globbedFiles.forEach((file) => files.add(file));
+    });
+
+    return Array.from(files);
   }
 
   get isInitialized() {

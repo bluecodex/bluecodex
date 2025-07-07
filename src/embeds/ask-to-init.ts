@@ -5,7 +5,7 @@ import { initCommand } from "./init/initCommand";
 
 export async function askToInit() {
   const wantsToInit = await prompt.bool(
-    `'Would you like to ${chalk.blueBright("෴ bcx init")} bluecodex on this project?`,
+    `'Would you like to ${chalk.yellowBright("෴ bcx init")} bluecodex on this project?`,
   );
 
   if (wantsToInit) {

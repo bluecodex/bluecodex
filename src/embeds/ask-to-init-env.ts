@@ -6,7 +6,7 @@ import { initEnvCommand } from "./init/initEnvCommand";
 
 export async function askToInitEnv() {
   const wantsToInitEnv = await prompt.bool(
-    `Would you like to ${chalk.blueBright("෴ bcx init:env")} to prepare your environment?`,
+    `Would you like to ${chalk.yellowBright("෴ bcx init:env")} to prepare your environment?`,
   );
 
   if (wantsToInitEnv) {
