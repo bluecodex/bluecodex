@@ -19,7 +19,7 @@ async function bootCli() {
   }
 
   // Load bluecodex.ts file
-  require(ioc.project.bluecodexFilePath);
+  await import(ioc.project.bluecodexFilePath);
 
   const [firstArgv, ...remainingArgv] = process.argv.slice(2);
 

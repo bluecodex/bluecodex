@@ -7,6 +7,8 @@ export function formatFlag(flag: Flag) {
 
   formattedParts.push(chalk(`${flag.short === true ? "-" : "--"}${flag.name}`));
 
+  if (flag.required) formattedParts.push("!");
+
   if (typeof flag.short === "string")
     formattedParts.push(chalk.dim(`(-${flag.short})`));
 

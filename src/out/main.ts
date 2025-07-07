@@ -43,3 +43,10 @@ export { command } from "../command/command";
 // Export kit
 export { prompt } from "../kit/prompt";
 export { run } from "../kit/run";
+export { source } from "../kit/source";
+
+// Export project
+export { Project } from "../project/project";
+
+// Export ioc
+export { ioc } from "../ioc";

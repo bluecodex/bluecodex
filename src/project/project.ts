@@ -5,7 +5,20 @@ export class Project {
   constructor(readonly config: { path: string }) {}
 
   get bluecodexFilePath() {
-    return path.join(this.config.path, "bluecodex.ts");
+    const rootFilePath = path.join(this.config.path, "bluecodex.ts");
+    if (fs.existsSync(rootFilePath)) return rootFilePath;
+
+    const dotBluecodexFilePath = path.join(
+      this.config.path,
+      ".bluecodex/bluecodex.ts",
+    );
+    if (fs.existsSync(dotBluecodexFilePath)) return dotBluecodexFilePath;
+
+    return dotBluecodexFilePath;
+  }
+
+  get relativeBluecodexFilePath() {
+    return path.relative(this.config.path, this.bluecodexFilePath);
   }
 
   get bluecodexFileExists() {
