@@ -1,4 +1,3 @@
-import chalk from "chalk";
 import * as fs from "node:fs";
 import * as path from "node:path";
 
@@ -9,10 +8,8 @@ export const initCommand = command("init", async () => {
   const relativePath = ioc.project.relativeBluecodexFilePath;
   const absolutePath = ioc.project.bluecodexFilePath;
 
-  if (ioc.project.bluecodexFileExists) {
-    console.log(
-      `There is already a bluecodex.ts file on your project at ${chalk.blueBright(relativePath)}`,
-    );
+  if (ioc.project.isInitialized) {
+    // TODO
     return;
   }
 

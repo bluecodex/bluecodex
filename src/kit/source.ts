@@ -9,4 +9,6 @@ export async function source(pattern: string) {
   for (const file of files) {
     await import(file);
   }
+
+  return files;
 }
