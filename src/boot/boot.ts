@@ -1,4 +1,3 @@
-import { parseCliArgv } from "../cli/parse-cli-argv";
 import { runCommand } from "../command/run-command";
 import { askToInit } from "../embeds/ask-to-init";
 import { embeddedCommands } from "../embeds/embeds";

@@ -20,7 +20,7 @@ export const run: RunFn = (cmd) => {
       resolve(code ?? 1);
     });
 
-    child.on("error", (code) => {
+    child.on("error", () => {
       resolve(1);
     });
   });
