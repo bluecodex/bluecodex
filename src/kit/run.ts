@@ -2,11 +2,17 @@ import { spawn } from "node:child_process";
 
 import { runCommand } from "../command/run-command";
 
+type RawCmd = string | (null | 0 | false | string)[];
+
+function rawCmdToStringSplit(rawCmd: RawCmd): string[] {
+  return (Array.isArray(rawCmd) ? rawCmd.join(" ") : rawCmd).split(" ");
+}
+
 /**
  * Runs a command asynchronously and returns the exit code
  */
-export function run(cmd: string): Promise<number> {
-  const [command, ...args] = cmd.split(" ");
+export function run(cmd: RawCmd): Promise<number> {
+  const [command, ...args] = rawCmdToStringSplit(cmd);
 
   return new Promise<number>((resolve) => {
     const child = spawn(command, args, { stdio: "inherit" });
@@ -21,9 +27,9 @@ export function run(cmd: string): Promise<number> {
   });
 }
 
-run.command = async (cmd: string): Promise<number> => {
-  const [name, ...remainingArgv] = cmd.split(" ");
+run.command = async (cmd: RawCmd): Promise<number> => {
+  const [name, ...argv] = rawCmdToStringSplit(cmd);
 
-  await runCommand(name, remainingArgv);
+  await runCommand(name, argv);
   return 0;
 };
