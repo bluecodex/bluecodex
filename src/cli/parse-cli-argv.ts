@@ -1,5 +1,5 @@
 import { parseArgs as nodeParseArgs } from "node:util";
-import type { ParseArgsOptionsConfig } from "util";
+import type { ParseArgsOptionDescriptor, ParseArgsOptionsConfig } from "util";
 
 import { castArg } from "../arg/cast-arg";
 import { InvalidArgInputError } from "../arg/errors/invalid-arg-input-error";
@@ -27,22 +27,23 @@ export function parseCliArgv<B extends Blueprint>({
   try {
     parsedArgs = nodeParseArgs({
       args: argv,
-      options: flags.reduce(
-        (acc, flag) => ({
-          ...acc,
-          [flag.name]: {
-            type: "string",
-            short:
-              flag.short === true
-                ? flag.name
-                : typeof flag.short === "string"
-                  ? flag.short
-                  : undefined,
-          },
-        }),
-        {} as ParseArgsOptionsConfig,
-      ),
       allowPositionals: true,
+      options: flags.reduce((acc, flag) => {
+        const nodeParserFlag: ParseArgsOptionDescriptor = {
+          type: flag.type === "boolean" ? "boolean" : "string",
+        };
+
+        if (flag.short === true) {
+          nodeParserFlag.short = flag.name;
+        } else if (typeof flag.short === "string") {
+          nodeParserFlag.short = flag.short;
+        }
+
+        return {
+          ...acc,
+          [flag.name]: nodeParserFlag,
+        };
+      }, {} as ParseArgsOptionsConfig),
     });
   } catch (error) {
     // TODO: use custom error
@@ -70,10 +71,6 @@ export function parseCliArgv<B extends Blueprint>({
 
   flags.forEach((flag) => {
     let value = parsedArgs.values[flag.name];
-
-    // if the flag is provided with no value, that means true
-    // example: foo bar -d
-    if (flag.type === "boolean" && typeof value !== "undefined") value = true;
 
     try {
       dataAcc[flag.name] = castFlag({
