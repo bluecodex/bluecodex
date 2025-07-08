@@ -1,7 +1,7 @@
 {
   "name": "bluecodex",
   "type": "module",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Knowledge toolkit for dev teams.",
   "repository": "https://github.com/bluecodex/bluecodex",
   "author": "Pedro Moreira <code@pedrosm.com>",
