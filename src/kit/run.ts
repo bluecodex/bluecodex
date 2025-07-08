@@ -2,15 +2,10 @@ import { spawn } from "node:child_process";
 
 import { runCommand } from "../command/run-command";
 
-type RunFn = {
-  (cmd: string): Promise<number>;
-  command(cmd: string): Promise<number>;
-};
-
 /**
  * Runs a command asynchronously and returns the exit code
  */
-export const run: RunFn = (cmd) => {
+export function run(cmd: string): Promise<number> {
   const [command, ...args] = cmd.split(" ");
 
   return new Promise<number>((resolve) => {
@@ -24,9 +19,9 @@ export const run: RunFn = (cmd) => {
       resolve(1);
     });
   });
-};
+}
 
-run.command = async (cmd) => {
+run.command = async (cmd: string): Promise<number> => {
   const [name, ...remainingArgv] = cmd.split(" ");
 
   await runCommand(name, remainingArgv);
