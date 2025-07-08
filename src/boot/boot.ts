@@ -31,15 +31,15 @@ async function bootCli() {
       console.log();
       console.log(`Welcome to ${chalk.blueBright("bluecodex")}\n`);
 
-      if (!shouldInitialize) {
+      if (shouldInitialize) {
+        console.log(`Let's get you started!\n`);
+        await askToInit();
+      } else if (shouldInitializeEnv) {
         console.log(
-          "Someone one your team setup bluecodex already, you just have to init your environment.\n",
+          "Someone one your team already started things off, you just have to init your environment.\n",
         );
 
         await askToInitEnv();
-      } else {
-        console.log(`Let's get you started with bluecodex.\n`);
-        await askToInit();
       }
 
       return;

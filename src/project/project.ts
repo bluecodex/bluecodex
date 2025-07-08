@@ -1,8 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import { ioc } from "../ioc";
-
 export class Project {
   constructor(readonly config: { path: string }) {}
 
@@ -33,13 +31,10 @@ export class Project {
 
     this.defaultSourcesPattern.forEach((pattern) => {
       try {
-        const globbedFiles = fs.globSync(
-          path.join(this.dotBluecodexFolderPath, pattern),
-        );
-
+        const globbedFiles = fs.globSync(path.join(this.config.path, pattern));
         globbedFiles.forEach((file) => files.add(file));
       } catch {
-        // do nothing
+        // do nothing if globbing a folder fails
       }
     });
 
