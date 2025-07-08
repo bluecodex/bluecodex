@@ -20,9 +20,12 @@ export class SettingsManager {
   }
 
   setSetting<S extends keyof Settings>(name: S, value: Settings[S]) {
+    ioc.project.ensureDotBluecodexFolderExists();
+
     fs.writeFileSync(
       this.settingsPath,
-      JSON.stringify({ ...this.settings, [name]: value }),
+      JSON.stringify({ ...this.settings, [name]: value }, null, 2),
+      {},
     );
   }
 }

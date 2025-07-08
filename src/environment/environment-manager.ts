@@ -4,18 +4,30 @@ import path from "node:path";
 import { ioc } from "../ioc";
 
 export class EnvironmentManager {
-  get path() {
+  get dotEnvPath() {
     return path.join(ioc.project.dotBluecodexFolderPath, ".env.bluecodex");
   }
 
-  get templatePath() {
+  get dotEnvTemplatePath() {
     return path.join(
       ioc.project.dotBluecodexFolderPath,
       ".env.bluecodex.template",
     );
   }
 
+  get canInitialize() {
+    return fs.existsSync(this.dotEnvTemplatePath);
+  }
+
   get isInitialized() {
-    return fs.existsSync(this.path);
+    return fs.existsSync(this.dotEnvPath);
+  }
+
+  get shouldInitialize() {
+    return Boolean(
+      this.canInitialize &&
+        !this.isInitialized &&
+        !ioc.settingsManager.settings.skipInitEnv,
+    );
   }
 }

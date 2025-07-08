@@ -10,33 +10,43 @@ export class Project {
     return path.join(this.config.path, ".bluecodex/");
   }
 
-  get bluecodexFilePath() {
-    return path.join(this.dotBluecodexFolderPath, "bluecodex.ts");
+  ensureDotBluecodexFolderExists() {
+    if (!fs.existsSync(this.dotBluecodexFolderPath)) {
+      fs.mkdirSync(this.dotBluecodexFolderPath);
+    }
   }
 
-  get relativeBluecodexFilePath() {
-    return path.relative(this.config.path, this.bluecodexFilePath);
+  relativePath(target: string) {
+    return path.relative(this.config.path, target);
   }
 
   get defaultSourcesPattern() {
-    return [".bluecodex/bluecodex.{ts,tsx}", ".bluecodex/**/*.bcx.{ts,tsx}"];
+    return [
+      "bluecodex.{ts,tsx}",
+      ".bluecodex/bluecodex.{ts,tsx}",
+      ".bluecodex/**/*.bcx.{ts,tsx}",
+    ];
   }
 
-  get defaultSources() {
+  get sources() {
     const files = new Set<string>();
 
     this.defaultSourcesPattern.forEach((pattern) => {
-      const globbedFiles = fs.globSync(
-        path.join(ioc.project.config.path, pattern),
-      );
+      try {
+        const globbedFiles = fs.globSync(
+          path.join(this.dotBluecodexFolderPath, pattern),
+        );
 
-      globbedFiles.forEach((file) => files.add(file));
+        globbedFiles.forEach((file) => files.add(file));
+      } catch {
+        // do nothing
+      }
     });
 
     return Array.from(files);
   }
 
   get isInitialized() {
-    return this.defaultSources.length > 0;
+    return this.sources.length > 0;
   }
 }

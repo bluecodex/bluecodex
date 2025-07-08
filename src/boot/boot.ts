@@ -24,14 +24,14 @@ async function bootCli() {
     name !== initCommand.blueprint.name &&
     name !== initEnvCommand.blueprint.name
   ) {
-    const wasInitialized = ioc.project.isInitialized;
-    const wasEnvInitialized = ioc.environmentManager.isInitialized;
+    const shouldInitialize = !ioc.project.isInitialized;
+    const shouldInitializeEnv = ioc.environmentManager.shouldInitialize;
 
-    if (!wasInitialized || !wasEnvInitialized) {
+    if (shouldInitialize || shouldInitializeEnv) {
       console.log();
       console.log(`Welcome to ${chalk.blueBright("bluecodex")}\n`);
 
-      if (wasInitialized) {
+      if (!shouldInitialize) {
         console.log(
           "Someone one your team setup bluecodex already, you just have to init your environment.\n",
         );
@@ -46,7 +46,7 @@ async function bootCli() {
     }
   }
 
-  for (const defaultSource of ioc.project.defaultSources) {
+  for (const defaultSource of ioc.project.sources) {
     await import(defaultSource);
   }
 
