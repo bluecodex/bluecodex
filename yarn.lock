@@ -570,11 +570,6 @@ cac@^6.7.14:
   resolved "https://registry.yarnpkg.com/cac/-/cac-6.7.14.tgz#804e1e6f506ee363cb0e3ccbb09cad5dd9870959"
   integrity sha512-b6Ilus+c3RrdDk+JhLKUAQfzzgLEPy6wcXqS7f/xe1EETvsDP6GORG7SFuOs6cID5YkqchW/LXZbX5bc8j7ZcQ==
 
-casex@^4.0.2:
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/casex/-/casex-4.0.2.tgz#ba53560e15b34e486417c810b33691f0a2c20cff"
-  integrity sha512-e7hXBVrfqMYB0/jb+8EMI+qsu8izgzePDCWkfiJnuixC33XqDhU3uqUBZTTwZ/uaccJ/ZqZIBkb2gpJbGPImWA==
-
 chai@^5.2.0:
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/chai/-/chai-5.2.0.tgz#1358ee106763624114addf84ab02697e411c9c05"
