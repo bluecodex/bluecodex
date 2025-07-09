@@ -1,10 +1,12 @@
+import chalk from "chalk";
+
 import { parseCliArgv } from "../cli/parse-cli-argv";
 import { ioc } from "../ioc";
 
 export async function runCommand(name: string, argv: string[]) {
-  const command = ioc.registry.findCommand(name || "list");
+  const command = ioc.registry.findCommand(name);
   if (!command) {
-    console.error("Command not found");
+    console.log(`Command ${chalk.yellowBright(name)} not found`);
     return;
   }
 

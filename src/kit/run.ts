@@ -1,5 +1,6 @@
 import chalk from "chalk";
-import { spawn } from "node:child_process";
+import { execSync, spawn } from "node:child_process";
+import fs from "node:fs";
 
 import { runCommand } from "../command/run-command";
 
@@ -18,15 +19,31 @@ function logRun(name: string, argv: string[]) {
   console.log(chalk.dim(`> ${chalk.yellowBright(name)} ${argv.join(" ")}`));
 }
 
+function commandOrLocalBin(bin: string) {
+  try {
+    return execSync(`which ${bin}`, { encoding: "utf-8" }).trim();
+  } catch (error) {
+    const binPath = `node_modules/.bin/${bin}`;
+    if (fs.existsSync(binPath)) return binPath;
+  }
+}
+
 /**
  * Runs a command asynchronously and returns the exit code
  */
 export function run(cmd: RawCmd): Promise<number> {
-  const [command, ...argv] = rawCmdToStringSplit(cmd);
-  logRun(command, argv);
+  const [bin, ...argv] = rawCmdToStringSplit(cmd);
+  logRun(bin, argv);
 
   return new Promise<number>((resolve) => {
-    const child = spawn(command, argv, { stdio: "inherit" });
+    const resolvedCommand = commandOrLocalBin(bin);
+    if (!resolvedCommand) {
+      console.log(`Binary ${chalk.yellowBright(bin)} not found`);
+      resolve(1);
+      return;
+    }
+
+    const child = spawn(resolvedCommand, argv, { stdio: "inherit" });
 
     child.on("close", (code) => {
       resolve(code ?? 1);
