@@ -1,3 +1,4 @@
+import chalk from "chalk";
 import { spawn } from "node:child_process";
 
 import { runCommand } from "../command/run-command";
@@ -13,14 +14,19 @@ function rawCmdToStringSplit(rawCmd: RawCmd): string[] {
   return rawCmd.split(" ");
 }
 
+function logRun(name: string, argv: string[]) {
+  console.log(chalk.dim(`> ${chalk.yellowBright(name)} ${argv.join(" ")}`));
+}
+
 /**
  * Runs a command asynchronously and returns the exit code
  */
 export function run(cmd: RawCmd): Promise<number> {
-  const [command, ...args] = rawCmdToStringSplit(cmd);
+  const [command, ...argv] = rawCmdToStringSplit(cmd);
+  logRun(command, argv);
 
   return new Promise<number>((resolve) => {
-    const child = spawn(command, args, { stdio: "inherit" });
+    const child = spawn(command, argv, { stdio: "inherit" });
 
     child.on("close", (code) => {
       resolve(code ?? 1);
@@ -35,6 +41,7 @@ export function run(cmd: RawCmd): Promise<number> {
 run.command = async (cmd: RawCmd): Promise<number> => {
   const [name, ...argv] = rawCmdToStringSplit(cmd);
 
+  logRun(name, argv);
   await runCommand(name, argv);
   return 0;
 };
