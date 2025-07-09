@@ -6,7 +6,7 @@ export function env(name: string): string | null {
 
 env.boolean = (name: string) => {
   const input = env(name);
-  if (input === null) return null;
+  if (input === null) return false;
 
   return castData({ type: "boolean", input });
 };

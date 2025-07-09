@@ -2,10 +2,15 @@ import { spawn } from "node:child_process";
 
 import { runCommand } from "../command/run-command";
 
-type RawCmd = string | (null | 0 | false | string)[];
+type RawCmd = string | (null | 0 | false | string | RawCmd)[];
 
 function rawCmdToStringSplit(rawCmd: RawCmd): string[] {
-  return (Array.isArray(rawCmd) ? rawCmd.join(" ") : rawCmd).split(" ");
+  // each part may be a string with argv separated by space
+  if (Array.isArray(rawCmd)) {
+    return rawCmd.flat().join(" ").split(" ");
+  }
+
+  return rawCmd.split(" ");
 }
 
 /**
