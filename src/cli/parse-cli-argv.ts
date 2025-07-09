@@ -5,6 +5,7 @@ import { castArg } from "../arg/cast-arg";
 import { InvalidArgInputError } from "../arg/errors/invalid-arg-input-error";
 import { MissingRequiredArgError } from "../arg/errors/missing-required-arg-error";
 import type { Blueprint, RecordFromBlueprint } from "../blueprint/blueprint";
+import { falsyValues, truthyValues } from "../data-type/data-type-constants";
 import { castFlag } from "../flag/cast-flag";
 
 export function parseCliArgv<B extends Blueprint>({
@@ -71,6 +72,8 @@ export function parseCliArgv<B extends Blueprint>({
 
   flags.forEach((flag) => {
     let value = parsedArgs.values[flag.name];
+    if (typeof value === "boolean")
+      value = value ? truthyValues[0] : falsyValues[0];
 
     try {
       dataAcc[flag.name] = castFlag({

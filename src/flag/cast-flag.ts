@@ -14,19 +14,23 @@ export function castFlag<F extends Flag>({
 }: {
   flag: F;
   input: string;
-}): DataTypeByToken<F["type"] & DataTypeToken> {
+}): F["type"] extends DataTypeToken
+  ? DataTypeByToken<F["type"]> | null
+  : F["type"] {
   if (flag.type instanceof InvalidFlagTypeError) {
     throw flag.type;
   }
 
-  if (flag.required && !input) {
-    throw new MissingRequiredFlagError(flag);
+  if (!input) {
+    if (flag.required) {
+      throw new MissingRequiredFlagError(flag);
+    } else {
+      return (flag.type === "boolean" ? false : null) as any;
+    }
   }
 
   try {
-    return castData({ type: flag.type, input }) as DataTypeByToken<
-      F["type"] & DataTypeToken
-    >;
+    return castData({ type: flag.type, input }) as any;
   } catch {
     throw new InvalidFlagInputError(flag, input);
   }
