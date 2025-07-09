@@ -37,7 +37,7 @@ export function command<
   BlueprintToken extends string,
   B extends ParseBlueprint<BlueprintToken>,
 >(blueprintToken: BlueprintToken, fn: CommandFn<B>): Command<B> {
-  return ioc.registry.selfRegisterIfEnabled({
+  return ioc.registry.selfRegisterCommandIfEnabled({
     blueprint: parseBlueprint(blueprintToken),
     fn,
     meta: {}, // TODO

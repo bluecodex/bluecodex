@@ -2,7 +2,7 @@ import { parseCliArgv } from "../cli/parse-cli-argv";
 import { ioc } from "../ioc";
 
 export async function runCommand(name: string, argv: string[]) {
-  const command = ioc.registry.find(name || "list");
+  const command = ioc.registry.findCommand(name || "list");
   if (!command) {
     console.error("Command not found");
     return;

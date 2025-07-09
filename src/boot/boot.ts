@@ -12,8 +12,8 @@ async function bootCli() {
     project: new Project({ path: process.cwd() }),
   });
 
-  embeddedCommands.forEach((cmd) => ioc.registry.register(cmd));
-  ioc.registry.selfRegisterEnabled = true;
+  embeddedCommands.forEach((cmd) => ioc.registry.registerCommand(cmd));
+  ioc.registry.selfRegisterCommandEnabled = true;
 
   const [firstArgv, ...remainingArgv] = process.argv.slice(2);
   const name = firstArgv ?? "help";
