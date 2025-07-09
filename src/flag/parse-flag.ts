@@ -254,16 +254,16 @@ export function parseFlag<FlagToken extends string>(
     if (typeof fallbackToken === "undefined" || type instanceof Error)
       return null;
 
-    const value = castData({ type, input: fallbackToken });
-
-    if (
-      value instanceof DataTypeCastBooleanError ||
-      value instanceof DataTypeCastNumberError
-    ) {
-      return new FlagFallbackCastError(name, value);
+    try {
+      return castData({ type, input: fallbackToken });
+    } catch (error) {
+      if (
+        error instanceof DataTypeCastBooleanError ||
+        error instanceof DataTypeCastNumberError
+      ) {
+        return new FlagFallbackCastError(name, error);
+      }
     }
-
-    return value;
   })();
 
   return {

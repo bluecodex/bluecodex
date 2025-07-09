@@ -1,10 +1,5 @@
 import type { Command } from "../command/command";
-import { helpCommand } from "./help/helpCommand";
-import { initCommand } from "./init/initCommand";
-import { initEnvCommand } from "./init/initEnvCommand";
+import { helpCommand } from "./help/help-command";
+import { initCommand } from "./init/init-command";
 
-export const embeddedCommands: Command[] = [
-  initCommand,
-  initEnvCommand,
-  helpCommand,
-];
+export const embeddedCommands: Command[] = [initCommand, helpCommand];

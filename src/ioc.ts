@@ -1,16 +1,12 @@
-import { CommandRegistry } from "./command/command-registry";
-import { EnvironmentManager } from "./environment/environment-manager";
 import type { Project } from "./project/project";
-import { SettingsManager } from "./settings/settings-manager";
+import { Registry } from "./registry/registry";
 
 class Ioc {
-  commandRegistry: CommandRegistry = new CommandRegistry();
-  settingsManager: SettingsManager = new SettingsManager();
-  environmentManager: EnvironmentManager = new EnvironmentManager();
+  registry: Registry = new Registry();
 
   private _project?: Project;
 
-  //The remaining containers are self-initialized
+  // The remaining containers are self-initialized
   init(args: { project: Project }) {
     this.project = args.project;
   }

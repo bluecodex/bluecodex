@@ -70,7 +70,7 @@ function printGroup({
 export const helpCommand = command("help", () => {
   console.log(""); // Some breathing room
 
-  const allCommands = ioc.commandRegistry.commands.filter(
+  const allCommands = ioc.registry.commands.filter(
     (command) => !command.meta.todo,
   );
   const groupedProjectCommands = groupCommands(

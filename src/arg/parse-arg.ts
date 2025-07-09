@@ -87,16 +87,18 @@ export function parseArg<ArgToken extends string>(
     if (typeof fallbackToken === "undefined" || type instanceof Error)
       return null;
 
-    const value = castData({ type, input: fallbackToken });
+    try {
+      return castData({ type, input: fallbackToken });
+    } catch (error) {
+      if (
+        error instanceof DataTypeCastBooleanError ||
+        error instanceof DataTypeCastNumberError
+      ) {
+        return new ArgFallbackCastError(name, error);
+      }
 
-    if (
-      value instanceof DataTypeCastBooleanError ||
-      value instanceof DataTypeCastNumberError
-    ) {
-      return new ArgFallbackCastError(name, value);
+      throw error;
     }
-
-    return value;
   })();
 
   return {

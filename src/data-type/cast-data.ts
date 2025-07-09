@@ -8,7 +8,6 @@ import {
   truthyValues,
 } from "./data-type-constants";
 import { DataTypeCastBooleanError } from "./errors/data-type-cast-boolean-error";
-import type { DataTypeCastError } from "./errors/data-type-cast-error";
 import { DataTypeCastNumberError } from "./errors/data-type-cast-number-error";
 
 export type CastData<
@@ -34,13 +33,13 @@ export function castData<DT extends DataTypeToken>({
 }: {
   type: DT;
   input: string;
-}): DataTypeByToken<DT> | DataTypeCastError {
+}): DataTypeByToken<DT> {
   switch (type) {
     case "string":
       return input as DataTypeByToken<DT>;
     case "number": {
       const numberCast = Number(input);
-      if (isNaN(numberCast)) return new DataTypeCastNumberError(input);
+      if (isNaN(numberCast)) throw new DataTypeCastNumberError(input);
 
       return numberCast as DataTypeByToken<DT>;
     }
@@ -48,6 +47,6 @@ export function castData<DT extends DataTypeToken>({
       if (truthyValues.includes(input)) return true as DataTypeByToken<DT>;
       if (falsyValues.includes(input)) return false as DataTypeByToken<DT>;
 
-      return new DataTypeCastBooleanError(input);
+      throw new DataTypeCastBooleanError(input);
   }
 }

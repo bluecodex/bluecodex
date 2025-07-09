@@ -1,7 +1,7 @@
 import chalk from "chalk";
 
 import { prompt } from "../kit/prompt";
-import { initCommand } from "./init/initCommand";
+import { initCommand } from "./init/init-command";
 
 export async function askToInit() {
   const wantsToInit = await prompt.bool(

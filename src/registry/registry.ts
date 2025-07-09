@@ -1,6 +1,6 @@
-import type { Command } from "./command";
+import type { Command } from "../command/command";
 
-export class CommandRegistry {
+export class Registry {
   private registeredCommands: Command[] = [];
   selfRegisterEnabled: boolean = false;
 
