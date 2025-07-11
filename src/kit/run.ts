@@ -3,6 +3,7 @@ import { execSync, spawn } from "node:child_process";
 import fs from "node:fs";
 
 import { runCommand } from "../command/run-command";
+import { ioc } from "../ioc";
 
 type RawCmd = string | (null | 0 | false | string | RawCmd)[];
 
@@ -13,10 +14,6 @@ function rawCmdToStringSplit(rawCmd: RawCmd): string[] {
   }
 
   return rawCmd.split(" ");
-}
-
-function logRun(name: string, argv: string[]) {
-  console.log(chalk.dim(`> ${chalk.yellowBright(name)} ${argv.join(" ")}`));
 }
 
 function commandOrLocalBin(bin: string) {
@@ -33,7 +30,7 @@ function commandOrLocalBin(bin: string) {
  */
 export function run(cmd: RawCmd): Promise<number> {
   const [bin, ...argv] = rawCmdToStringSplit(cmd);
-  logRun(bin, argv);
+  console.log(ioc.theme.run(bin, argv));
 
   return new Promise<number>((resolve) => {
     const resolvedCommand = commandOrLocalBin(bin);
@@ -58,7 +55,7 @@ export function run(cmd: RawCmd): Promise<number> {
 run.command = async (cmd: RawCmd): Promise<number> => {
   const [name, ...argv] = rawCmdToStringSplit(cmd);
 
-  logRun(name, argv);
+  console.log(ioc.theme.run(name, argv));
   await runCommand(name, argv);
   return 0;
 };

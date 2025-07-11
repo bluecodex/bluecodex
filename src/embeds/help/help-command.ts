@@ -1,8 +1,4 @@
-import chalk from "chalk";
-
-import { formatArg } from "../../arg/format-arg";
 import { type Command, command } from "../../command/command";
-import { formatFlag } from "../../flag/format-flag";
 import { ioc } from "../../ioc";
 import { embeddedCommands } from "../embeds";
 
@@ -40,28 +36,22 @@ function groupCommands(commands: Command[]) {
 
 function printGroup({
   title,
-  titleSuffix,
+  subtitle,
   commands,
 }: {
   title: string;
-  titleSuffix?: string;
+  subtitle: string | null;
   commands: Command[];
 }) {
-  console.log(
-    [chalk.cyan(title), titleSuffix && chalk.cyan.dim(titleSuffix)]
-      .filter(Boolean)
-      .join(" "),
-  );
+  const themedCommands = commands
+    .map((command) => ioc.theme.command(command))
+    .filter(Boolean);
+  if (!themedCommands) return;
 
-  commands.forEach(({ blueprint }) => {
-    const formattedName = chalk.blueBright(blueprint.name);
-    const formattedParts = blueprint.parts
-      .map((part) =>
-        part.__objectType__ === "flag" ? formatFlag(part) : formatArg(part),
-      )
-      .join(" ");
+  console.log(ioc.theme.commandGroup(title, subtitle));
 
-    console.log(`  ${formattedName} ${chalk.white(formattedParts)}`);
+  themedCommands.forEach((themedCommand) => {
+    console.log(themedCommand);
   });
 
   console.log(""); // Some breathing room
@@ -70,9 +60,7 @@ function printGroup({
 export const helpCommand = command("help", () => {
   console.log(""); // Some breathing room
 
-  const allCommands = ioc.registry.commands.filter(
-    (command) => !command.meta.todo,
-  );
+  const allCommands = ioc.registry.commands;
   const groupedProjectCommands = groupCommands(
     allCommands.filter((command) => !embeddedCommands.includes(command)),
   );
@@ -81,17 +69,21 @@ export const helpCommand = command("help", () => {
 
   printGroup({
     title: "bluecodex",
-    titleSuffix: "(embedded)",
+    subtitle: "(embedded)",
     commands: embeddedCommands,
   });
 
   titles.forEach((title) => {
     if (title) {
-      printGroup({ title, commands: groupedProjectCommands[title] });
+      printGroup({
+        title,
+        subtitle: null,
+        commands: groupedProjectCommands[title],
+      });
     } else {
       printGroup({
         title: "project",
-        titleSuffix: "(no group)",
+        subtitle: "(no group)",
         commands: groupedProjectCommands[title],
       });
     }
