@@ -85,7 +85,11 @@ export class Theme {
    */
 
   blueprintName(blueprint: Blueprint) {
-    return chalk.cyan(blueprint.name);
+    return `${chalk.blueBright(`⎇ ${blueprint.name}`)}`;
+  }
+
+  blueprintNameNotFound(name: string) {
+    return `${chalk.redBright(`⎇ ${name}`)}`;
   }
 
   blueprintParts(blueprint: Blueprint) {
@@ -98,7 +102,7 @@ export class Theme {
   }
 
   blueprint(blueprint: Blueprint) {
-    return ["  ", this.blueprintName(blueprint), this.blueprintParts(blueprint)]
+    return [" ", this.blueprintName(blueprint), this.blueprintParts(blueprint)]
       .filter(Boolean)
       .join(" ");
   }
@@ -108,11 +112,11 @@ export class Theme {
    */
 
   commandGroupTitle(title: string) {
-    return chalk.green(title);
+    return chalk.dim(`${chalk.blueBright("⧉")} ${title}`);
   }
 
   commandGroupSubtitle(text: string) {
-    return chalk.green.italic.dim(text);
+    return chalk.blue.italic.dim(text);
   }
 
   commandGroup(title: string, help: string | null) {
@@ -145,6 +149,14 @@ export class Theme {
   run(bin: string, argv: string[]) {
     return chalk.dim(
       ["$", this.runBin(bin), this.runArgv(argv)].filter(Boolean).join(" "),
+    );
+  }
+
+  runCommand(name: string, argv: string[]) {
+    return chalk.dim(
+      [chalk.blueBright(`$ ${name}`), this.runArgv(argv)]
+        .filter(Boolean)
+        .join(" "),
     );
   }
 }

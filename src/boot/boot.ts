@@ -6,6 +6,7 @@ import { embeddedCommands } from "../embeds/embeds";
 import { initCommand } from "../embeds/init/init-command";
 import { ioc } from "../ioc";
 import { Project } from "../project/project";
+import { themedProjectName } from "../theme/themedProjectName";
 
 async function bootCli() {
   ioc.init({
@@ -21,7 +22,7 @@ async function bootCli() {
   if (name !== initCommand.blueprint.name) {
     if (!ioc.project.isInitialized) {
       console.log();
-      console.log(`Welcome to ${chalk.blueBright("bluecodex")}\n`);
+      console.log(`Welcome to ${themedProjectName}\n`);
 
       await askToInit();
 

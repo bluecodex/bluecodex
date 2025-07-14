@@ -68,8 +68,8 @@ export const helpCommand = command("help", () => {
   const titles = Object.keys(groupedProjectCommands).sort();
 
   printGroup({
-    title: "bluecodex",
-    subtitle: "(embedded)",
+    title: "embedded",
+    subtitle: null,
     commands: embeddedCommands,
   });
 

@@ -8,7 +8,7 @@ import { ioc } from "../../ioc";
 export const initCommand = command("init", async () => {
   if (ioc.project.isInitialized) {
     console.log(
-      `You've already initialized this project, these are the files ${chalk.blueBright("bluecodex")} is sourcing:`,
+      `You've already initialized this project, these are the files sourced:`,
     );
 
     ioc.project.sources.forEach((source) => {
@@ -19,14 +19,11 @@ export const initCommand = command("init", async () => {
   }
 
   const contents = fs
-    .readFileSync(path.join(__dirname, "bluecodex.template.ts"), "utf-8")
+    .readFileSync(path.join(__dirname, "init-ask.template.ts"), "utf-8")
     .replace('from "../../out/main";', 'from "bluecodex";');
 
-  ioc.project.ensureDotBluecodexFolderExists();
-  const filePath = path.join(
-    ioc.project.dotBluecodexFolderPath,
-    "bluecodex.ts",
-  );
+  ioc.project.ensureBlueFolderExists();
+  const filePath = path.join(ioc.project.blueFolderPath, "ask.blue.ts");
   fs.writeFileSync(filePath, contents);
 
   console.log(

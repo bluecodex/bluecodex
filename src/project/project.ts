@@ -4,13 +4,13 @@ import path from "node:path";
 export class Project {
   constructor(readonly config: { path: string }) {}
 
-  get dotBluecodexFolderPath() {
-    return path.join(this.config.path, ".bluecodex/");
+  get blueFolderPath() {
+    return path.join(this.config.path, ".blue/");
   }
 
-  ensureDotBluecodexFolderExists() {
-    if (!fs.existsSync(this.dotBluecodexFolderPath)) {
-      fs.mkdirSync(this.dotBluecodexFolderPath);
+  ensureBlueFolderExists() {
+    if (!fs.existsSync(this.blueFolderPath)) {
+      fs.mkdirSync(this.blueFolderPath);
     }
   }
 
@@ -19,11 +19,7 @@ export class Project {
   }
 
   get defaultSourcesPattern() {
-    return [
-      "bluecodex.{ts,tsx}",
-      ".bluecodex/bluecodex.{ts,tsx}",
-      ".bluecodex/**/*.blue.{ts,tsx}",
-    ];
+    return ["blue.{ts,tsx}", ".blue/**/*.blue.{ts,tsx}", "**/*.blue.{ts,tsx}"];
   }
 
   get sources() {

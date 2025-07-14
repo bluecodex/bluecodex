@@ -1,11 +1,12 @@
 import chalk from "chalk";
 
+import { ioc } from "../ioc";
 import { prompt } from "../kit/prompt";
 import { initCommand } from "./init/init-command";
 
 export async function askToInit() {
   const wantsToInit = await prompt.bool(
-    `Would you like to ${chalk.yellowBright("blue init")} kick things off?`,
+    `Would you like to ${ioc.theme.blueprintName(initCommand.blueprint)} kick things off?`,
   );
 
   if (wantsToInit) {
