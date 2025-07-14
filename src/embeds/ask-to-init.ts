@@ -1,5 +1,3 @@
-import chalk from "chalk";
-
 import { ioc } from "../ioc";
 import { prompt } from "../kit/prompt";
 import { initCommand } from "./init/init-command";

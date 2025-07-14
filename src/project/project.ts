@@ -4,6 +4,10 @@ import path from "node:path";
 export class Project {
   constructor(readonly config: { path: string }) {}
 
+  get rootPath() {
+    return this.config.path;
+  }
+
   get blueFolderPath() {
     return path.join(this.config.path, ".blue/");
   }
@@ -12,10 +16,6 @@ export class Project {
     if (!fs.existsSync(this.blueFolderPath)) {
       fs.mkdirSync(this.blueFolderPath);
     }
-  }
-
-  relativePath(target: string) {
-    return path.relative(this.config.path, target);
   }
 
   get defaultSourcesPattern() {

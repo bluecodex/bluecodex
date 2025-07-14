@@ -1,5 +1,3 @@
-import chalk from "chalk";
-
 import { parseCliArgv } from "../cli/parse-cli-argv";
 import { ioc } from "../ioc";
 

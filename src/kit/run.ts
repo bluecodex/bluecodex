@@ -19,7 +19,7 @@ function rawCmdToStringSplit(rawCmd: RawCmd): string[] {
 function commandOrLocalBin(bin: string) {
   try {
     return execSync(`which ${bin}`, { encoding: "utf-8" }).trim();
-  } catch (error) {
+  } catch {
     const binPath = `node_modules/.bin/${bin}`;
     if (fs.existsSync(binPath)) return binPath;
   }

@@ -1,9 +1,11 @@
 import chalk from "chalk";
+import path from "node:path";
 
 import type { Arg } from "../arg/arg";
 import type { Blueprint } from "../blueprint/blueprint";
 import type { Command } from "../command/command";
 import type { Flag } from "../flag/flag";
+import { ioc } from "../ioc";
 
 export class Theme {
   /*
@@ -158,5 +160,27 @@ export class Theme {
         .filter(Boolean)
         .join(" "),
     );
+  }
+
+  /*
+   * File
+   */
+
+  relativePath(filePath: string) {
+    return path.relative(ioc.project.rootPath, filePath);
+  }
+
+  fileCreated({
+    filePath,
+    relativeToProjectRoot,
+  }: {
+    filePath: string;
+    relativeToProjectRoot: boolean;
+  }) {
+    const resolvedPath = relativeToProjectRoot
+      ? this.relativePath(filePath)
+      : filePath;
+
+    return chalk.greenBright(resolvedPath);
   }
 }

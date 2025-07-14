@@ -1,4 +1,3 @@
-import chalk from "chalk";
 import * as fs from "node:fs";
 import * as path from "node:path";
 
@@ -27,6 +26,6 @@ export const initCommand = command("init", async () => {
   fs.writeFileSync(filePath, contents);
 
   console.log(
-    `${chalk.greenBright(ioc.project.relativePath(filePath))} created`,
+    `${ioc.theme.fileCreated({ filePath, relativeToProjectRoot: true })} created`,
   );
 });
