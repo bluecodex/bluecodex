@@ -11,7 +11,7 @@
     "src"
   ],
   "bin": {
-    "bcx": "src/bin/boot-with-bun.js",
+    "blue": "src/bin/boot-with-bun.js",
     "bluecodex": "src/bin/boot-with-bun.js"
   },
   "keywords": [
@@ -23,7 +23,7 @@
     "cli",
     "scaffolding",
     "generator",
-    "bcx",
+    "blue",
     "bluecodex"
   ],
   "scripts": {

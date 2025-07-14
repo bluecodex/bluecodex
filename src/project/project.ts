@@ -22,7 +22,7 @@ export class Project {
     return [
       "bluecodex.{ts,tsx}",
       ".bluecodex/bluecodex.{ts,tsx}",
-      ".bluecodex/**/*.bcx.{ts,tsx}",
+      ".bluecodex/**/*.blue.{ts,tsx}",
     ];
   }
 
