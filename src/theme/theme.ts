@@ -2,7 +2,6 @@ import chalk from "chalk";
 import path from "node:path";
 
 import type { Arg } from "../arg/arg";
-import type { Blueprint } from "../blueprint/blueprint";
 import type { Command } from "../command/command";
 import type { Flag } from "../flag/flag";
 import { ioc } from "../ioc";
