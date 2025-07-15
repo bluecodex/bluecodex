@@ -21,8 +21,11 @@ export const initCommand = command("init", async () => {
   fs.mkdirSync(ioc.project.blueFolderPath);
 
   // create base readme
-  const readmePath = path.join(ioc.project.blueFolderPath, "blue.md");
-  fs.copyFileSync(path.join(__dirname, "init-blue.template.md"), readmePath);
+  const readmePath = path.join(ioc.project.blueFolderPath, "bluecodex.md");
+  fs.copyFileSync(
+    path.join(__dirname, "init-bluecodex.template.md"),
+    readmePath,
+  );
   console.log(ioc.theme.fileCreated(readmePath));
 
   // example .blue file
@@ -51,6 +54,7 @@ export const initCommand = command("init", async () => {
       "# Files in this folder are not tracked on git",
       "*",
       "!.gitignore",
+      "",
     ].join("\n"),
   );
   console.log(ioc.theme.fileCreated(localGitIgnoreFilePath));
