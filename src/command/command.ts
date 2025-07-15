@@ -17,7 +17,10 @@ export type CommandFn<B extends Blueprint> = (
   data: ExpandObject<{ argv: string[] } & RecordFromBlueprint<B>>,
 ) => unknown;
 
-export type CommandMeta<B extends Blueprint> = { todo?: boolean } & Partial<{
+export type CommandMeta<B extends Blueprint> = {
+  todo?: boolean;
+  local?: boolean;
+} & Partial<{
   [P in B["parts"][number] as P["name"]]: {
     description?: string;
   };

@@ -55,7 +55,13 @@ export function run(cmd: RawCmd): Promise<number> {
 run.command = async (cmd: RawCmd): Promise<number> => {
   const [name, ...argv] = rawCmdToStringSplit(cmd);
 
-  console.log(ioc.theme.runCommand(name, argv));
+  const command = ioc.registry.findCommand(name);
+  if (!command) {
+    console.log(ioc.theme.commandNotFound(name));
+    return 1;
+  }
+
+  console.log(ioc.theme.runCommand(command, argv));
   await runCommand(name, argv);
   return 0;
 };

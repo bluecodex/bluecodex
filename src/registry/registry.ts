@@ -2,10 +2,17 @@ import type { Command } from "../command/command";
 
 export class Registry {
   private registeredCommands: Command[] = [];
+  private markCommandsAsLocalEnabled: boolean = false;
   selfRegisterCommandEnabled: boolean = false;
 
   get commands(): Command[] {
     return [...this.registeredCommands];
+  }
+
+  async markingRegisteredCommandsAsLocal(fn: () => Promise<void>) {
+    this.markCommandsAsLocalEnabled = true;
+    await fn();
+    this.markCommandsAsLocalEnabled = false;
   }
 
   registerCommand<C extends Command>(command: C): C {
@@ -15,8 +22,13 @@ export class Registry {
       );
     }
 
-    this.registeredCommands.push(command);
-    return command;
+    const adjustedCommand = this.markCommandsAsLocalEnabled
+      ? { ...command, meta: { ...command.meta, local: true } }
+      : command;
+
+    this.registeredCommands.push(adjustedCommand);
+
+    return adjustedCommand;
   }
 
   selfRegisterCommandIfEnabled<C extends Command>(command: C): C {

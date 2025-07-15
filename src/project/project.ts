@@ -12,14 +12,12 @@ export class Project {
     return path.join(this.config.path, ".blue/");
   }
 
-  ensureBlueFolderExists() {
-    if (!fs.existsSync(this.blueFolderPath)) {
-      fs.mkdirSync(this.blueFolderPath);
-    }
+  get localBlueFolderPath() {
+    return path.join(this.blueFolderPath, "local/");
   }
 
   get defaultSourcesPattern() {
-    return ["blue.{ts,tsx}", ".blue/**/*.blue.{ts,tsx}", "**/*.blue.{ts,tsx}"];
+    return ["blue.{ts,tsx}", ".blue/blue.{ts,tsx}", ".blue/**/*.blue.{ts,tsx}"];
   }
 
   get sources() {

@@ -17,15 +17,41 @@ export const initCommand = command("init", async () => {
     return;
   }
 
+  // create .blue folder
+  fs.mkdirSync(ioc.project.blueFolderPath);
+
+  // create base readme
+  const readmePath = path.join(ioc.project.blueFolderPath, "blue.md");
+  fs.copyFileSync(path.join(__dirname, "init-blue.template.md"), readmePath);
+  console.log(ioc.theme.fileCreated(readmePath));
+
+  // example .blue file
+  const filePath = path.join(ioc.project.blueFolderPath, "ask.blue.ts");
+
   const contents = fs
     .readFileSync(path.join(__dirname, "init-ask.template.ts"), "utf-8")
     .replace('from "../../out/main";', 'from "bluecodex";');
 
-  ioc.project.ensureBlueFolderExists();
-  const filePath = path.join(ioc.project.blueFolderPath, "ask.blue.ts");
   fs.writeFileSync(filePath, contents);
+  console.log(ioc.theme.fileCreated(filePath));
 
-  console.log(
-    `${ioc.theme.fileCreated({ filePath, relativeToProjectRoot: true })} created`,
+  // .gitignore
+  const localGitIgnoreFilePath = path.join(
+    ioc.project.localBlueFolderPath,
+    ".gitignore",
   );
+
+  fs.mkdirSync(ioc.project.localBlueFolderPath);
+  fs.writeFileSync(
+    localGitIgnoreFilePath,
+    [
+      "# You can use this folder to make customizations",
+      "# or experiment with new commands before you share with your team.",
+      "",
+      "# Files in this folder are not tracked on git",
+      "*",
+      "!.gitignore",
+    ].join("\n"),
+  );
+  console.log(ioc.theme.fileCreated(localGitIgnoreFilePath));
 });

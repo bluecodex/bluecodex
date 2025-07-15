@@ -83,35 +83,25 @@ export class Theme {
   }
 
   /*
-   * Blueprint
+   * Command
    */
 
-  blueprintName(blueprint: Blueprint) {
-    return `${chalk.blueBright(`⎇ ${blueprint.name}`)}`;
+  commandName(command: Command) {
+    if (command.meta.local) {
+      return `${chalk.magenta("⎇")} ${chalk.blueBright(`${command.blueprint.name}`)}`;
+    }
+
+    return chalk.blueBright(`⎇ ${command.blueprint.name}`);
   }
 
-  blueprintNameNotFound(name: string) {
-    return `${chalk.redBright(`⎇ ${name}`)}`;
-  }
-
-  blueprintParts(blueprint: Blueprint) {
-    return blueprint.parts
+  commandParts(command: Command) {
+    return command.blueprint.parts
       .map((part) =>
         part.__objectType__ === "flag" ? this.flag(part) : this.arg(part),
       )
       .filter(Boolean)
       .join(" ");
   }
-
-  blueprint(blueprint: Blueprint) {
-    return [" ", this.blueprintName(blueprint), this.blueprintParts(blueprint)]
-      .filter(Boolean)
-      .join(" ");
-  }
-
-  /*
-   * Command
-   */
 
   commandGroupTitle(title: string) {
     return chalk.dim(`${chalk.blueBright("⧉")} ${title}`);
@@ -133,7 +123,13 @@ export class Theme {
   command(command: Command) {
     if (command.meta.todo) return;
 
-    return this.blueprint(command.blueprint);
+    return [" ", this.commandName(command), this.commandParts(command)]
+      .filter(Boolean)
+      .join(" ");
+  }
+
+  commandNotFound(name: string) {
+    return `Command ${chalk.redBright(`⎇ ${name}`)} not found`;
   }
 
   /*
@@ -141,7 +137,7 @@ export class Theme {
    */
 
   runBin(bin: string) {
-    return chalk.yellowBright(bin);
+    return chalk.yellowBright(`$ ${bin}`);
   }
 
   runArgv(argv: string[]) {
@@ -150,15 +146,13 @@ export class Theme {
 
   run(bin: string, argv: string[]) {
     return chalk.dim(
-      ["$", this.runBin(bin), this.runArgv(argv)].filter(Boolean).join(" "),
+      [this.runBin(bin), this.runArgv(argv)].filter(Boolean).join(" "),
     );
   }
 
-  runCommand(name: string, argv: string[]) {
+  runCommand(command: Command, argv: string[]) {
     return chalk.dim(
-      [chalk.blueBright(`$ ${name}`), this.runArgv(argv)]
-        .filter(Boolean)
-        .join(" "),
+      [this.commandName(command), this.runArgv(argv)].filter(Boolean).join(" "),
     );
   }
 
@@ -170,17 +164,15 @@ export class Theme {
     return path.relative(ioc.project.rootPath, filePath);
   }
 
-  fileCreated({
-    filePath,
-    relativeToProjectRoot,
-  }: {
-    filePath: string;
-    relativeToProjectRoot: boolean;
-  }) {
-    const resolvedPath = relativeToProjectRoot
-      ? this.relativePath(filePath)
-      : filePath;
+  fileCreated(filePath: string) {
+    return chalk.greenBright(`+ ${this.relativePath(filePath)} created`);
+  }
 
-    return chalk.greenBright(resolvedPath);
+  fileUpdated(filePath: string) {
+    return chalk.cyanBright(`◉ ${this.relativePath(filePath)} updated`);
+  }
+
+  fileDeleted(filePath: string) {
+    return chalk.redBright(`- ${this.relativePath(filePath)} deleted`);
   }
 }

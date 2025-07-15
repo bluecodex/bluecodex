@@ -3,6 +3,7 @@ import { askToInit } from "../embeds/ask-to-init";
 import { embeddedCommands } from "../embeds/embeds";
 import { initCommand } from "../embeds/init/init-command";
 import { ioc } from "../ioc";
+import { source } from "../kit/source";
 import { Project } from "../project/project";
 import { themedProjectName } from "../theme/themedProjectName";
 
@@ -29,7 +30,7 @@ async function bootCli() {
   }
 
   for (const defaultSource of ioc.project.sources) {
-    await import(defaultSource);
+    await source(defaultSource);
   }
 
   await runCommand(name, remainingArgv);

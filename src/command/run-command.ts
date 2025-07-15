@@ -4,7 +4,7 @@ import { ioc } from "../ioc";
 export async function runCommand(name: string, argv: string[]) {
   const command = ioc.registry.findCommand(name);
   if (!command) {
-    console.log(`Command ${ioc.theme.blueprintNameNotFound(name)} not found`);
+    console.log(ioc.theme.commandNotFound(name));
     return;
   }
 
