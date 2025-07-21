@@ -1,46 +1,13 @@
-import chalk from "chalk";
-import { execSync, spawn } from "node:child_process";
-import fs from "node:fs";
+import { spawn } from "node:child_process";
 
+import type { RawCmd } from "../cli/raw-cmd";
+import { resolveBin } from "../cli/resolve-bin";
 import { runCommand } from "../command/run-command";
 import { ioc } from "../ioc";
 
-type RawCmd = string | (null | 0 | false | string | RawCmd)[];
-
-function rawCmdToStringSplit(rawCmd: RawCmd): string[] {
-  // each part may be a string with argv separated by space
-  if (Array.isArray(rawCmd)) {
-    return rawCmd.flat().filter(Boolean).join(" ").split(" ");
-  }
-
-  return rawCmd.split(" ");
-}
-
-function commandOrLocalBin(bin: string) {
-  try {
-    return execSync(`which ${bin}`, { encoding: "utf-8" }).trim();
-  } catch {
-    const binPath = `node_modules/.bin/${bin}`;
-    if (fs.existsSync(binPath)) return binPath;
-  }
-}
-
-/**
- * Runs a command asynchronously and returns the exit code
- */
-export function run(cmd: RawCmd): Promise<number> {
-  const [bin, ...argv] = rawCmdToStringSplit(cmd);
-  console.log(ioc.theme.run(bin, argv));
-
+function spawnPromise(cmd: string, argv: string[]) {
   return new Promise<number>((resolve) => {
-    const resolvedCommand = commandOrLocalBin(bin);
-    if (!resolvedCommand) {
-      console.log(`Binary ${chalk.yellowBright(bin)} not found`);
-      resolve(1);
-      return;
-    }
-
-    const child = spawn(resolvedCommand, argv, { stdio: "inherit" });
+    const child = spawn(cmd, argv, { stdio: "inherit" });
 
     child.on("close", (code) => {
       resolve(code ?? 1);
@@ -52,16 +19,40 @@ export function run(cmd: RawCmd): Promise<number> {
   });
 }
 
-run.command = async (cmd: RawCmd): Promise<number> => {
-  const [name, ...argv] = rawCmdToStringSplit(cmd);
+/**
+ * Runs a command asynchronously and returns the exit code
+ */
+export async function run(rawCmd: RawCmd): Promise<number> {
+  const resolvedBin = resolveBin(rawCmd);
 
-  const command = ioc.registry.findCommand(name);
-  if (!command) {
-    console.log(ioc.theme.commandNotFound(name));
-    return 1;
+  switch (resolvedBin.type) {
+    case "command": {
+      const command = ioc.registry.findCommand(resolvedBin.name);
+      if (!command) {
+        console.log(ioc.theme.commandNotFound(resolvedBin.name));
+        return 1;
+      }
+
+      console.log(ioc.theme.runCommand(command, resolvedBin.argv));
+      await runCommand(resolvedBin.name, resolvedBin.argv);
+      return 0;
+    }
+
+    case "spawn": {
+      console.log(ioc.theme.runSpawn(resolvedBin.name, resolvedBin.argv));
+      return spawnPromise(resolvedBin.name, resolvedBin.argv);
+    }
+
+    case "spawn-package-bin": {
+      console.log(
+        ioc.theme.runSpawnPackageBin(resolvedBin.name, resolvedBin.argv),
+      );
+      return spawnPromise(resolvedBin.path, resolvedBin.argv);
+    }
+
+    case "not-found": {
+      console.log(ioc.theme.runBinNotFound(resolvedBin.name));
+      return 1;
+    }
   }
-
-  console.log(ioc.theme.runCommand(command, argv));
-  await runCommand(name, argv);
-  return 0;
-};
+}

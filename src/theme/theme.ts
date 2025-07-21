@@ -135,17 +135,33 @@ export class Theme {
    * Run
    */
 
-  runBin(bin: string) {
-    return chalk.yellowBright(`$ ${bin}`);
+  runBinName(name: string) {
+    return chalk.yellowBright(`$ ${name}`);
+  }
+
+  runPackageBinName(name: string) {
+    return chalk.yellowBright(`$ ${name}`);
+  }
+
+  runBinNotFound(name: string) {
+    return `${chalk.redBright(`${name}`)} not found`;
   }
 
   runArgv(argv: string[]) {
     return argv.join(" ");
   }
 
-  run(bin: string, argv: string[]) {
+  runSpawn(name: string, argv: string[]) {
     return chalk.dim(
-      [this.runBin(bin), this.runArgv(argv)].filter(Boolean).join(" "),
+      [this.runBinName(name), this.runArgv(argv)].filter(Boolean).join(" "),
+    );
+  }
+
+  runSpawnPackageBin(name: string, argv: string[]) {
+    return chalk.dim(
+      [this.runPackageBinName(name), this.runArgv(argv)]
+        .filter(Boolean)
+        .join(" "),
     );
   }
 
