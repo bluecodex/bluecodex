@@ -1,3 +1,5 @@
+import chalk from "chalk";
+
 import { parseCliArgv } from "../cli/parse-cli-argv";
 import { ioc } from "../ioc";
 
@@ -8,15 +10,29 @@ export async function runCommand(name: string, argv: string[]) {
     return;
   }
 
-  const result = parseCliArgv({
+  const parsedArgv = parseCliArgv({
     argv,
     blueprint: command.blueprint,
   });
 
-  if (result.type === "error") {
-    console.log(result.errors.map((error) => error.message).join("\n"));
-    return;
+  if (parsedArgv.type === "error") {
+    // TODO: auto-collect missing input
+    process.stderr.write(
+      chalk.redBright("[error]") +
+        " " +
+        parsedArgv.errors.map((error) => error.message).join("\n") +
+        "\n",
+    );
+    return 1;
   }
 
-  await command.fn({ argv, ...result.data } as any);
+  try {
+    await command.fn({ argv, ...parsedArgv.data } as any);
+    return 0;
+  } catch (error) {
+    process.stderr.write(
+      ((error as Error).stack ?? (error as Error).message) + "\n",
+    );
+    return 1;
+  }
 }

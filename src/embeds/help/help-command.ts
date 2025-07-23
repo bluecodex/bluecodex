@@ -34,21 +34,28 @@ function groupCommands(commands: Command[]) {
   return groups;
 }
 
-function printGroup({
-  title,
-  subtitle,
-  commands,
-}: {
-  title: string;
-  subtitle: string | null;
-  commands: Command[];
-}) {
-  const themedCommands = commands
+function printSection(
+  data:
+    | { type: "embedded"; commands: Command[] }
+    | { type: "ungrouped"; commands: Command[] }
+    | { type: "grouped"; title: string; commands: Command[] },
+) {
+  const themedCommands = data.commands
     .map((command) => ioc.theme.command(command))
     .filter(Boolean);
   if (!themedCommands) return;
 
-  console.log(ioc.theme.commandGroup(title, subtitle));
+  switch (data.type) {
+    case "embedded":
+      console.log(ioc.theme.embeddedCommandGroupTitle());
+      break;
+    case "ungrouped":
+      console.log(ioc.theme.ungroupedCommandGroupTitle());
+      break;
+    case "grouped":
+      console.log(ioc.theme.commandGroupTitle(data.title));
+      break;
+  }
 
   themedCommands.forEach((themedCommand) => {
     console.log(themedCommand);
@@ -67,23 +74,21 @@ export const helpCommand = command("help", () => {
 
   const titles = Object.keys(groupedProjectCommands).sort();
 
-  printGroup({
-    title: "embedded",
-    subtitle: null,
+  printSection({
+    type: "embedded",
     commands: embeddedCommands,
   });
 
   titles.forEach((title) => {
     if (title) {
-      printGroup({
+      printSection({
+        type: "grouped",
         title,
-        subtitle: null,
         commands: groupedProjectCommands[title],
       });
     } else {
-      printGroup({
-        title: "project",
-        subtitle: "(no group)",
+      printSection({
+        type: "ungrouped",
         commands: groupedProjectCommands[title],
       });
     }

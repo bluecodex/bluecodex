@@ -33,7 +33,8 @@ async function bootCli() {
     await source(defaultSource);
   }
 
-  await runCommand(name, remainingArgv);
+  const exitCode = await runCommand(name, remainingArgv);
+  process.exitCode = exitCode;
 }
 
 await bootCli();

@@ -1,58 +1,84 @@
-import { spawn } from "node:child_process";
+import { execa } from "execa";
 
 import type { RawCmd } from "../cli/raw-cmd";
-import { resolveBin } from "../cli/resolve-bin";
-import { runCommand } from "../command/run-command";
+import { rawCmdTarget } from "../cli/raw-cmd-target";
 import { ioc } from "../ioc";
 
-function spawnPromise(cmd: string, argv: string[]) {
-  return new Promise<number>((resolve) => {
-    const child = spawn(cmd, argv, { stdio: "inherit" });
-
-    child.on("close", (code) => {
-      resolve(code ?? 1);
-    });
-
-    child.on("error", () => {
-      resolve(1);
-    });
-  });
-}
+export type RunResult = {
+  output: string;
+  stdout: string;
+  stderr: string;
+  exitCode: number | undefined;
+};
 
 /**
  * Runs a command asynchronously and returns the exit code
  */
-export async function run(rawCmd: RawCmd): Promise<number> {
-  const resolvedBin = resolveBin(rawCmd);
+export async function run(rawCmd: RawCmd): Promise<RunResult> {
+  const target = rawCmdTarget(rawCmd);
 
-  switch (resolvedBin.type) {
-    case "command": {
-      const command = ioc.registry.findCommand(resolvedBin.name);
-      if (!command) {
-        console.log(ioc.theme.commandNotFound(resolvedBin.name));
-        return 1;
-      }
+  let name: string;
+  let argv: string[];
 
-      console.log(ioc.theme.runCommand(command, resolvedBin.argv));
-      await runCommand(resolvedBin.name, resolvedBin.argv);
-      return 0;
-    }
-
+  switch (target.type) {
     case "spawn": {
-      console.log(ioc.theme.runSpawn(resolvedBin.name, resolvedBin.argv));
-      return spawnPromise(resolvedBin.name, resolvedBin.argv);
+      name = target.name;
+      argv = target.argv;
+
+      console.log(ioc.theme.runSpawn(target.name, target.argv));
+      break;
     }
 
     case "spawn-package-bin": {
-      console.log(
-        ioc.theme.runSpawnPackageBin(resolvedBin.name, resolvedBin.argv),
-      );
-      return spawnPromise(resolvedBin.path, resolvedBin.argv);
+      name = target.name;
+      argv = target.argv;
+
+      console.log(ioc.theme.runSpawnPackageBin(target.name, target.argv));
+      break;
+    }
+
+    case "command": {
+      name = process.argv0;
+      argv = [process.argv[1], target.name, ...target.argv];
+
+      console.log(ioc.theme.runCommand(target.command!, target.argv));
+      break;
     }
 
     case "not-found": {
-      console.log(ioc.theme.runBinNotFound(resolvedBin.name));
-      return 1;
+      const notFoundMessage = ioc.theme.runNotFound(target.name);
+      process.stderr.write(notFoundMessage + "\n");
+
+      return {
+        output: notFoundMessage,
+        stdout: "",
+        stderr: notFoundMessage,
+        exitCode: 1,
+      };
     }
   }
+
+  const { stdout, stderr, all, exitCode, originalMessage } = await execa(
+    name,
+    argv,
+    {
+      all: true,
+      stdin: ["inherit"],
+      stdout: ["pipe", "inherit"],
+      stderr: ["pipe", "inherit"],
+      reject: false,
+      env: { FORCE_COLOR: "1" },
+    },
+  );
+
+  if (originalMessage) {
+    process.stderr.write(originalMessage);
+  }
+
+  return {
+    output: (all ?? "") as string,
+    stdout: stdout as string,
+    stderr: stderr as string,
+    exitCode,
+  };
 }

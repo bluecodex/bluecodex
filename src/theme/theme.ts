@@ -38,6 +38,10 @@ export class Theme {
       .join("");
   }
 
+  invalidArgInputErrorMessage(arg: Arg, input: string) {
+    return `Invalid input ${chalk.redBright(input)} for arg ${chalk.bold(`${arg.name}:${arg.type}`)}`;
+  }
+
   /*
    * Flag
    */
@@ -102,21 +106,16 @@ export class Theme {
       .join(" ");
   }
 
+  embeddedCommandGroupTitle() {
+    return chalk.dim(chalk.blueBright("§ bluecodex"));
+  }
+
+  ungroupedCommandGroupTitle() {
+    return chalk.dim(chalk.blueBright("∅ no group"));
+  }
+
   commandGroupTitle(title: string) {
     return chalk.dim(`${chalk.blueBright("⧉")} ${title}`);
-  }
-
-  commandGroupSubtitle(text: string) {
-    return chalk.blue.italic.dim(text);
-  }
-
-  commandGroup(title: string, help: string | null) {
-    return [
-      this.commandGroupTitle(title),
-      help && this.commandGroupSubtitle(help),
-    ]
-      .filter(Boolean)
-      .join(" ");
   }
 
   command(command: Command) {
@@ -168,6 +167,16 @@ export class Theme {
   runCommand(command: Command, argv: string[]) {
     return chalk.dim(
       [this.commandName(command), this.runArgv(argv)].filter(Boolean).join(" "),
+    );
+  }
+
+  runNotFound(name: string) {
+    return (
+      chalk.redBright("[error]") +
+      ` ${name} was not found.\n` +
+      chalk.dim(
+        "It's not in your $PATH, an npm package executable, or a bluecodex command.",
+      )
     );
   }
 

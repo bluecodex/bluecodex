@@ -1,5 +1,4 @@
-import chalk from "chalk";
-
+import { ioc } from "../../ioc";
 import type { Arg } from "../arg";
 
 export class InvalidArgInputError extends Error {
@@ -11,6 +10,6 @@ export class InvalidArgInputError extends Error {
   }
 
   get message() {
-    return `Invalid input ${chalk.redBright(this.input)} for arg ${chalk.bold(`${this.arg.name}:${this.arg.type}`)}`;
+    return ioc.theme.invalidArgInputErrorMessage(this.arg, this.input);
   }
 }
