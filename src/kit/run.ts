@@ -9,6 +9,7 @@ export type RunResult = {
   stdout: string;
   stderr: string;
   exitCode: number | undefined;
+  failed: boolean;
 };
 
 /**
@@ -54,22 +55,20 @@ export async function run(rawCmd: RawCmd): Promise<RunResult> {
         stdout: "",
         stderr: notFoundMessage,
         exitCode: 1,
+        failed: true,
       };
     }
   }
 
-  const { stdout, stderr, all, exitCode, originalMessage } = await execa(
-    name,
-    argv,
-    {
+  const { stdout, stderr, all, exitCode, failed, originalMessage } =
+    await execa(name, argv, {
       all: true,
       stdin: ["inherit"],
       stdout: ["pipe", "inherit"],
       stderr: ["pipe", "inherit"],
       reject: false,
       env: { FORCE_COLOR: "1" },
-    },
-  );
+    });
 
   if (originalMessage) {
     process.stderr.write(originalMessage);
@@ -80,5 +79,6 @@ export async function run(rawCmd: RawCmd): Promise<RunResult> {
     stdout: stdout as string,
     stderr: stderr as string,
     exitCode,
+    failed,
   };
 }
