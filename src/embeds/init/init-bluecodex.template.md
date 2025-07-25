@@ -12,12 +12,19 @@ Once installed `blue` will be available via your package manager's run command s
 
 ## Setup alias
 
-You might run `blue` several times a day. For an optimal experience we recommend setting `blue` as an alias.
+You might run `blue` several times a day. For an optimal experience we recommend setting up an alias.
 
 To achieve that either:
 
 - run `npm run blue alias` _(or equivalent for your package manager)_
-- or manually add `alias blue="node_modules/.bin/blue"` to your terminal profile
+- or manually add the alias to your terminal profile file
+
+```
+alias blue="node_modules/.bin/blue"
+
+# If you are feeling bold, try the single letter alias
+alias b="node_modules/.bin/blue"
+``` 
 
 ## How to use it
 
