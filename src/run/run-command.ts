@@ -1,15 +1,12 @@
 import chalk from "chalk";
 
-import { parseCliArgv } from "../cli/parse-cli-argv";
-import { ioc } from "../ioc";
+import type { Command } from "../command/command";
+import { parseCliArgv } from "./parse-cli-argv";
 
-export async function runCommand(name: string, argv: string[]) {
-  const command = ioc.registry.findCommand(name);
-  if (!command) {
-    console.log(ioc.theme.commandNotFound(name));
-    return;
-  }
-
+export async function runCommand(
+  command: Command,
+  argv: string[],
+): Promise<number> {
   const parsedArgv = parseCliArgv({
     argv,
     blueprint: command.blueprint,
@@ -18,11 +15,11 @@ export async function runCommand(name: string, argv: string[]) {
   if (parsedArgv.type === "error") {
     // TODO: auto-collect missing input
     process.stderr.write(
-      chalk.redBright("[error]") +
-        " " +
-        parsedArgv.errors.map((error) => error.message).join("\n") +
-        "\n",
+      parsedArgv.errors
+        .map((error) => `${chalk.redBright("[error]")} ${error.message}`)
+        .join("\n") + "\n",
     );
+
     return 1;
   }
 

@@ -27,7 +27,7 @@
     "bluecodex"
   ],
   "scripts": {
-    "check": "tsc",
+    "typecheck": "tsc",
     "lint": "oxlint src/**/*",
     "test": "vitest",
     "format": "prettier ./src/**/* --write; prettier ./*.md --write",
@@ -46,9 +46,10 @@
   },
   "dependencies": {
     "ansi-escapes": "^7.0.0",
-    "bun": "^1.2.18",
+    "bun": "^1.2.19",
     "chalk": "^5.4.1",
     "execa": "^9.6.0",
+    "strip-ansi": "^7.1.0",
     "which": "^5.0.0"
   }
 }

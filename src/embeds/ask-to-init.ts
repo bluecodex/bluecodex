@@ -1,5 +1,6 @@
 import { ioc } from "../ioc";
 import { prompt } from "../kit/prompt";
+import { runCommand } from "../run/run-command";
 import { initCommand } from "./init/init-command";
 
 export async function askToInit() {
@@ -8,8 +9,9 @@ export async function askToInit() {
   );
 
   if (wantsToInit) {
-    initCommand.fn({ argv: [] });
+    return runCommand(initCommand, []);
   } else {
     console.log("Ok then! See ya later.");
+    return 0;
   }
 }

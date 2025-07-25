@@ -1,13 +1,13 @@
-import { runCommand } from "../command/run-command";
 import { askToInit } from "../embeds/ask-to-init";
 import { embeddedCommands } from "../embeds/embeds";
 import { initCommand } from "../embeds/init/init-command";
 import { ioc } from "../ioc";
-import { source } from "../kit/source";
 import { Project } from "../project/project";
+import { source } from "../registry/source";
+import { runCommand } from "../run/run-command";
 import { themedProjectName } from "../theme/themedProjectName";
 
-async function bootCli() {
+async function bootCli(): Promise<number> {
   ioc.init({
     project: new Project({ path: process.cwd() }),
   });
@@ -23,9 +23,7 @@ async function bootCli() {
       console.log();
       console.log(`Welcome to ${themedProjectName}\n`);
 
-      await askToInit();
-
-      return;
+      return askToInit();
     }
   }
 
@@ -33,8 +31,13 @@ async function bootCli() {
     await source(defaultSource);
   }
 
-  const exitCode = await runCommand(name, remainingArgv);
-  process.exitCode = exitCode;
+  const command = ioc.registry.findCommand(name);
+  if (!command) {
+    process.stderr.write(ioc.theme.commandNotFound(name) + "\n");
+    return 1;
+  }
+
+  return runCommand(command, remainingArgv);
 }
 
-await bootCli();
+process.exitCode = await bootCli();

@@ -4,8 +4,11 @@ import which from "which";
 import { ioc } from "../ioc";
 import type { RawCmd } from "./raw-cmd";
 import { rawCmdToStringSplit } from "./raw-cmd-to-string-split";
+import type { RunTarget } from "./run-target";
 
-export function rawCmdTarget(rawCmd: RawCmd) {
+export async function resolveRunTargetFromRawCmd(
+  rawCmd: RawCmd,
+): Promise<RunTarget> {
   const [first, ...rest] = rawCmdToStringSplit(rawCmd);
 
   if (first === "blue") {
@@ -15,7 +18,7 @@ export function rawCmdTarget(rawCmd: RawCmd) {
     if (command) return { type: "command", name, argv, command } as const;
   }
 
-  const binExists = Boolean(which.sync(first, { nothrow: true }));
+  const binExists = await which(first, { nothrow: true });
   if (binExists) return { type: "spawn", name: first, argv: rest } as const;
 
   const packageBinPath = `node_modules/.bin/${first}`;
