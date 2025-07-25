@@ -24,7 +24,11 @@ export async function runCommand(
   }
 
   try {
-    await command.fn({ argv, ...parsedArgv.data } as any);
+    const response = await command.fn({ argv, ...parsedArgv.data } as any);
+
+    // If an exit code is returned, use it
+    if (typeof response === "number") return response;
+
     return 0;
   } catch (error) {
     process.stderr.write(
