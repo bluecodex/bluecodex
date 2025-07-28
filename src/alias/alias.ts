@@ -2,7 +2,8 @@
  * Types
  */
 import { ioc } from "../ioc";
-import { parseAliasToken } from "./parse-alias-token";
+import { MalformattedAliasError } from "./errors/malformatted-alias-error";
+import { type ParseAliasToken, parseAliasToken } from "./parse-alias-token";
 
 export type AliasMeta = {
   local?: boolean;
@@ -22,8 +23,16 @@ export type Alias<
  * Functions
  */
 
-export function alias<AliasToken extends `${string}=${string}`>(
+export function alias<AliasToken extends string>(
   aliasToken: AliasToken,
-) {
-  return ioc.registry.selfRegisterAliasIfEnabled(parseAliasToken(aliasToken));
+): ParseAliasToken<AliasToken> {
+  const parsedAliasToken = parseAliasToken(aliasToken);
+
+  if (parsedAliasToken instanceof MalformattedAliasError) {
+    return parsedAliasToken;
+  }
+
+  return ioc.registry.selfRegisterAliasIfEnabled(
+    parsedAliasToken,
+  ) as ParseAliasToken<AliasToken>;
 }
