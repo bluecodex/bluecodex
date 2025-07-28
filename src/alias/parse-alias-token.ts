@@ -9,5 +9,6 @@ export function parseAliasToken<AliasToken extends `${string}=${string}`>(
     __objectType__: "alias",
     name: alias,
     target: name,
+    meta: {},
   };
 }

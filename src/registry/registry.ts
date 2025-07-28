@@ -14,9 +14,36 @@ export class Registry {
     return [...this.registeredCommands];
   }
 
+  get commandByName(): Partial<Record<string, Command>> {
+    const commandByName: Partial<Record<string, Command>> = {};
+    for (const command of this.commands) {
+      commandByName[command.blueprint.name] = command;
+    }
+
+    return commandByName;
+  }
+
   get aliases(): Alias[] {
     // Return a copy to prevent the original array from being manipulated from outside
     return [...this.registeredAliases];
+  }
+
+  get aliasByName(): Partial<Record<string, Alias>> {
+    const aliasByName: Partial<Record<string, Alias>> = {};
+    for (const alias of this.aliases) {
+      aliasByName[alias.name] = alias;
+    }
+
+    return aliasByName;
+  }
+
+  /**
+   * Aliases that do not point to a command
+   */
+  get directAliases(): Alias[] {
+    const commandByName = this.commandByName;
+
+    return this.aliases.filter((alias) => !commandByName[alias.target]);
   }
 
   async markingAsLocal(fn: () => Promise<void>) {
@@ -49,30 +76,24 @@ export class Registry {
   }
 
   findAliasedCommand(alias: Alias): Command | undefined {
-    return this.registeredCommands.find(
-      (registeredCommand) => registeredCommand.blueprint.name === alias.name,
-    );
+    return this.commandByName[alias.target];
   }
 
-  registeredAliasesForCommand(command: Command): Alias[] {
+  aliasesForCommand(command: Command): Alias[] {
     return this.registeredAliases.filter(
       (alias) => alias.target === command.blueprint.name,
     );
   }
 
   findCommandOrAlias(name: string): Command | Alias | undefined {
-    return (
-      this.registeredCommands.find(
-        (command) => command.blueprint.name === name,
-      ) ?? this.registeredAliases.find((alias) => alias.name === name)
-    );
+    return this.commandByName[name] ?? this.aliasByName[name];
   }
 
   registerAlias<A extends Alias>(alias: A): A {
     this.throwIfCommandOrAliasAlreadyRegistered(alias.name);
 
     const adjustedAlias = this.markAsLocalEnabled
-      ? { ...alias, local: true }
+      ? { ...alias, meta: { ...alias.meta, local: true } }
       : alias;
 
     this.registeredAliases.push(adjustedAlias);

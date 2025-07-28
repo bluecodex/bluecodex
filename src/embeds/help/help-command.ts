@@ -1,3 +1,4 @@
+import type { Alias } from "../../alias/alias";
 import { type Command, command } from "../../command/command";
 import { ioc } from "../../ioc";
 import { embeddedCommands } from "../embeds";
@@ -42,10 +43,7 @@ function printSection(
 ) {
   const themedCommands = data.commands
     .map((command) =>
-      ioc.theme.command(
-        command,
-        ioc.registry.registeredAliasesForCommand(command),
-      ),
+      ioc.theme.command(command, ioc.registry.aliasesForCommand(command)),
     )
     .filter(Boolean);
   if (!themedCommands) return;
@@ -101,4 +99,13 @@ export const helpCommand = command("help", () => {
       });
     }
   });
+
+  const directAliases = ioc.registry.directAliases;
+  if (directAliases.length > 0) {
+    console.log(ioc.theme.directAliasesGroupTitle());
+
+    for (const alias of directAliases) {
+      console.log(["  ", ioc.theme.alias(alias)].join(""));
+    }
+  }
 });

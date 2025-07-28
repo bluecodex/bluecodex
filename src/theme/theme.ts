@@ -128,12 +128,35 @@ export class Theme {
       .filter(Boolean)
       .join(" ");
 
-    const aliasesLine =
-      aliases.length > 0
-        ? ["Aliases:", ...aliases.map((alias) => alias.name)].join(" ")
-        : "";
+    const aliasesLine = [
+      "    ",
+      chalk.dim("└ "),
+      aliases.map((alias) => ioc.theme.aliasName(alias)).join(" "),
+    ].join("");
 
-    return [firstLine, aliasesLine].filter(Boolean).join("\n");
+    return [firstLine, aliases.length > 0 && aliasesLine]
+      .filter(Boolean)
+      .join("\n");
+  }
+
+  aliasName(alias: Alias) {
+    if (alias.meta.local) {
+      return `${chalk.magenta("⌁")} ${chalk.blueBright(`${alias.name}`)}`;
+    }
+
+    return chalk.blueBright(`⌁ ${alias.name}`);
+  }
+
+  aliasTarget(alias: Alias) {
+    return alias.target;
+  }
+
+  alias(alias: Alias) {
+    return this.aliasName(alias) + chalk.dim("=") + this.aliasTarget(alias);
+  }
+
+  directAliasesGroupTitle() {
+    return chalk.dim(chalk.blueBright("▸ Direct aliases"));
   }
 
   commandOrAliasNotFound(name: string) {

@@ -4,6 +4,10 @@
 import { ioc } from "../ioc";
 import { parseAliasToken } from "./parse-alias-token";
 
+export type AliasMeta = {
+  local?: boolean;
+};
+
 export type Alias<
   Name extends string = string,
   Target extends string = string,
@@ -11,7 +15,7 @@ export type Alias<
   __objectType__: "alias";
   name: Name;
   target: Target;
-  local?: boolean;
+  meta: AliasMeta;
 };
 
 /*
