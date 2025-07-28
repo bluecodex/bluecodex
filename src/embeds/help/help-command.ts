@@ -42,7 +42,12 @@ function printSection(
 ) {
   const themedCommands = data.commands
     .map((command) =>
-      ioc.theme.command(command, ioc.registry.aliasesForCommand(command)),
+      ioc.theme.command(
+        command,
+        ioc.registry
+          .aliasesForCommand(command)
+          .filter((alias) => !alias.meta.misspelling),
+      ),
     )
     .filter(Boolean);
   if (!themedCommands) return;
@@ -99,11 +104,13 @@ export const helpCommand = command("help", () => {
     }
   });
 
-  const directAliases = ioc.registry.directAliases;
-  if (directAliases.length > 0) {
-    console.log(ioc.theme.directAliasesGroupTitle());
+  const shellAliases = ioc.registry.shellAliases.filter(
+    (alias) => !alias.meta.misspelling,
+  );
+  if (shellAliases.length > 0) {
+    console.log(ioc.theme.shellAliasesGroupTitle());
 
-    for (const alias of directAliases) {
+    for (const alias of shellAliases) {
       console.log(["  ", ioc.theme.alias(alias)].join(""));
     }
   }

@@ -38,9 +38,9 @@ export class Registry {
   }
 
   /**
-   * Aliases that do not point to a command
+   * Aliases that do not point to a command, therefore it points to a system executable
    */
-  get directAliases(): Alias[] {
+  get shellAliases(): Alias[] {
     const commandByName = this.commandByName;
 
     return this.aliases.filter((alias) => !commandByName[alias.target]);

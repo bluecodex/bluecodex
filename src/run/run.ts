@@ -5,7 +5,7 @@ import { spawnRunTarget } from "./spawn-run-target";
 import { SpawnStdOption } from "./spawn-std-option";
 
 /**
- * Executes a binary or bluecodex command asynchronously with `stdio: 'inherit'`
+ * Calls an executable or bluecodex command asynchronously with `stdio: 'inherit'`
  * and returns its exit code.
  *
  * This method enables TTY support by forwarding stdio directly to the terminal,
@@ -26,7 +26,7 @@ export async function run(
 }
 
 /**
- * Executes a binary or bluebodex command asynchronously and returns its result.
+ * Calls an executable or bluebodex command asynchronously and returns its result.
  *
  * Note: Commands run with this function do **not** have TTY enabled.
  * If TTY behavior is required (e.g. for interactive prompts), use `run` instead.

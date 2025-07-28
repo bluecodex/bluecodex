@@ -49,9 +49,9 @@ command('component:new name --domain:string', ({ name, domain }) => {
 })
 ```
 
-Arguments and flag types are parsed automatically and the data is available for your function.
+Arguments and flag types are parsed and the data is available at your function.
 
-If the user does not provide the necessary data, **blue** _codex_ will automatically prompt the dev
+If the user does not provide the necessary data, **blue** _codex_ will automatically ask the dev
 invoking the command for the missing data.
 
 For more information visit https://bluecodex.dev/

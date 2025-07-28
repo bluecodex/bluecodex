@@ -141,7 +141,7 @@ export class Theme {
 
   aliasName(alias: Alias) {
     if (alias.meta.local) {
-      return `${chalk.magenta("⌁")} ${chalk.blueBright(`${alias.name}`)}`;
+      return `${chalk.magenta("⌁")}${chalk.blueBright(`${alias.name}`)}`;
     }
 
     return chalk.blueBright(`⌁ ${alias.name}`);
@@ -155,8 +155,8 @@ export class Theme {
     return this.aliasName(alias) + chalk.dim("=") + this.aliasTarget(alias);
   }
 
-  directAliasesGroupTitle() {
-    return chalk.dim(chalk.blueBright("▸ Direct aliases"));
+  shellAliasesGroupTitle() {
+    return chalk.dim(`${chalk.blueBright("$")} Shell aliases`);
   }
 
   commandOrAliasNotFound(name: string) {
