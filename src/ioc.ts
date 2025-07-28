@@ -1,10 +1,10 @@
 import type { Project } from "./project/project";
 import { Registry } from "./registry/registry";
-import { Theme } from "./theme/theme";
+import { ThemeClass } from "./theme/theme-class";
 
 class Ioc {
   registry: Registry = new Registry();
-  theme: Theme = new Theme();
+  theme: ThemeClass = new ThemeClass();
 
   private _project?: Project;
 
@@ -24,7 +24,3 @@ class Ioc {
 }
 
 export const ioc = new Ioc();
-
-export function customTheme(themeClass: { new (): Theme }) {
-  ioc.theme = new themeClass();
-}

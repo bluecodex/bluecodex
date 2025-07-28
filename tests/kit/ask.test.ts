@@ -1,5 +1,5 @@
 import { test } from "vitest";
 
-test.todo("it prompts", () => {
+test.todo("it asks", () => {
   // TODO
 });
