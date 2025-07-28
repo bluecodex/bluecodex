@@ -1,4 +1,3 @@
-import type { Alias } from "../../alias/alias";
 import { type Command, command } from "../../command/command";
 import { ioc } from "../../ioc";
 import { embeddedCommands } from "../embeds";
