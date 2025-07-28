@@ -8,6 +8,7 @@ import {
 } from "../blueprint/parse-blueprint";
 import { ioc } from "../ioc";
 import type { ExpandObject } from "../types/object-type-utils";
+import { parseAliasToken } from "./parse-alias-token";
 
 /*
  * Types
@@ -27,6 +28,7 @@ export type CommandMeta<B extends Blueprint> = {
 }>;
 
 export type Command<B extends Blueprint = Blueprint> = {
+  __objectType__: "command";
   blueprint: B;
   fn: CommandFn<B>;
   meta: CommandMeta<B>;
@@ -41,6 +43,7 @@ export function command<
   B extends ParseBlueprint<BlueprintToken>,
 >(blueprintToken: BlueprintToken, fn: CommandFn<B>): Command<B> {
   return ioc.registry.selfRegisterCommandIfEnabled({
+    __objectType__: "command",
     blueprint: parseBlueprint(blueprintToken),
     fn,
     meta: {}, // TODO
@@ -53,9 +56,19 @@ command.todo = <
 >(
   blueprintToken: BlueprintToken,
   fn: CommandFn<B>,
-) =>
-  ({
+) => {
+  return ioc.registry.selfRegisterCommandIfEnabled({
+    __objectType__: "command",
     blueprint: parseBlueprint(blueprintToken),
     fn,
     meta: { todo: true }, // TODO
   }) as Command<B>;
+};
+
+command.alias = <AliasToken extends `${string}=${string}`>(
+  aliasToken: AliasToken,
+) => {
+  return ioc.registry.selfRegisterCommandAliasIfEnabled(
+    parseAliasToken(aliasToken),
+  );
+};

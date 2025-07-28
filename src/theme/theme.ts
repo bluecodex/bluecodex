@@ -3,6 +3,7 @@ import path from "node:path";
 
 import type { Arg } from "../arg/arg";
 import type { Command } from "../command/command";
+import type { CommandAlias } from "../command/command-alias";
 import type { Flag } from "../flag/flag";
 import { ioc } from "../ioc";
 
@@ -119,15 +120,21 @@ export class Theme {
   }
 
   command(command: Command) {
-    if (command.meta.todo) return;
-
     return [" ", this.commandName(command), this.commandParts(command)]
       .filter(Boolean)
       .join(" ");
   }
 
-  commandNotFound(name: string) {
-    return `Command ${chalk.redBright(`⎇ ${name}`)} not found`;
+  commandOrAliasNotFound(name: string) {
+    return `Command or alias ${chalk.redBright(`⎇ ${name}`)} not found`;
+  }
+
+  commandAlreadyRegisteredMessage(command: Command) {
+    return `Command with name "${command.blueprint.name}" already exists.`;
+  }
+
+  commandAliasAlreadyRegisteredMessage(commandAlis: CommandAlias) {
+    return `Alias with name "${commandAlis.alias}" already exists.`;
   }
 
   /*

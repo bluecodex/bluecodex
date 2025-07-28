@@ -13,7 +13,7 @@ export async function source(pattern: string) {
     const isLocalOnlyFile = file.startsWith(ioc.project.localBlueFolderPath);
 
     if (isLocalOnlyFile) {
-      await ioc.registry.markingRegisteredCommandsAsLocal(async () => {
+      await ioc.registry.markingAsLocal(async () => {
         await import(file);
       });
     } else {
