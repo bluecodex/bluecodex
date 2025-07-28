@@ -1,9 +1,9 @@
 import chalk from "chalk";
 import path from "node:path";
 
+import type { Alias } from "../alias/alias";
 import type { Arg } from "../arg/arg";
 import type { Command } from "../command/command";
-import type { CommandAlias } from "../command/command-alias";
 import type { Flag } from "../flag/flag";
 import { ioc } from "../ioc";
 
@@ -119,10 +119,21 @@ export class Theme {
     return chalk.dim(`${chalk.blueBright("⧉")} ${title}`);
   }
 
-  command(command: Command) {
-    return [" ", this.commandName(command), this.commandParts(command)]
+  command(command: Command, aliases: Alias[]) {
+    const firstLine = [
+      " ",
+      this.commandName(command),
+      this.commandParts(command),
+    ]
       .filter(Boolean)
       .join(" ");
+
+    const aliasesLine =
+      aliases.length > 0
+        ? ["Aliases:", ...aliases.map((alias) => alias.name)].join(" ")
+        : "";
+
+    return [firstLine, aliasesLine].filter(Boolean).join("\n");
   }
 
   commandOrAliasNotFound(name: string) {
@@ -133,8 +144,8 @@ export class Theme {
     return `Command with name "${command.blueprint.name}" already exists.`;
   }
 
-  commandAliasAlreadyRegisteredMessage(commandAlis: CommandAlias) {
-    return `Alias with name "${commandAlis.alias}" already exists.`;
+  aliasAlreadyRegisteredMessage(commandAlis: Alias) {
+    return `Alias with name "${commandAlis.name}" already exists.`;
   }
 
   /*

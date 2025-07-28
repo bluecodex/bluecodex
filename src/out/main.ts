@@ -1,3 +1,4 @@
+export { alias } from "../alias/alias";
 export { command } from "../command/command";
 export { env } from "../env/env";
 export { prompt } from "../kit/prompt";

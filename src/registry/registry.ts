@@ -1,10 +1,10 @@
+import type { Alias } from "../alias/alias";
 import type { Command } from "../command/command";
-import type { CommandAlias } from "../command/command-alias";
 import { CommandAlreadyRegisteredError } from "./command-already-registered-error";
 
 export class Registry {
   private registeredCommands: Command[] = [];
-  private registeredCommandAliases: CommandAlias[] = [];
+  private registeredAliases: Alias[] = [];
 
   private markAsLocalEnabled: boolean = false;
   selfRegisterEnabled: boolean = false;
@@ -14,9 +14,9 @@ export class Registry {
     return [...this.registeredCommands];
   }
 
-  get commandAliases(): CommandAlias[] {
+  get aliases(): Alias[] {
     // Return a copy to prevent the original array from being manipulated from outside
-    return [...this.registeredCommandAliases];
+    return [...this.registeredAliases];
   }
 
   async markingAsLocal(fn: () => Promise<void>) {
@@ -48,50 +48,43 @@ export class Registry {
     return this.selfRegisterEnabled ? this.registerCommand(command) : command;
   }
 
-  findAliasedCommand(commandAlias: CommandAlias): Command | undefined {
+  findAliasedCommand(alias: Alias): Command | undefined {
     return this.registeredCommands.find(
-      (registeredCommand) =>
-        registeredCommand.blueprint.name === commandAlias.alias,
+      (registeredCommand) => registeredCommand.blueprint.name === alias.name,
     );
   }
 
-  registeredAliasesForCommand(command: Command): CommandAlias[] {
-    return this.registeredCommandAliases.filter(
-      (registeredCommandAlias) =>
-        registeredCommandAlias.target === command.blueprint.name,
+  registeredAliasesForCommand(command: Command): Alias[] {
+    return this.registeredAliases.filter(
+      (alias) => alias.target === command.blueprint.name,
     );
   }
 
-  findCommandOrAlias(name: string): Command | CommandAlias | undefined {
+  findCommandOrAlias(name: string): Command | Alias | undefined {
     return (
       this.registeredCommands.find(
         (command) => command.blueprint.name === name,
-      ) ??
-      this.registeredCommandAliases.find(
-        (commandAlias) => commandAlias.alias === name,
-      )
+      ) ?? this.registeredAliases.find((alias) => alias.name === name)
     );
   }
 
-  registerCommandAlias<CA extends CommandAlias>(commandAlias: CA): CA {
-    this.throwIfCommandOrAliasAlreadyRegistered(commandAlias.alias);
+  registerAlias<A extends Alias>(alias: A): A {
+    this.throwIfCommandOrAliasAlreadyRegistered(alias.name);
 
-    const adjustedCommandAlias = this.markAsLocalEnabled
-      ? { ...commandAlias, local: true }
-      : commandAlias;
+    const adjustedAlias = this.markAsLocalEnabled
+      ? { ...alias, local: true }
+      : alias;
 
-    this.registeredCommandAliases.push(adjustedCommandAlias);
+    this.registeredAliases.push(adjustedAlias);
 
-    return adjustedCommandAlias;
+    return adjustedAlias;
   }
 
-  selfRegisterCommandAliasIfEnabled<CA extends CommandAlias>(
-    commandAlias: CA,
-  ): CA {
+  selfRegisterAliasIfEnabled<A extends Alias>(alias: A): A {
     if (this.selfRegisterEnabled) {
-      return this.registerCommandAlias(commandAlias);
+      return this.registerAlias(alias);
     }
 
-    return commandAlias;
+    return alias;
   }
 }

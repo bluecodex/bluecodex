@@ -8,7 +8,6 @@ import {
 } from "../blueprint/parse-blueprint";
 import { ioc } from "../ioc";
 import type { ExpandObject } from "../types/object-type-utils";
-import { parseAliasToken } from "./parse-alias-token";
 
 /*
  * Types
@@ -63,12 +62,4 @@ command.todo = <
     fn,
     meta: { todo: true }, // TODO
   }) as Command<B>;
-};
-
-command.alias = <AliasToken extends `${string}=${string}`>(
-  aliasToken: AliasToken,
-) => {
-  return ioc.registry.selfRegisterCommandAliasIfEnabled(
-    parseAliasToken(aliasToken),
-  );
 };

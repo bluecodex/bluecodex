@@ -41,7 +41,12 @@ function printSection(
     | { type: "grouped"; title: string; commands: Command[] },
 ) {
   const themedCommands = data.commands
-    .map((command) => ioc.theme.command(command))
+    .map((command) =>
+      ioc.theme.command(
+        command,
+        ioc.registry.registeredAliasesForCommand(command),
+      ),
+    )
     .filter(Boolean);
   if (!themedCommands) return;
 
