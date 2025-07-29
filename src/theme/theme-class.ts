@@ -9,6 +9,38 @@ import { ioc } from "../ioc";
 
 export class ThemeClass {
   /*
+   * Colors
+   */
+
+  styleDim(text: string) {
+    return chalk.dim(text);
+  }
+
+  stylePrimary(text: string) {
+    return chalk.blueBright(text);
+  }
+
+  styleLocal(text: string) {
+    return chalk.magenta(text);
+  }
+
+  styleBold(text: string) {
+    return chalk.bold(text);
+  }
+
+  styleShell(text: string) {
+    return chalk.yellowBright(text);
+  }
+
+  styleSuccess(text: string) {
+    return chalk.greenBright(text);
+  }
+
+  styleError(text: string) {
+    return chalk.redBright(text);
+  }
+
+  /*
    * Arg
    */
 
@@ -17,16 +49,16 @@ export class ThemeClass {
   }
 
   optionalArgName(arg: Arg) {
-    return chalk.dim(`${arg.name}?`);
+    return this.styleDim(`${arg.name}?`);
   }
 
   argType(arg: Arg) {
-    return chalk.dim(`:${arg.type}`);
+    return this.styleDim(`:${arg.type}`);
   }
 
   argFallback(arg: Arg) {
     if (arg.fallback === null) return;
-    return chalk.dim(`=${arg.fallback}`);
+    return this.styleDim(`=${arg.fallback}`);
   }
 
   arg(arg: Arg) {
@@ -40,7 +72,7 @@ export class ThemeClass {
   }
 
   invalidArgInputErrorMessage(arg: Arg, input: string) {
-    return `Invalid input ${chalk.redBright(input)} for arg ${chalk.bold(`${arg.name}:${arg.type}`)}`;
+    return `Invalid input ${this.styleError(input)} for arg ${this.styleBold(`${arg.name}:${arg.type}`)}`;
   }
 
   /*
@@ -56,23 +88,23 @@ export class ThemeClass {
       .filter(Boolean)
       .join("");
 
-    return flag.required ? text : chalk.dim(text);
+    return flag.required ? text : this.styleDim(text);
   }
 
   flagShort(flag: Flag) {
     if (!flag.short) return;
 
-    return chalk.dim(`(-${flag.short})`);
+    return this.styleDim(`(-${flag.short})`);
   }
 
   flagType(flag: Flag) {
-    return chalk.dim(`:${flag.type}`);
+    return this.styleDim(`:${flag.type}`);
   }
 
   flagFallback(flag: Flag) {
     if (flag.fallback === null) return;
 
-    return chalk.dim(`=${flag.fallback}`);
+    return this.styleDim(`=${flag.fallback}`);
   }
 
   flag(flag: Flag) {
@@ -92,10 +124,10 @@ export class ThemeClass {
 
   commandName(command: Command) {
     if (command.meta.local) {
-      return `${chalk.magenta("⎇")} ${chalk.blueBright(`${command.blueprint.name}`)}`;
+      return `${this.styleLocal("⎇")} ${this.stylePrimary(`${command.blueprint.name}`)}`;
     }
 
-    return chalk.blueBright(`⎇ ${command.blueprint.name}`);
+    return this.stylePrimary(`⎇ ${command.blueprint.name}`);
   }
 
   commandParts(command: Command) {
@@ -108,15 +140,15 @@ export class ThemeClass {
   }
 
   embeddedCommandGroupTitle() {
-    return chalk.dim(chalk.blueBright("§ bluecodex"));
+    return this.styleDim(this.stylePrimary("§ bluecodex"));
   }
 
   ungroupedCommandGroupTitle() {
-    return chalk.dim(chalk.blueBright("∅ no group"));
+    return this.styleDim(this.stylePrimary("∅ no group"));
   }
 
   commandGroupTitle(title: string) {
-    return chalk.dim(`${chalk.blueBright("⧉")} ${title}`);
+    return this.styleDim(`${this.stylePrimary("⧉")} ${title}`);
   }
 
   command(command: Command, aliases: Alias[]) {
@@ -130,7 +162,7 @@ export class ThemeClass {
 
     const aliasesLine = [
       "    ",
-      chalk.dim("└ "),
+      this.styleDim("└ "),
       aliases.map((alias) => ioc.theme.aliasName(alias)).join(" "),
     ].join("");
 
@@ -141,10 +173,10 @@ export class ThemeClass {
 
   aliasName(alias: Alias) {
     if (alias.meta.local) {
-      return `${chalk.magenta("⌁")}${chalk.blueBright(`${alias.name}`)}`;
+      return `${this.styleLocal("⌁")}${this.stylePrimary(`${alias.name}`)}`;
     }
 
-    return chalk.blueBright(`⌁ ${alias.name}`);
+    return this.stylePrimary(`⌁ ${alias.name}`);
   }
 
   aliasTarget(alias: Alias) {
@@ -152,15 +184,15 @@ export class ThemeClass {
   }
 
   alias(alias: Alias) {
-    return this.aliasName(alias) + chalk.dim("=") + this.aliasTarget(alias);
+    return this.aliasName(alias) + this.styleDim("=") + this.aliasTarget(alias);
   }
 
   shellAliasesGroupTitle() {
-    return chalk.dim(`${chalk.blueBright("$")} Shell aliases`);
+    return this.styleDim(`${this.stylePrimary("$")} Shell aliases`);
   }
 
   commandOrAliasNotFound(name: string) {
-    return `Command or alias ${chalk.redBright(`⎇ ${name}`)} not found`;
+    return `Command or alias ${this.styleError(`⎇ ${name}`)} not found`;
   }
 
   commandAlreadyRegisteredMessage(command: Command) {
@@ -176,15 +208,11 @@ export class ThemeClass {
    */
 
   runBinName(name: string) {
-    return chalk.yellowBright(`$ ${name}`);
+    return this.styleShell(`$ ${name}`);
   }
 
   runPackageBinName(name: string) {
-    return chalk.yellowBright(`$ ${name}`);
-  }
-
-  runBinNotFound(name: string) {
-    return `${chalk.redBright(`${name}`)} not found`;
+    return this.styleShell(`$ ${name}`);
   }
 
   runArgv(argv: string[]) {
@@ -192,13 +220,13 @@ export class ThemeClass {
   }
 
   runSpawn(name: string, argv: string[]) {
-    return chalk.dim(
+    return this.styleDim(
       [this.runBinName(name), this.runArgv(argv)].filter(Boolean).join(" "),
     );
   }
 
   runSpawnPackageBin(name: string, argv: string[]) {
-    return chalk.dim(
+    return this.styleDim(
       [this.runPackageBinName(name), this.runArgv(argv)]
         .filter(Boolean)
         .join(" "),
@@ -206,16 +234,16 @@ export class ThemeClass {
   }
 
   runCommand(command: Command, argv: string[]) {
-    return chalk.dim(
+    return this.styleDim(
       [this.commandName(command), this.runArgv(argv)].filter(Boolean).join(" "),
     );
   }
 
   runNotFound(name: string) {
     return (
-      chalk.redBright("[error]") +
+      this.styleError("[error]") +
       ` ${name} was not found.\n` +
-      chalk.dim(
+      this.styleDim(
         "It's not in your $PATH, an npm package executable, or a bluecodex command.",
       )
     );
@@ -230,14 +258,14 @@ export class ThemeClass {
   }
 
   fileCreated(filePath: string) {
-    return chalk.greenBright(`+ ${this.relativePath(filePath)} created`);
+    return this.styleSuccess(`+ ${this.relativePath(filePath)} created`);
   }
 
   fileUpdated(filePath: string) {
-    return chalk.cyanBright(`◉ ${this.relativePath(filePath)} updated`);
+    return this.styleSuccess(`◉ ${this.relativePath(filePath)} updated`);
   }
 
   fileDeleted(filePath: string) {
-    return chalk.redBright(`- ${this.relativePath(filePath)} deleted`);
+    return this.styleSuccess(`- ${this.relativePath(filePath)} deleted`);
   }
 }
