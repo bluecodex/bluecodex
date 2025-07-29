@@ -49,5 +49,5 @@ alias.misspelling = <AliasToken extends `${string}=${string}`>(
     meta: {
       misspelling: true,
     },
-  });
+  }) as ParseAliasToken<AliasToken>;
 };
