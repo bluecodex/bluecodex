@@ -40,7 +40,7 @@ export function alias<AliasToken extends `${string}=${string}`>(
 
 alias.misspelling = <AliasToken extends `${string}=${string}`>(
   aliasToken: AliasToken,
-) => {
+): ParseAliasToken<AliasToken> => {
   const parsedAliasToken = parseAliasToken(aliasToken);
   if (parsedAliasToken instanceof Error) return parsedAliasToken;
 
