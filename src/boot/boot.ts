@@ -22,13 +22,11 @@ async function bootCli(): Promise<number | null> {
     process.argv.slice(2),
   );
 
-  if (name !== initCommand.blueprint.name) {
-    if (!ioc.project.isInitialized) {
-      console.log();
-      console.log(`Welcome to ${themedProjectName}\n`);
+  if (name !== initCommand.blueprint.name && !ioc.project.isInitialized) {
+    console.log();
+    console.log(`Welcome to ${themedProjectName}\n`);
 
-      return askToInit();
-    }
+    return askToInit();
   }
 
   for (const defaultSource of ioc.project.sources) {
