@@ -10,10 +10,12 @@ const srcDirPath = path.join(
 
 const cmdArgv = process.argv.slice(2);
 
-spawnSync(
+const response = spawnSync(
   `node_modules/.bin/bun`,
   [path.join(srcDirPath, "boot/boot.ts"), ...cmdArgv],
   {
     stdio: "inherit",
   },
 );
+
+process.exitCode = response.status ?? 1;
