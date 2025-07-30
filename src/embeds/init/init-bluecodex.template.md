@@ -8,23 +8,17 @@ In this folder you'll find commands that will help you with daily tasks on this 
 
 **blue** _codex_ is installed as a npm package, which means just have to install your packages.
 
-Once installed `blue` will be available via your package manager's run command such as `npm run blue`.
+Once installed `bluecodex` will be available via your package manager's run command such as `npm run bluecodex`.
 
-## Setup alias
+## Setup yourself up
 
-You might run `blue` several times a day. For an optimal experience we recommend setting up an alias.
+You might run `bluecodex` several times a day and typing out `npm run bluecodex` might get a bit tedious.
 
-To achieve that either:
+For an optimal experience we recommend setting up some shortcuts. We have a command to guide you through the options.
 
-- run `npm run blue alias` _(or equivalent for your package manager)_
-- or manually add the alias to your terminal profile file
-
+```sh
+npm run bluecodex me
 ```
-alias blue="node_modules/.bin/blue"
-
-# If you are feeling bold, try the single letter alias
-alias b="node_modules/.bin/blue"
-``` 
 
 ## How to use it
 

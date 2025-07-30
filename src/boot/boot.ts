@@ -8,6 +8,7 @@ import { source } from "../registry/source";
 import { run } from "../run/run";
 import { runCommand } from "../run/run-command";
 import { themedProjectName } from "../theme/themedProjectName";
+import { resolveBootParts } from "./resolve-boot-parts";
 
 async function bootCli(): Promise<number | null> {
   ioc.init({
@@ -17,8 +18,9 @@ async function bootCli(): Promise<number | null> {
   embeddedCommands.forEach((cmd) => ioc.registry.registerCommand(cmd));
   ioc.registry.selfRegisterEnabled = true;
 
-  const [firstArgv, ...remainingArgv] = process.argv.slice(2);
-  const name = firstArgv ?? "help";
+  const { name, argv, isCommandNotFoundHandle } = resolveBootParts(
+    process.argv.slice(2),
+  );
 
   if (name !== initCommand.blueprint.name) {
     if (!ioc.project.isInitialized) {
@@ -35,6 +37,8 @@ async function bootCli(): Promise<number | null> {
 
   const commandOrAlias = ioc.registry.findCommandOrAlias(name);
   if (!commandOrAlias) {
+    if (isCommandNotFoundHandle) return 127;
+
     process.stderr.write(ioc.theme.commandOrAliasNotFound(name) + "\n");
     return 1;
   }
@@ -56,7 +60,7 @@ async function bootCli(): Promise<number | null> {
     }
   }
 
-  return runCommand(command, remainingArgv);
+  return runCommand(command, argv);
 }
 
 const exitCode = await bootCli();
