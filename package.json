@@ -2,7 +2,7 @@
   "name": "bluecodex",
   "type": "module",
   "version": "0.0.17",
-  "description": "Turn repetitive dev tasks into simple CLI commands",
+  "description": "Turn repetitive dev tasks into CLI commands with Typescript",
   "repository": "https://github.com/bluecodex/bluecodex",
   "author": "Pedro Moreira <code@pedrosm.com>",
   "license": "MIT",
