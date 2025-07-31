@@ -49,13 +49,8 @@ async function bootCli(): Promise<number | null> {
     // commandOrAlias is an alias
     const alias = commandOrAlias;
 
-    const aliasedCommand = ioc.registry.findAliasedCommand(alias);
-
-    if (aliasedCommand) command = aliasedCommand;
-    else {
-      const { exitCode } = await run(alias.target);
-      return exitCode;
-    }
+    const { exitCode } = await run([alias.target, argv]);
+    return exitCode;
   }
 
   return runCommand(command, argv);
