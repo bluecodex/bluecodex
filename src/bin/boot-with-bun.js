@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { spawnSync } from "node:child_process";
+import { execa } from "execa";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -10,12 +10,10 @@ const srcDirPath = path.join(
 
 const cmdArgv = process.argv.slice(2);
 
-const response = spawnSync(
+const { exitCode } = await execa(
   `node_modules/.bin/bun`,
   [path.join(srcDirPath, "boot/boot.ts"), ...cmdArgv],
-  {
-    stdio: "inherit",
-  },
+  { stdio: "inherit", reject: false },
 );
 
-process.exitCode = response.status ?? 1;
+process.exitCode = exitCode ?? 1;
