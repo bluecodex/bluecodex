@@ -1,6 +1,8 @@
 # blue codex
 
-**blue** _codex_ is a knowledge toolkit for dev teams. You can find docs at https://bluecodex.dev/.
+**blue** _codex_ helps you streamline your development workflow by turning repetitive tasks into easy-to-use CLI commands. You can keep them private or share with your team for seamless collaboration.
+
+You can find docs at https://bluecodex.dev/.
 
 In this folder you'll find commands that will help you with daily tasks on this project.
 
