@@ -11,6 +11,7 @@
     "src"
   ],
   "bin": {
+    "blue": "src/bin/boot-with-bun.js",
     "bluecodex": "src/bin/boot-with-bun.js"
   },
   "keywords": [
