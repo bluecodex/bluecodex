@@ -57,4 +57,4 @@ async function bootCli(): Promise<number | null> {
 }
 
 const exitCode = await bootCli();
-process.exitCode = exitCode ?? 1;
+if (exitCode) process.exitCode = exitCode;
