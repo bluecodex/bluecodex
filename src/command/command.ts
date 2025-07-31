@@ -15,7 +15,7 @@ import type { ExpandObject } from "../types/object-type-utils";
 
 export type CommandFn<B extends Blueprint> = (
   data: ExpandObject<{ argv: string[] } & RecordFromBlueprint<B>>,
-) => void | Promise<void> | number | Promise<number> | null | Promise<null>;
+) => void | number | null | Promise<void | number | null>;
 
 export type CommandMeta<B extends Blueprint> = {
   todo?: boolean;
