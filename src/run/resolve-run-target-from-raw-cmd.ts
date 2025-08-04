@@ -89,7 +89,7 @@ export async function resolveRunTargetFromRawCmd(
     }
 
     // commandOrAlias is alias
-    const alias = commandOrAlias;
+    const alias = ioc.registry.findEndAlias(commandOrAlias);
 
     const aliasedCommand = ioc.registry.findAliasedCommand(alias);
     if (aliasedCommand) {
@@ -101,14 +101,14 @@ export async function resolveRunTargetFromRawCmd(
       } as const;
     }
 
-    const [firstAliasArgv, ...remainingAliasArgv] = argv;
-    const binOrLocalBin = await resolveRunTargetBinOrLocalBin(
-      firstAliasArgv,
-      remainingAliasArgv,
+    const [aliasTargetName, ...aliasTargetArgv] = alias.target.split(" ");
+    const aliasBinOrLocalBin = await resolveRunTargetBinOrLocalBin(
+      aliasTargetName,
+      aliasTargetArgv,
     );
 
-    if (binOrLocalBin) return binOrLocalBin;
+    if (aliasBinOrLocalBin) return aliasBinOrLocalBin;
   }
 
-  return { type: "not-found", name: name } as const;
+  return { type: "not-found", name } as const;
 }

@@ -75,6 +75,11 @@ export class Registry {
     return this.selfRegisterEnabled ? this.registerCommand(command) : command;
   }
 
+  findEndAlias(alias: Alias): Alias {
+    const nextAliasName = alias.target.split(" ")[0];
+    return this.aliasByName[nextAliasName] ?? alias;
+  }
+
   findAliasedCommand(alias: Alias): Command | undefined {
     return this.commandByName[alias.target];
   }
