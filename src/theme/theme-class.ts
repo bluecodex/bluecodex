@@ -173,7 +173,7 @@ export class ThemeClass {
 
   aliasName(alias: Alias) {
     if (alias.meta.local) {
-      return `${this.styleLocal("⌁")}${this.stylePrimary(`${alias.name}`)}`;
+      return `${this.styleLocal("⌁")} ${this.stylePrimary(`${alias.name}`)}`;
     }
 
     return this.stylePrimary(`⌁ ${alias.name}`);
