@@ -9,9 +9,6 @@ export async function getCurrentGitRef() {
     if (!hasGit) return { type: "git-cli-unavailable" } as const;
 
     const { stdout } = await execa`git symbolic-ref --short HEAD`;
-
-    console.log({ stdout });
-
     return { type: "branch", name: stdout.trim() } as const;
   } catch (error) {
     try {
