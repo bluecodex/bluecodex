@@ -1,8 +1,9 @@
-import type { RawCmd } from "./raw-cmd";
-import { resolveRunTargetFromRawCmd } from "./resolve-run-target-from-raw-cmd";
+import type { LooseArgv } from "./loose-argv";
+import { resolveRunTarget } from "./resolve-run-target";
 import type { RunResult } from "./run-result";
 import { spawnRunTarget } from "./spawn-run-target";
 import { SpawnStdOption } from "./spawn-std-option";
+import { tightenLooseArgv } from "./tighten-loose-argv";
 
 /**
  * Calls an executable or bluecodex command asynchronously with `stdio: 'inherit'`
@@ -14,9 +15,9 @@ import { SpawnStdOption } from "./spawn-std-option";
  * If you need the output use `run.withResult` instead
  */
 export async function run(
-  rawCmd: RawCmd,
+  looseArgv: LooseArgv,
 ): Promise<Pick<RunResult, "exitCode" | "failed">> {
-  const runTarget = await resolveRunTargetFromRawCmd(rawCmd);
+  const runTarget = await resolveRunTarget(tightenLooseArgv(looseArgv));
   const result = await spawnRunTarget({
     runTarget,
     stdOption: SpawnStdOption.tty,
@@ -31,8 +32,8 @@ export async function run(
  * Note: Commands run with this function do **not** have TTY enabled.
  * If TTY behavior is required (e.g. for interactive prompts), use `run` instead.
  */
-run.withResult = async (rawCmd: RawCmd): Promise<RunResult> => {
-  const runTarget = await resolveRunTargetFromRawCmd(rawCmd);
+run.withResult = async (looseArgv: LooseArgv): Promise<RunResult> => {
+  const runTarget = await resolveRunTarget(tightenLooseArgv(looseArgv));
   const result = await spawnRunTarget({
     runTarget,
     stdOption: SpawnStdOption.pipeAndInherit,

@@ -2,9 +2,8 @@ import fs from "node:fs";
 import which from "which";
 
 import { ioc } from "../ioc";
-import type { RawCmd } from "./raw-cmd";
-import { rawCmdToStringSplit } from "./raw-cmd-to-string-split";
 import type { RunTarget } from "./run-target";
+import { tightenLooseArgv } from "./tighten-loose-argv";
 
 async function resolveRunTargetBinOrLocalBin(name: string, argv: string[]) {
   const binExists = await which(name, { nothrow: true });
@@ -66,17 +65,15 @@ async function resolveRunTargetFromBlueRawCmd(name: string, argv: string[]) {
   return { type: "not-found", name: name } as const;
 }
 
-export async function resolveRunTargetFromRawCmd(
-  rawCmd: RawCmd,
-): Promise<RunTarget> {
-  const [name, ...argv] = rawCmdToStringSplit(rawCmd);
+export async function resolveRunTarget(argv: string[]): Promise<RunTarget> {
+  const [name, ...targetArgv] = tightenLooseArgv(argv);
 
   if (name === "blue" || name === "bluecodex") {
-    const [firstBlueArgv, ...remainingBlueArgv] = argv;
+    const [firstBlueArgv, ...remainingBlueArgv] = targetArgv;
     return resolveRunTargetFromBlueRawCmd(firstBlueArgv, remainingBlueArgv);
   }
 
-  const binOrLocalBin = await resolveRunTargetBinOrLocalBin(name, argv);
+  const binOrLocalBin = await resolveRunTargetBinOrLocalBin(name, targetArgv);
   if (binOrLocalBin) return binOrLocalBin;
 
   const commandOrAlias = ioc.registry.findCommandOrAlias(name);
@@ -85,7 +82,12 @@ export async function resolveRunTargetFromRawCmd(
     if (commandOrAlias.__objectType__ === "command") {
       // commandOrAlias is command
       const command = commandOrAlias;
-      return { type: "command", name: name, argv: argv, command } as const;
+      return {
+        type: "command",
+        name: name,
+        argv: targetArgv,
+        command,
+      } as const;
     }
 
     // commandOrAlias is alias
@@ -96,7 +98,7 @@ export async function resolveRunTargetFromRawCmd(
       return {
         type: "command",
         name: name,
-        argv: argv,
+        argv: targetArgv,
         command: aliasedCommand,
       } as const;
     }

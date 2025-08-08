@@ -1,10 +1,10 @@
 export { alias } from "../alias/alias";
+export { ask } from "../ask/ask";
 export { command } from "../command/command";
 export { env } from "../env/env";
-export { ask } from "../kit/ask";
-export { git } from "../kit/git/git";
-export { os } from "../kit/os";
+export { git } from "../git/git";
+export { os } from "../os/os";
 export { source } from "../registry/source";
 export { run } from "../run/run";
-export type { RawCmd } from "../run/raw-cmd";
+export type { LooseArgv } from "../run/loose-argv";
 export { theme } from "../theme/theme";

@@ -1,5 +1,5 @@
+import { ask } from "../ask/ask";
 import { ioc } from "../ioc";
-import { ask } from "../kit/ask";
 import { runCommand } from "../run/run-command";
 import { initCommand } from "./init/init-command";
 

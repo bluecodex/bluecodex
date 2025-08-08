@@ -2,7 +2,6 @@
  * Types
  */
 import { ioc } from "../ioc";
-import { MalformattedAliasError } from "./errors/malformatted-alias-error";
 import { type ParseAliasToken, parseAliasToken } from "./parse-alias-token";
 
 export type AliasMeta = {

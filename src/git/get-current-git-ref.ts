@@ -10,7 +10,7 @@ export async function getCurrentGitRef() {
 
     const { stdout } = await execa`git symbolic-ref --short HEAD`;
     return { type: "branch", name: stdout.trim() } as const;
-  } catch (error) {
+  } catch {
     try {
       // Not in a git branch, check if in a detached head
       const { stdout } = await execa`git rev-parse --short HEAD`;
