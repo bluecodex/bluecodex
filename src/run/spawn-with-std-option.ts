@@ -1,7 +1,7 @@
 import { execa } from "execa";
 import stripAnsi from "strip-ansi";
 
-import type { RunResult } from "./run-result";
+import type { RunResultWithOutput } from "./run-result";
 import type { SpawnStdOption } from "./spawn-std-option";
 
 type Args = {
@@ -14,7 +14,7 @@ export async function spawnWithStdOption({
   name,
   argv,
   stdOption,
-}: Args): Promise<RunResult> {
+}: Args): Promise<RunResultWithOutput> {
   const { stdout, stderr, all, exitCode, failed } = await execa(name, argv, {
     all: true,
     ...(stdOption === "tty"
@@ -29,6 +29,7 @@ export async function spawnWithStdOption({
   });
 
   return {
+    __objectType__: "run-result-with-output",
     output: stripAnsi(all ?? ""),
     stdout: stripAnsi(stdout ?? ""),
     stderr: stripAnsi(stderr ?? ""),

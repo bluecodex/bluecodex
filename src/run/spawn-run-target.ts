@@ -1,5 +1,5 @@
 import { ioc } from "../ioc";
-import type { RunResult } from "./run-result";
+import type { RunResultWithOutput } from "./run-result";
 import type { RunTarget } from "./run-target";
 import type { SpawnStdOption } from "./spawn-std-option";
 import { spawnWithStdOption } from "./spawn-with-std-option";
@@ -12,7 +12,7 @@ type Args = {
 export function spawnRunTarget({
   runTarget,
   stdOption,
-}: Args): Promise<RunResult> {
+}: Args): Promise<RunResultWithOutput> {
   switch (runTarget.type) {
     case "spawn": {
       console.log(ioc.theme.runSpawn(runTarget.name, runTarget.argv));
@@ -46,6 +46,7 @@ export function spawnRunTarget({
       process.stderr.write(notFoundMessage + "\n");
 
       return Promise.resolve({
+        __objectType__: "run-result-with-output",
         output: notFoundMessage,
         stdout: "",
         stderr: notFoundMessage,

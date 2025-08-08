@@ -26,8 +26,20 @@ export async function runCommand(
   try {
     const response = await command.fn({ argv, ...parsedArgv.data } as any);
 
-    // If an exit code is returned, use it
+    // If an exit code number is returned, use it
     if (typeof response === "number") return response;
+
+    // If it's a boolean, true means success and false means failure
+    if (typeof response === "boolean") return response ? 0 : 1;
+
+    // If it's a run-result, use the exit code
+    if (
+      response &&
+      typeof response === "object" &&
+      (response.__objectType__ === "run-result" ||
+        response.__objectType__ === "run-result-with-output")
+    )
+      return response.exitCode ?? 0;
 
     return 0;
   } catch (error) {

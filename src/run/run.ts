@@ -1,6 +1,6 @@
 import type { LooseArgv } from "./loose-argv";
 import { resolveRunTarget } from "./resolve-run-target";
-import type { RunResult } from "./run-result";
+import type { RunResult, RunResultWithOutput } from "./run-result";
 import { spawnRunTarget } from "./spawn-run-target";
 import { SpawnStdOption } from "./spawn-std-option";
 import { tightenLooseArgv } from "./tighten-loose-argv";
@@ -14,16 +14,18 @@ import { tightenLooseArgv } from "./tighten-loose-argv";
  *
  * If you need the output use `run.withResult` instead
  */
-export async function run(
-  looseArgv: LooseArgv,
-): Promise<Pick<RunResult, "exitCode" | "failed">> {
+export async function run(looseArgv: LooseArgv): Promise<RunResult> {
   const runTarget = await resolveRunTarget(tightenLooseArgv(looseArgv));
   const result = await spawnRunTarget({
     runTarget,
     stdOption: SpawnStdOption.tty,
   });
 
-  return { exitCode: result.exitCode, failed: result.failed };
+  return {
+    __objectType__: "run-result",
+    exitCode: result.exitCode,
+    failed: result.failed,
+  };
 }
 
 /**
@@ -32,7 +34,7 @@ export async function run(
  * Note: Commands run with this function do **not** have TTY enabled.
  * If TTY behavior is required (e.g. for interactive prompts), use `run` instead.
  */
-run.withResult = async (looseArgv: LooseArgv): Promise<RunResult> => {
+run.withResult = async (looseArgv: LooseArgv): Promise<RunResultWithOutput> => {
   const runTarget = await resolveRunTarget(tightenLooseArgv(looseArgv));
   const result = await spawnRunTarget({
     runTarget,

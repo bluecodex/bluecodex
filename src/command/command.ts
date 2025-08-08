@@ -7,6 +7,7 @@ import {
   parseBlueprint,
 } from "../blueprint/parse-blueprint";
 import { ioc } from "../ioc";
+import type { RunResult, RunResultWithOutput } from "../run/run-result";
 import type { ExpandObject } from "../types/object-type-utils";
 
 /*
@@ -15,7 +16,14 @@ import type { ExpandObject } from "../types/object-type-utils";
 
 export type CommandFn<B extends Blueprint> = (
   data: ExpandObject<{ argv: string[] } & RecordFromBlueprint<B>>,
-) => void | number | null | Promise<void | number | null>;
+) =>
+  | void
+  | number
+  | boolean
+  | null
+  | RunResult
+  | RunResultWithOutput
+  | Promise<void | number | boolean | null | RunResult | RunResultWithOutput>;
 
 export type CommandMeta<B extends Blueprint> = {
   todo?: boolean;
