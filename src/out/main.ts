@@ -1,9 +1,9 @@
 export { alias } from "../alias/alias";
-export { ask } from "../ask/ask";
 export { command } from "../command/command";
 export { env } from "../env/env";
 export { git } from "../git/git";
 export { os } from "../os/os";
+export { prompt } from "../prompt/prompt";
 export { source } from "../registry/source";
 export { run } from "../run/run";
 export type { LooseArgv } from "../run/loose-argv";

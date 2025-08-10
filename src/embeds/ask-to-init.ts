@@ -1,10 +1,10 @@
-import { ask } from "../ask/ask";
 import { ioc } from "../ioc";
+import { prompt } from "../prompt/prompt";
 import { runCommand } from "../run/run-command";
 import { initCommand } from "./init/init-command";
 
 export async function askToInit() {
-  const wantsToInit = await ask.bool(
+  const wantsToInit = await prompt.confirm(
     `Would you like to ${ioc.theme.commandName(initCommand)} kick things off?`,
   );
 
