@@ -13,27 +13,29 @@ function onCancel() {
   process.exit(0);
 }
 
-export async function prompt(
-  message: string,
-  options?: {
-    /**
-     * Default initial value
-     */
-    initial?: string;
+export async function prompt(options?: {
+  /**
+   * Message to be shown
+   */
+  message?: string;
 
-    /**
-     * Receive user input. Should return true if the value is valid, and an
-     * error message String otherwise. If false is returned, a default error
-     * message is shown
-     */
-    validate?: (value: string) => boolean | string;
-  },
-): Promise<string> {
+  /**
+   * Default initial value
+   */
+  initial?: string;
+
+  /**
+   * Receive user input. Should return true if the value is valid, and an
+   * error message String otherwise. If false is returned, a default error
+   * message is shown
+   */
+  validate?: (value: string) => boolean | string;
+}): Promise<string> {
   const { value } = await prompts(
     {
       type: "text",
       name: "value",
-      message,
+      message: options?.message ?? "Enter value",
       initial: options?.initial,
       validate: options?.validate,
     },
@@ -43,20 +45,22 @@ export async function prompt(
   return value;
 }
 
-prompt.confirm = async (
-  message: string,
-  options?: {
-    /**
-     * Default initial value
-     */
-    initial?: boolean;
-  },
-): Promise<boolean> => {
+prompt.confirm = async (options?: {
+  /**
+   * Message to be shown
+   */
+  message?: string;
+
+  /**
+   * Default initial value
+   */
+  initial?: boolean;
+}): Promise<boolean> => {
   const { value } = await prompts(
     {
       type: "confirm",
       name: "value",
-      message,
+      message: options?.message ?? "Are you sure?",
       initial: options?.initial ?? true,
     },
     { onCancel },
@@ -65,47 +69,49 @@ prompt.confirm = async (
   return value;
 };
 
-prompt.number = async (
-  message: string,
-  options?: {
-    /**
-     * Default initial value
-     */
-    initial?: number;
+prompt.number = async (options?: {
+  /**
+   * Message to be shown
+   */
+  message?: string;
 
-    /**
-     * Receive user input. Should return true if the value is valid, and an
-     * error message String otherwise. If false is returned, a default error
-     * message is shown
-     */
-    validate?: (value: string) => boolean | string;
+  /**
+   * Default initial value
+   */
+  initial?: number;
 
-    /**
-     * Min value. Defaults to -infinity
-     */
-    min?: number;
+  /**
+   * Receive user input. Should return true if the value is valid, and an
+   * error message String otherwise. If false is returned, a default error
+   * message is shown
+   */
+  validate?: (value: string) => boolean | string;
 
-    /**
-     * Max value. Defaults to Infinity
-     */
-    max?: number;
+  /**
+   * Min value. Defaults to -infinity
+   */
+  min?: number;
 
-    /**
-     * Allow floating point inputs. Defaults to false
-     */
-    float?: boolean | { decimalPlaces: number };
+  /**
+   * Max value. Defaults to Infinity
+   */
+  max?: number;
 
-    /**
-     * Increment step when using arrow keys. Defaults to 1
-     */
-    increment?: number;
-  },
-): Promise<number> => {
+  /**
+   * Allow floating point inputs. Defaults to false
+   */
+  float?: boolean | { decimalPlaces: number };
+
+  /**
+   * Increment step when using arrow keys. Defaults to 1
+   */
+  increment?: number;
+}): Promise<number> => {
   const { value } = await prompts(
     {
       type: "number",
       name: "value",
-      message,
+      message: options?.message ?? "Enter number",
       initial: options?.initial ?? options?.min ?? 0,
       validate: options?.validate,
       min: options?.min,
@@ -135,9 +141,10 @@ type PromptSelectChoice<TValue extends string> =
     };
 
 prompt.select = async <TValue extends string>(
-  message: string,
   choices: PromptSelectChoice<TValue>[],
   options?: {
+    message?: string;
+
     /**
      * Default initial value
      */
@@ -169,7 +176,7 @@ prompt.select = async <TValue extends string>(
     {
       type: "select",
       name: "value",
-      message,
+      message: options?.message ?? "Select one of the choices below",
       choices: mappedChoices,
       initial: options?.initial
         ? mappedChoices.findIndex((choice) => choice.value === options.initial)
@@ -197,9 +204,13 @@ type PromptAutocompleteChoice<TValue extends string> =
  * Similar to `select` but does not support hints and disabled choices
  */
 prompt.autocomplete = async <TValue extends string>(
-  message: string,
   choices: PromptAutocompleteChoice<TValue>[],
   options?: {
+    /**
+     * Message to be shown
+     */
+    message?: string;
+
     /**
      * Default initial value
      */
@@ -242,7 +253,7 @@ prompt.autocomplete = async <TValue extends string>(
       name: "value",
       // @ts-expect-error prompts types have not been updated yet
       clearFirst: true,
-      message,
+      message: options?.message ?? "Type to filter or select and option below",
       choices: mappedChoices,
       initial: options?.initial
         ? mappedChoices.findIndex((choice) => choice.value === options.initial)
