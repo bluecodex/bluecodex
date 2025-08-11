@@ -9,12 +9,18 @@ import prompts from "prompts";
 // to using `prompts` or some other library.
 // =============================================================================
 
+/*
+ * Text
+ */
+
+export type PromptTextOptions = {
+  initial?: string;
+  validate?: (value: string) => boolean | string;
+};
+
 export async function prompt(
   message: string,
-  options?: {
-    initial?: string;
-    validate?: (value: string) => boolean | string;
-  },
+  options?: PromptTextOptions,
 ): Promise<string> {
   const { value } = await prompts({
     type: "text",
@@ -29,11 +35,17 @@ export async function prompt(
   return value;
 }
 
+/*
+ * Confirm
+ */
+
+export type PromptConfirmOptions = {
+  initial?: boolean;
+};
+
 prompt.confirm = async (
   message: string,
-  options?: {
-    initial?: boolean;
-  },
+  options?: PromptConfirmOptions,
 ): Promise<boolean> => {
   const { value } = await prompts({
     type: "confirm",
@@ -47,16 +59,22 @@ prompt.confirm = async (
   return value;
 };
 
+/*
+ * Number
+ */
+
+export type PromptNumberOptions = {
+  initial?: number;
+  validate?: (value: number) => boolean | string;
+  min?: number;
+  max?: number;
+  float?: boolean | { decimalPlaces: number };
+  step?: number;
+};
+
 prompt.number = async (
   message: string,
-  options?: {
-    initial?: number;
-    validate?: (value: string) => boolean | string;
-    min?: number;
-    max?: number;
-    float?: boolean | { decimalPlaces: number };
-    step?: number;
-  },
+  options?: PromptNumberOptions,
 ): Promise<number> => {
   const { value } = await prompts({
     type: "number",
@@ -81,7 +99,11 @@ prompt.number = async (
 
 // Select
 
-type PromptSelectChoice<TValue extends string> =
+export type PromptSelectOptions<TValue> = {
+  initial?: TValue;
+};
+
+export type PromptSelectChoice<TValue extends string> =
   | TValue
   | {
       title?: string;
@@ -92,9 +114,7 @@ type PromptSelectChoice<TValue extends string> =
 prompt.select = async <TValue extends string>(
   message: string,
   choices: PromptSelectChoice<TValue>[],
-  options?: {
-    initial?: TValue;
-  },
+  options?: PromptSelectOptions<TValue>,
 ): Promise<TValue> => {
   const mappedChoices = choices.map((choice) =>
     typeof choice === "string"
