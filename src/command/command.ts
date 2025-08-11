@@ -1,5 +1,6 @@
 import {
   type Blueprint,
+  type BlueprintDefinition,
   type RecordFromBlueprint,
 } from "../blueprint/blueprint";
 import {
@@ -26,13 +27,10 @@ export type CommandFn<B extends Blueprint> = (
   | Promise<void | number | boolean | null | RunResult | RunResultWithOutput>;
 
 export type CommandMeta<B extends Blueprint> = {
+  description?: string;
   todo?: boolean;
   local?: boolean;
-} & Partial<{
-  [P in B["parts"][number] as P["name"]]: {
-    description?: string;
-  };
-}>;
+};
 
 export type Command<B extends Blueprint = Blueprint> = {
   __objectType__: "command";
@@ -47,27 +45,34 @@ export type Command<B extends Blueprint = Blueprint> = {
 
 export function command<
   BlueprintToken extends string,
-  B extends ParseBlueprint<BlueprintToken>,
->(blueprintToken: BlueprintToken, fn: CommandFn<B>): Command<B> {
+  Definition extends BlueprintDefinition<BlueprintToken>,
+  B extends ParseBlueprint<Definition>,
+>(
+  definition: Definition,
+  fn: CommandFn<B>,
+  meta?: Omit<CommandMeta<B>, "todo" | "local">,
+): Command<B> {
   return ioc.registry.selfRegisterCommandIfEnabled({
     __objectType__: "command",
-    blueprint: parseBlueprint(blueprintToken),
+    blueprint: parseBlueprint(definition) as any,
     fn,
-    meta: {}, // TODO
+    meta: meta ?? {},
   }) as Command<B>;
 }
 
 command.todo = <
   BlueprintToken extends string,
-  B extends ParseBlueprint<BlueprintToken>,
+  Definition extends BlueprintDefinition<BlueprintToken>,
+  B extends ParseBlueprint<Definition>,
 >(
-  blueprintToken: BlueprintToken,
+  definition: Definition,
   fn: CommandFn<B>,
+  meta?: Omit<CommandMeta<B>, "todo" | "local">,
 ) => {
   return ioc.registry.selfRegisterCommandIfEnabled({
     __objectType__: "command",
-    blueprint: parseBlueprint(blueprintToken),
+    blueprint: parseBlueprint(definition),
     fn,
-    meta: { todo: true }, // TODO
+    meta: { ...meta, todo: true },
   }) as Command<B>;
 };

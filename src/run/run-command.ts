@@ -1,6 +1,10 @@
-import chalk from "chalk";
-
+import { InvalidArgInputError } from "../arg/errors/invalid-arg-input-error";
+import { MissingRequiredArgError } from "../arg/errors/missing-required-arg-error";
 import type { Command } from "../command/command";
+import { InvalidFlagInputError } from "../flag/errors/invalid-flag-input-error";
+import { MissingRequiredFlagError } from "../flag/errors/missing-required-flag-error";
+import { promptArg } from "../prompt/prompt-arg";
+import { promptFlag } from "../prompt/prompt-flag";
 import { parseCliArgv } from "./parse-cli-argv";
 
 export async function runCommand(
@@ -12,19 +16,28 @@ export async function runCommand(
     blueprint: command.blueprint,
   });
 
-  if (parsedArgv.type === "error") {
-    // TODO: auto-collect missing input
-    process.stderr.write(
-      parsedArgv.errors
-        .map((error) => `${chalk.redBright("[error]")} ${error.message}`)
-        .join("\n") + "\n",
-    );
+  const { data } = parsedArgv;
 
-    return 1;
+  if (parsedArgv.type === "error") {
+    for (const error of parsedArgv.errors) {
+      if (
+        error instanceof InvalidArgInputError ||
+        error instanceof MissingRequiredArgError
+      ) {
+        const { arg } = error;
+        data[arg.name] = await promptArg({ command, arg });
+      } else if (
+        error instanceof InvalidFlagInputError ||
+        error instanceof MissingRequiredFlagError
+      ) {
+        const { flag } = error;
+        data[flag.name] = await promptFlag({ command, flag });
+      }
+    }
   }
 
   try {
-    const response = await command.fn({ argv, ...parsedArgv.data } as any);
+    const response = await command.fn({ argv, ...data } as any);
 
     // If an exit code number is returned, use it
     if (typeof response === "number") return response;

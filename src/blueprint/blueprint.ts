@@ -2,12 +2,30 @@ import type { Arg } from "../arg/arg";
 import type { IsNullableArg } from "../arg/is-nullable-arg";
 import type {
   DataTypeByToken,
+  DataTypeSchemaByToken,
   DataTypeToken,
 } from "../data-type/data-type-constants";
 import type { Flag } from "../flag/flag";
 import type { IsNullableFlag } from "../flag/is-nullable-flag";
+import type { ExplodeBlueprintToken } from "./explode-blueprint-token";
 
 /* Types */
+
+export type BlueprintTokenExploded<
+  Name extends string = string,
+  Parts extends (Arg | Flag)[] = (Arg | Flag)[],
+> = {
+  __objectType__: "blueprint-token-exploded";
+  name: Name;
+  parts: Parts;
+};
+
+export type BlueprintSchema<Parts extends (Arg | Flag)[] = (Arg | Flag)[]> =
+  Partial<{
+    [P in Parts[number] as P["name"]]: P["type"] extends DataTypeToken
+      ? DataTypeSchemaByToken<P["type"]>
+      : {};
+  }>;
 
 export type Blueprint<
   Name extends string = string,
@@ -16,7 +34,15 @@ export type Blueprint<
   __objectType__: "blueprint";
   name: Name;
   parts: Parts;
+  schema: BlueprintSchema<Parts>;
 };
+
+export type BlueprintDefinition<BlueprintToken extends string = string> =
+  | BlueprintToken
+  | [
+      BlueprintToken,
+      BlueprintSchema<ExplodeBlueprintToken<BlueprintToken>["parts"]>,
+    ];
 
 /*
  * Type utilities

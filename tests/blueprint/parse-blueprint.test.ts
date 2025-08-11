@@ -11,6 +11,7 @@ test("just the name", () => {
     __objectType__: "blueprint",
     name: "foo",
     parts: [] as never,
+    schema: {},
   } as const);
 
   expectParseBlueprintMatch("foo");
@@ -30,6 +31,7 @@ test("with arg but no flag", () => {
         fallback: null,
       },
     ],
+    schema: {},
   } as const);
 
   expectParseBlueprintMatch("foo arg_one");
@@ -50,6 +52,7 @@ test("with flag but no arg", () => {
         fallback: null,
       },
     ],
+    schema: {},
   } as const);
 
   expectParseBlueprintMatch("foo --flag_one(-f):number");
@@ -95,9 +98,12 @@ test("with multiple args and flags", () => {
         fallback: null,
       },
     ],
+    schema: {},
   } as const);
 
   expectParseBlueprintMatch(
     "model:new name domain? --form=true --prefix(-p):string",
   );
 });
+
+// TODO: add tests with schema

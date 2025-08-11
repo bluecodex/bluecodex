@@ -1,46 +1,42 @@
-import type { Arg } from "../arg/arg";
-import { type ParseArg, parseArg } from "../arg/parse-arg";
-import type { Flag } from "../flag/flag";
-import { type ParseFlag, parseFlag } from "../flag/parse-flag";
-import type { Blueprint } from "./blueprint";
+import type {
+  Blueprint,
+  BlueprintDefinition,
+  BlueprintSchema,
+} from "./blueprint";
+import {
+  type ExplodeBlueprintToken,
+  explodeBlueprintToken,
+} from "./explode-blueprint-token";
 
-/*
- * Type parser
- */
+export type ParseBlueprint<
+  Definition extends BlueprintDefinition,
+  Exploded extends ExplodeBlueprintToken<
+    Definition extends string ? Definition : Definition[0]
+  > = ExplodeBlueprintToken<
+    Definition extends string ? Definition : Definition[0]
+  >,
+> = Blueprint<Exploded["name"], Exploded["parts"]>;
 
-type ParseBlueprintTokenPart<ArgOrFlagToken extends string> =
-  ArgOrFlagToken extends `-${string}`
-    ? ParseFlag<ArgOrFlagToken>
-    : ParseArg<ArgOrFlagToken>;
+export function parseBlueprint<Definition extends BlueprintDefinition>(
+  definition: Definition,
+): ParseBlueprint<Definition> {
+  if (typeof definition === "string") {
+    const { name, parts } = explodeBlueprintToken(definition);
 
-type ParseBlueprintCombinedTokenParts<ArgAndFlagTokens extends string> =
-  ArgAndFlagTokens extends `${infer FirstToken} ${infer RemainingTokens}`
-    ? [
-        ParseBlueprintTokenPart<FirstToken>,
-        ...ParseBlueprintCombinedTokenParts<RemainingTokens>,
-      ]
-    : [ParseBlueprintTokenPart<ArgAndFlagTokens>];
+    return {
+      __objectType__: "blueprint",
+      name,
+      parts,
+      schema: {},
+    } satisfies Blueprint<any, any> as ParseBlueprint<Definition>;
+  }
 
-export type ParseBlueprint<BlueprintToken extends string> =
-  BlueprintToken extends `${infer Name} ${infer ArgAndFlagTokens}`
-    ? Blueprint<Name, ParseBlueprintCombinedTokenParts<ArgAndFlagTokens>>
-    : Blueprint<BlueprintToken, never>;
+  const { name, parts } = explodeBlueprintToken(definition[0]);
 
-/*
- * Function
- */
-
-export function parseBlueprint<BlueprintToken extends string>(
-  blueprintToken: BlueprintToken,
-): ParseBlueprint<BlueprintToken> {
-  const [name, ...inputParts] = blueprintToken.split(" ");
-
-  const parts: (Arg | Flag)[] = inputParts.map((part) =>
-    part.startsWith("-") ? parseFlag(part) : parseArg(part),
-  );
-
-  return { __objectType__: "blueprint", name, parts } satisfies Blueprint<
-    any,
-    any
-  > as ParseBlueprint<BlueprintToken>;
+  return {
+    __objectType__: "blueprint",
+    name,
+    parts,
+    schema: definition[1],
+  } satisfies Blueprint<any, any> as ParseBlueprint<Definition>;
 }

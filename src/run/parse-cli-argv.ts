@@ -7,6 +7,8 @@ import { MissingRequiredArgError } from "../arg/errors/missing-required-arg-erro
 import type { Blueprint, RecordFromBlueprint } from "../blueprint/blueprint";
 import { falsyValues, truthyValues } from "../data-type/data-type-constants";
 import { castFlag } from "../flag/cast-flag";
+import { InvalidFlagInputError } from "../flag/errors/invalid-flag-input-error";
+import { MissingRequiredFlagError } from "../flag/errors/missing-required-flag-error";
 
 export function parseCliArgv<B extends Blueprint>({
   argv,
@@ -15,8 +17,8 @@ export function parseCliArgv<B extends Blueprint>({
   argv: string[];
   blueprint: B;
 }):
-  | { type: "error"; errors: Error[] }
-  | { type: "data"; data: RecordFromBlueprint<B> } {
+  | { type: "data"; data: RecordFromBlueprint<B> }
+  | { type: "error"; data: Partial<RecordFromBlueprint<B>>; errors: Error[] } {
   let parsedArgs: ReturnType<typeof nodeParseArgs>;
 
   const flags = blueprint.parts.filter(
@@ -47,11 +49,15 @@ export function parseCliArgv<B extends Blueprint>({
       }, {} as ParseArgsOptionsConfig),
     });
   } catch (error) {
-    // TODO: use custom error
-    return { type: "error", errors: [error as Error] };
+    throw error;
   }
 
-  const errors: Error[] = [];
+  const errors: Array<
+    | InvalidArgInputError
+    | MissingRequiredArgError
+    | MissingRequiredFlagError
+    | InvalidFlagInputError
+  > = [];
   const dataAcc: Record<string, unknown> = {};
 
   args.forEach((arg, index) => {
@@ -64,9 +70,9 @@ export function parseCliArgv<B extends Blueprint>({
       if (
         error instanceof InvalidArgInputError ||
         error instanceof MissingRequiredArgError
-      )
+      ) {
         errors.push(error);
-      else throw error;
+      } else throw error;
     }
   });
 
@@ -81,11 +87,20 @@ export function parseCliArgv<B extends Blueprint>({
         input: value ?? flag.fallback ?? "",
       });
     } catch (error) {
-      errors.push(error as Error);
+      if (
+        error instanceof MissingRequiredFlagError ||
+        error instanceof InvalidFlagInputError
+      ) {
+        errors.push(error);
+      } else throw error;
     }
   });
 
   return errors.length > 0
-    ? { type: "error", errors }
+    ? {
+        type: "error",
+        data: dataAcc as Partial<RecordFromBlueprint<B>>,
+        errors,
+      }
     : { type: "data", data: dataAcc as RecordFromBlueprint<B> };
 }

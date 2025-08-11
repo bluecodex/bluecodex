@@ -1,3 +1,11 @@
+import type {
+  PromptConfirmOptions,
+  PromptNumberOptions,
+  PromptSelectChoice,
+  PromptSelectOptions,
+  PromptTextOptions,
+} from "../prompt/prompt";
+
 export const dataTypeTokens = ["string", "boolean", "number"] as const;
 export type DataTypeToken = (typeof dataTypeTokens)[number];
 
@@ -34,3 +42,17 @@ export type DataTypeByToken<DT extends DataTypeToken> = DT extends "string"
     : DT extends "number"
       ? number
       : unknown;
+
+export type DataTypeSchemaByToken<DT extends DataTypeToken> =
+  DT extends "string"
+    ? (
+        | PromptTextOptions
+        | (PromptSelectOptions<string> & {
+            choices: PromptSelectChoice<string>[];
+          })
+      ) & { message?: string }
+    : DT extends "boolean"
+      ? PromptConfirmOptions & { message?: string }
+      : DT extends "number"
+        ? PromptNumberOptions & { message?: string }
+        : {};
