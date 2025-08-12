@@ -1,8 +1,4 @@
-import type {
-  Blueprint,
-  BlueprintDefinition,
-  BlueprintSchema,
-} from "./blueprint";
+import type { Blueprint, BlueprintDefinition } from "./blueprint";
 import {
   type ExplodeBlueprintToken,
   explodeBlueprintToken,
@@ -15,7 +11,11 @@ export type ParseBlueprint<
   > = ExplodeBlueprintToken<
     Definition extends string ? Definition : Definition[0]
   >,
-> = Blueprint<Exploded["name"], Exploded["parts"]>;
+> = Blueprint<
+  Exploded["name"],
+  Exploded["parts"],
+  Definition extends string ? {} : Definition[1]
+>;
 
 export function parseBlueprint<Definition extends BlueprintDefinition>(
   definition: Definition,
@@ -37,6 +37,6 @@ export function parseBlueprint<Definition extends BlueprintDefinition>(
     __objectType__: "blueprint",
     name,
     parts,
-    schema: definition[1],
+    schema: definition[1] as any,
   } satisfies Blueprint<any, any> as ParseBlueprint<Definition>;
 }

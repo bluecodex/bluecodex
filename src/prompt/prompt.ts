@@ -103,13 +103,20 @@ export type PromptSelectOptions<TValue> = {
   initial?: TValue;
 };
 
-export type PromptSelectChoice<TValue extends string> =
+export type PromptSelectChoice<TValue extends string = string> =
   | TValue
   | {
       title?: string;
       value: TValue;
       description?: string;
     };
+
+export type ValueFromPromptSelectChoice<Choice extends PromptSelectChoice> =
+  Choice extends string
+    ? Choice
+    : Choice extends { value: any }
+      ? Choice["value"]
+      : never;
 
 prompt.select = async <TValue extends string>(
   message: string,

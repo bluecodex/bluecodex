@@ -1,7 +1,7 @@
 import type { Arg } from "../arg/arg";
 import type { IsNullableArg } from "../arg/is-nullable-arg";
 import type {
-  DataTypeByToken,
+  DataTypeByTokenAndSchema,
   DataTypeSchemaByToken,
   DataTypeToken,
 } from "../data-type/data-type-constants";
@@ -30,11 +30,12 @@ export type BlueprintSchema<Parts extends (Arg | Flag)[] = (Arg | Flag)[]> =
 export type Blueprint<
   Name extends string = string,
   Parts extends (Arg | Flag)[] = (Arg | Flag)[],
+  Schema extends BlueprintSchema<Parts> = BlueprintSchema<Parts>,
 > = {
   __objectType__: "blueprint";
   name: Name;
   parts: Parts;
-  schema: BlueprintSchema<Parts>;
+  schema: Schema;
 };
 
 export type BlueprintDefinition<BlueprintToken extends string = string> =
@@ -57,7 +58,7 @@ type IsNullablePart<P extends Arg | Flag> = P extends Arg
 export type RecordFromBlueprint<B extends Blueprint> = {
   [P in B["parts"][number] as P["name"]]: P["type"] extends DataTypeToken
     ? IsNullablePart<P> extends true
-      ? DataTypeByToken<P["type"]> | null
-      : DataTypeByToken<P["type"]>
+      ? DataTypeByTokenAndSchema<P["type"], B["schema"][P["name"]]> | null
+      : DataTypeByTokenAndSchema<P["type"], B["schema"][P["name"]]>
     : P["type"];
 };

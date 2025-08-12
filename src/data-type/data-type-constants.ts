@@ -4,6 +4,7 @@ import type {
   PromptSelectChoice,
   PromptSelectOptions,
   PromptTextOptions,
+  ValueFromPromptSelectChoice,
 } from "../prompt/prompt";
 
 export const dataTypeTokens = ["string", "boolean", "number"] as const;
@@ -37,6 +38,19 @@ export type FalsyValue = (typeof falsyValues)[number];
 
 export type DataTypeByToken<DT extends DataTypeToken> = DT extends "string"
   ? string
+  : DT extends "boolean"
+    ? boolean
+    : DT extends "number"
+      ? number
+      : unknown;
+
+export type DataTypeByTokenAndSchema<
+  DT extends DataTypeToken,
+  Schema extends Partial<DataTypeSchemaByToken<DT>> | undefined,
+> = DT extends "string"
+  ? Schema extends { choices: any }
+    ? ValueFromPromptSelectChoice<Schema["choices"][number]>
+    : string
   : DT extends "boolean"
     ? boolean
     : DT extends "number"
