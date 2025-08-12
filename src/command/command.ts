@@ -26,7 +26,7 @@ export type CommandFn<B extends Blueprint> = (
   | RunResultWithOutput
   | Promise<void | number | boolean | null | RunResult | RunResultWithOutput>;
 
-export type CommandMeta<B extends Blueprint> = {
+export type CommandMeta = {
   description?: string;
   todo?: boolean;
   local?: boolean;
@@ -36,7 +36,7 @@ export type Command<B extends Blueprint = Blueprint> = {
   __objectType__: "command";
   blueprint: B;
   fn: CommandFn<B>;
-  meta: CommandMeta<B>;
+  meta: CommandMeta;
 };
 
 /*
@@ -50,7 +50,7 @@ export function command<
 >(
   definition: Definition,
   fn: CommandFn<B>,
-  meta?: Omit<CommandMeta<B>, "todo" | "local">,
+  meta?: Omit<CommandMeta, "todo" | "local">,
 ): Command<B> {
   return ioc.registry.selfRegisterCommandIfEnabled({
     __objectType__: "command",
@@ -67,7 +67,7 @@ command.todo = <
 >(
   definition: Definition,
   fn: CommandFn<B>,
-  meta?: Omit<CommandMeta<B>, "todo" | "local">,
+  meta?: Omit<CommandMeta, "todo" | "local">,
 ) => {
   return ioc.registry.selfRegisterCommandIfEnabled({
     __objectType__: "command",

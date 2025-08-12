@@ -1,10 +1,13 @@
+import type { Arg } from "../arg/arg";
 import { InvalidArgInputError } from "../arg/errors/invalid-arg-input-error";
+import { InvalidArgTypeError } from "../arg/errors/invalid-arg-type-error";
 import { MissingRequiredArgError } from "../arg/errors/missing-required-arg-error";
 import type { Command } from "../command/command";
 import { InvalidFlagInputError } from "../flag/errors/invalid-flag-input-error";
+import { InvalidFlagTypeError } from "../flag/errors/invalid-flag-type-error";
 import { MissingRequiredFlagError } from "../flag/errors/missing-required-flag-error";
-import { promptArg } from "../prompt/prompt-arg";
-import { promptFlag } from "../prompt/prompt-flag";
+import type { Flag } from "../flag/flag";
+import { promptPart } from "../prompt/prompt-part";
 import { parseCliArgv } from "./parse-cli-argv";
 
 export async function runCommand(
@@ -20,18 +23,37 @@ export async function runCommand(
 
   if (parsedArgv.type === "error") {
     for (const error of parsedArgv.errors) {
+      let part: Arg | Flag | null = null;
+
       if (
         error instanceof InvalidArgInputError ||
         error instanceof MissingRequiredArgError
       ) {
-        const { arg } = error;
-        data[arg.name] = await promptArg({ command, arg });
+        part = error.arg;
       } else if (
         error instanceof InvalidFlagInputError ||
         error instanceof MissingRequiredFlagError
       ) {
-        const { flag } = error;
-        data[flag.name] = await promptFlag({ command, flag });
+        part = error.flag;
+      } else {
+        // this should never happen, but if it happens, throw error
+        throw error;
+      }
+
+      if (part) {
+        // at this point part.type should never be an error,
+        // but if it is (in case of a bug), throw it
+        if (
+          part.type instanceof InvalidArgTypeError ||
+          part.type instanceof InvalidFlagTypeError
+        )
+          throw part.type;
+
+        data[part.name] = (await promptPart({
+          type: part.type,
+          name: part.name,
+          partSchema: command.blueprint.schema[part.name] ?? {},
+        })) as any;
       }
     }
   }

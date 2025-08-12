@@ -27,30 +27,26 @@ export function parseCliArgv<B extends Blueprint>({
 
   const args = blueprint.parts.filter((part) => part.__objectType__ === "arg");
 
-  try {
-    parsedArgs = nodeParseArgs({
-      args: argv,
-      allowPositionals: true,
-      options: flags.reduce((acc, flag) => {
-        const nodeParserFlag: ParseArgsOptionDescriptor = {
-          type: flag.type === "boolean" ? "boolean" : "string",
-        };
+  parsedArgs = nodeParseArgs({
+    args: argv,
+    allowPositionals: true,
+    options: flags.reduce((acc, flag) => {
+      const nodeParserFlag: ParseArgsOptionDescriptor = {
+        type: flag.type === "boolean" ? "boolean" : "string",
+      };
 
-        if (flag.short === true) {
-          nodeParserFlag.short = flag.name;
-        } else if (typeof flag.short === "string") {
-          nodeParserFlag.short = flag.short;
-        }
+      if (flag.short === true) {
+        nodeParserFlag.short = flag.name;
+      } else if (typeof flag.short === "string") {
+        nodeParserFlag.short = flag.short;
+      }
 
-        return {
-          ...acc,
-          [flag.name]: nodeParserFlag,
-        };
-      }, {} as ParseArgsOptionsConfig),
-    });
-  } catch (error) {
-    throw error;
-  }
+      return {
+        ...acc,
+        [flag.name]: nodeParserFlag,
+      };
+    }, {} as ParseArgsOptionsConfig),
+  });
 
   const errors: Array<
     | InvalidArgInputError

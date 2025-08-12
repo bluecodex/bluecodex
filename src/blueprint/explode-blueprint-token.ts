@@ -2,7 +2,7 @@ import type { Arg } from "../arg/arg";
 import { type ParseArg, parseArg } from "../arg/parse-arg";
 import type { Flag } from "../flag/flag";
 import { type ParseFlag, parseFlag } from "../flag/parse-flag";
-import type { BlueprintSchema, BlueprintTokenExploded } from "./blueprint";
+import type { BlueprintTokenExploded } from "./blueprint";
 
 /*
  * Type parser

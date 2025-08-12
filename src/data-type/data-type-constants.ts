@@ -57,7 +57,7 @@ export type DataTypeByTokenAndSchema<
       ? number
       : unknown;
 
-export type DataTypeSchemaByToken<DT extends DataTypeToken> =
+export type DataTypeSchemaByToken<DT extends DataTypeToken = DataTypeToken> =
   DT extends "string"
     ? (
         | PromptTextOptions
