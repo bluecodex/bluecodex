@@ -1,5 +1,5 @@
 import { type CastData, castData } from "../data-type/cast-data";
-import type { DataTypeToken } from "../data-type/data-type-constants";
+import type { DataTypeToken } from "../data-type/data-type-token";
 import { DataTypeCastBooleanError } from "../data-type/errors/data-type-cast-boolean-error";
 import type { DataTypeCastError } from "../data-type/errors/data-type-cast-error";
 import { DataTypeCastNumberError } from "../data-type/errors/data-type-cast-number-error";

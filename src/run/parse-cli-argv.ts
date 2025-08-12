@@ -5,7 +5,12 @@ import { castArg } from "../arg/cast-arg";
 import { InvalidArgInputError } from "../arg/errors/invalid-arg-input-error";
 import { MissingRequiredArgError } from "../arg/errors/missing-required-arg-error";
 import type { Blueprint, RecordFromBlueprint } from "../blueprint/blueprint";
-import { falsyValues, truthyValues } from "../data-type/data-type-constants";
+import {
+  type DataTypeToken,
+  falsyValues,
+  truthyValues,
+} from "../data-type/data-type-token";
+import { validateValueForDataTypeWithSchema } from "../data-type/validate-value-for-data-type-with-schema";
 import { castFlag } from "../flag/cast-flag";
 import { InvalidFlagInputError } from "../flag/errors/invalid-flag-input-error";
 import { MissingRequiredFlagError } from "../flag/errors/missing-required-flag-error";
@@ -58,10 +63,22 @@ export function parseCliArgv<B extends Blueprint>({
 
   args.forEach((arg, index) => {
     try {
-      dataAcc[arg.name] = castArg({
+      const value = (dataAcc[arg.name] = castArg({
         arg,
         input: parsedArgs.positionals[index] ?? arg.fallback ?? "",
-      });
+      }));
+
+      if (value !== null) {
+        const isValid = validateValueForDataTypeWithSchema({
+          type: arg.type as DataTypeToken, // TODO: create ValidArg type
+          schema: blueprint.schema[arg.name] ?? {},
+          value,
+        });
+
+        if (!isValid) throw new InvalidArgInputError(arg, value.toString());
+      }
+
+      dataAcc[arg.name] = value;
     } catch (error) {
       if (
         error instanceof InvalidArgInputError ||
@@ -73,15 +90,27 @@ export function parseCliArgv<B extends Blueprint>({
   });
 
   flags.forEach((flag) => {
-    let value = parsedArgs.values[flag.name];
-    if (typeof value === "boolean")
-      value = value ? truthyValues[0] : falsyValues[0];
+    let rawValue = parsedArgs.values[flag.name];
+    if (typeof rawValue === "boolean")
+      rawValue = rawValue ? truthyValues[0] : falsyValues[0];
 
     try {
-      dataAcc[flag.name] = castFlag({
+      const value = castFlag({
         flag,
-        input: value ?? flag.fallback ?? "",
+        input: rawValue ?? flag.fallback ?? "",
       });
+
+      if (value !== null) {
+        const isValid = validateValueForDataTypeWithSchema({
+          type: flag.type as DataTypeToken, // TODO: create ValidArg type
+          schema: blueprint.schema[flag.name] ?? {},
+          value,
+        });
+
+        if (!isValid) throw new InvalidFlagInputError(flag, value.toString());
+      }
+
+      dataAcc[flag.name] = value;
     } catch (error) {
       if (
         error instanceof MissingRequiredFlagError ||

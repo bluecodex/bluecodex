@@ -1,26 +1,23 @@
 import { castData } from "../data-type/cast-data";
-import type {
-  DataTypeByToken,
-  DataTypeToken,
-} from "../data-type/data-type-constants";
+import type { DataType } from "../data-type/data-type";
 import type { Arg } from "./arg";
 import { InvalidArgInputError } from "./errors/invalid-arg-input-error";
 import { InvalidArgTypeError } from "./errors/invalid-arg-type-error";
 import { MissingRequiredArgError } from "./errors/missing-required-arg-error";
 
-export function castArg<A extends Arg>({
-  arg,
-  input,
-}: {
-  arg: A;
+type Args = {
+  arg: Arg;
   input: string;
-}): A["type"] extends DataTypeToken ? DataTypeByToken<A["type"]> : A["type"] {
+};
+
+export function castArg({ arg, input }: Args): DataType | null {
   if (arg.type instanceof InvalidArgTypeError) {
     throw arg.type;
   }
 
-  if (!arg.optional && !input) {
-    throw new MissingRequiredArgError(arg);
+  if (!input) {
+    if (!arg.optional) throw new MissingRequiredArgError(arg);
+    return null;
   }
 
   try {

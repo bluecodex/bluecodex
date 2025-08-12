@@ -1,10 +1,10 @@
 import type { Arg } from "../arg/arg";
 import type { IsNullableArg } from "../arg/is-nullable-arg";
 import type {
-  DataTypeByTokenAndSchema,
-  DataTypeSchemaByToken,
-  DataTypeToken,
-} from "../data-type/data-type-constants";
+  DataTypeSchema,
+  DataTypeWithSchema,
+} from "../data-type/data-type-schema";
+import type { DataTypeToken } from "../data-type/data-type-token";
 import type { Flag } from "../flag/flag";
 import type { IsNullableFlag } from "../flag/is-nullable-flag";
 import type { ExplodeBlueprintToken } from "./explode-blueprint-token";
@@ -23,7 +23,7 @@ export type BlueprintTokenExploded<
 export type BlueprintSchema<Parts extends (Arg | Flag)[] = (Arg | Flag)[]> =
   Partial<{
     [P in Parts[number] as P["name"]]: P["type"] extends DataTypeToken
-      ? DataTypeSchemaByToken<P["type"]>
+      ? DataTypeSchema<P["type"]>
       : {};
   }>;
 
@@ -58,7 +58,7 @@ type IsNullablePart<P extends Arg | Flag> = P extends Arg
 export type RecordFromBlueprint<B extends Blueprint> = {
   [P in B["parts"][number] as P["name"]]: P["type"] extends DataTypeToken
     ? IsNullablePart<P> extends true
-      ? DataTypeByTokenAndSchema<P["type"], B["schema"][P["name"]]> | null
-      : DataTypeByTokenAndSchema<P["type"], B["schema"][P["name"]]>
+      ? DataTypeWithSchema<P["type"], B["schema"][P["name"]]> | null
+      : DataTypeWithSchema<P["type"], B["schema"][P["name"]]>
     : P["type"];
 };

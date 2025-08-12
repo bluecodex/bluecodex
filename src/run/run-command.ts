@@ -41,8 +41,7 @@ export async function runCommand(
       }
 
       if (part) {
-        // at this point part.type should never be an error,
-        // but if it is (in case of a bug), throw it
+        // TODO: create "ValidArg" and "ValidFlag" types
         if (
           part.type instanceof InvalidArgTypeError ||
           part.type instanceof InvalidFlagTypeError
@@ -52,7 +51,7 @@ export async function runCommand(
         data[part.name] = (await promptPart({
           type: part.type,
           name: part.name,
-          partSchema: command.blueprint.schema[part.name] ?? {},
+          schema: command.blueprint.schema[part.name] ?? {},
         })) as any;
       }
     }

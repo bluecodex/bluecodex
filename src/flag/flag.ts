@@ -1,4 +1,4 @@
-import type { DataTypeToken } from "../data-type/data-type-constants";
+import type { DataTypeToken } from "../data-type/data-type-token";
 import type { DataTypeCastError } from "../data-type/errors/data-type-cast-error";
 import type { FlagFallbackCastError } from "./errors/flag-fallback-cast-error";
 import type { FlagShortHasMoreThanOneCharError } from "./errors/flag-short-has-more-than-one-char-error";

@@ -1,4 +1,4 @@
-import type { DataTypeToken } from "../data-type/data-type-constants";
+import type { DataTypeToken } from "../data-type/data-type-token";
 import type { DataTypeCastError } from "../data-type/errors/data-type-cast-error";
 import type { ArgFallbackCastError } from "./errors/arg-fallback-cast-error";
 import type { InvalidArgTypeError } from "./errors/invalid-arg-type-error";

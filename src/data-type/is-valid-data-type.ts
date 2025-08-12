@@ -1,4 +1,4 @@
-import { type DataTypeToken, dataTypeTokens } from "./data-type-constants";
+import { type DataTypeToken, dataTypeTokens } from "./data-type-token";
 
 export type IsValidDataTypeToken<
   RawDataType extends string,

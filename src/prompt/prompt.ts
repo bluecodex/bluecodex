@@ -99,7 +99,7 @@ prompt.number = async (
 
 // Select
 
-export type PromptSelectOptions<TValue = unknown> = {
+export type PromptSelectOptions<TValue extends string = string> = {
   initial?: TValue;
 };
 
