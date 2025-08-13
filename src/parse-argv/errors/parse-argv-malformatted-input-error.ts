@@ -13,4 +13,8 @@ export class ParseArgvMalformattedInputError extends Error {
   get message() {
     return ioc.theme.parseArgvMalformattedInputErrorMessage(this);
   }
+
+  get reason() {
+    return "malformatted input";
+  }
 }

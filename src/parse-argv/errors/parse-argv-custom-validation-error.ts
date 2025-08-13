@@ -5,7 +5,7 @@ export class ParseArgvCustomValidationError extends Error {
   constructor(
     readonly field: ValidArg | ValidFlag,
     readonly value: unknown,
-    readonly reason: string | null,
+    readonly customMessage: string | null,
   ) {
     super();
   }
@@ -13,9 +13,13 @@ export class ParseArgvCustomValidationError extends Error {
   get message() {
     return [
       `Value "${this.value}" did not pass validation for ${this.field.__objectType__}`,
-      this.reason && `reason: ${this.reason}`,
+      this.customMessage && `reason: ${this.customMessage}`,
     ]
       .filter(Boolean)
       .join(", ");
+  }
+
+  get reason() {
+    return this.customMessage ?? "failed custom validation";
   }
 }

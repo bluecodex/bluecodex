@@ -18,4 +18,8 @@ export class ParseArgvInvalidChoiceError extends Error {
 
     return `Invalid choice "${this.value}" for ${this.field.__objectType__} ${this.field.name}. Valid choices: ${choicesString}`;
   }
+
+  get reason() {
+    return "invalid choice";
+  }
 }

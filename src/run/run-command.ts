@@ -1,5 +1,6 @@
 import { assertBlueprintIsValid } from "../blueprint/assert-blueprint-is-valid";
 import type { Command } from "../command/command";
+import { ioc } from "../ioc";
 import { parseArgv } from "../parse-argv/parse-argv";
 import { promptField } from "../prompt/prompt-field";
 
@@ -16,6 +17,16 @@ export async function runCommand(
   const { data } = parsedArgv;
 
   if (parsedArgv.type === "error") {
+    parsedArgv.errors.forEach((error) => {
+      console.log(
+        ioc.theme.styleDim("  └ ") +
+          ioc.theme.styleWarning(error.field.name) +
+          ioc.theme.styleDim(`: ${error.reason}`),
+      );
+    });
+
+    console.log(""); // some breathing room
+
     for (const error of parsedArgv.errors) {
       const field = error.field;
       const schema = command.blueprint.schema[field.name] ?? {};

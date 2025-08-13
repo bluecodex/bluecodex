@@ -12,4 +12,8 @@ export class ParseArgvNumberCannotFloatError extends Error {
   get message() {
     return `${this.field.__objectType__} expects an integer, ${this.value} given`;
   }
+
+  get reason() {
+    return "does not allow decimals";
+  }
 }

@@ -11,12 +11,18 @@ export class ParseArgvNumberOutOfRangeError extends Error {
     super();
   }
 
-  get message() {
-    const rangeText = ioc.theme.rangeText({
+  private get rangeText() {
+    return ioc.theme.rangeText({
       min: this.range.min,
       max: this.range.max,
     });
+  }
 
-    return `${this.field.__objectType__} ${this.field.name} expects a value ${rangeText}, ${this.value} given`;
+  get message() {
+    return `${this.field.__objectType__} ${this.field.name} expects a value ${this.rangeText}, ${this.value} given`;
+  }
+
+  get reason() {
+    return `must be ${this.rangeText}`;
   }
 }

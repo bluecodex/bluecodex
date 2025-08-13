@@ -37,6 +37,10 @@ export class ThemeClass {
     return chalk.greenBright(text);
   }
 
+  styleWarning(text: string) {
+    return chalk.yellowBright(text);
+  }
+
   styleError(text: string) {
     return chalk.redBright(text);
   }
