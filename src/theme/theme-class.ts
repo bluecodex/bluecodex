@@ -52,7 +52,7 @@ export class ThemeClass {
   rangeText({ min, max }: { min: number | null; max: number | null }) {
     if (min === null) return `<= ${max}`;
     if (max === null) return `>= ${min}`;
-    return `between (inclusive) ${min} and ${max}`;
+    return `>= ${min} and <= ${max}`;
   }
 
   /*
