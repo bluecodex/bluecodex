@@ -38,14 +38,14 @@ export function explodeBlueprintToken<BlueprintToken extends string>(
 ): ExplodeBlueprintToken<BlueprintToken> {
   const [name, ...inputParts] = blueprintToken.split(" ");
 
-  const parts: (Arg | Flag)[] = inputParts.map((part) =>
+  const fields: (Arg | Flag)[] = inputParts.map((part) =>
     part.startsWith("-") ? parseFlag(part) : parseArg(part),
   );
 
   return {
     __objectType__: "blueprint-token-exploded",
     name,
-    parts,
+    fields,
   } satisfies BlueprintTokenExploded<
     any,
     any

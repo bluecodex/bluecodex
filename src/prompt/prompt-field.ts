@@ -1,17 +1,19 @@
+import type { ValidArg } from "../arg/arg";
 import type { DataTypeSchema } from "../data-type/data-type-schema";
-import type { DataTypeToken } from "../data-type/data-type-token";
+import type { ValidFlag } from "../flag/flag";
 import { prompt } from "../prompt/prompt";
 
 type Args = {
-  type: DataTypeToken;
-  name: string;
+  field: ValidArg | ValidFlag;
   schema: DataTypeSchema;
 };
 
-export async function promptPart({ type, name, schema: uncastSchema }: Args) {
-  switch (type) {
+export async function promptField({ field, schema: uncastSchema }: Args) {
+  const name = field.name;
+  
+  switch (field.type) {
     case "string": {
-      const argSchema = uncastSchema as DataTypeSchema<typeof type>;
+      const argSchema = uncastSchema as DataTypeSchema<typeof field.type>;
 
       if ("choices" in argSchema && argSchema.choices) {
         return prompt.select(
@@ -28,7 +30,7 @@ export async function promptPart({ type, name, schema: uncastSchema }: Args) {
     }
 
     case "boolean": {
-      const argSchema = uncastSchema as DataTypeSchema<typeof type>;
+      const argSchema = uncastSchema as DataTypeSchema<typeof field.type>;
 
       return prompt.confirm(
         argSchema.message ?? `Provide confirmation for ${name}`,
@@ -37,7 +39,7 @@ export async function promptPart({ type, name, schema: uncastSchema }: Args) {
     }
 
     case "number": {
-      const argSchema = uncastSchema as DataTypeSchema<typeof type>;
+      const argSchema = uncastSchema as DataTypeSchema<typeof field.type>;
 
       return prompt.number(argSchema.message ?? `Enter a number for ${name}`, {
         initial: argSchema.initial,

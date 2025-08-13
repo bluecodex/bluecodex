@@ -1,11 +1,11 @@
-import type { Arg } from "../arg/arg";
+import type { Arg, ValidArg } from "../arg/arg";
 import type { IsNullableArg } from "../arg/is-nullable-arg";
 import type {
   DataTypeSchema,
   DataTypeWithSchema,
 } from "../data-type/data-type-schema";
 import type { DataTypeToken } from "../data-type/data-type-token";
-import type { Flag } from "../flag/flag";
+import type { Flag, ValidFlag } from "../flag/flag";
 import type { IsNullableFlag } from "../flag/is-nullable-flag";
 import type { ExplodeBlueprintToken } from "./explode-blueprint-token";
 
@@ -13,36 +13,42 @@ import type { ExplodeBlueprintToken } from "./explode-blueprint-token";
 
 export type BlueprintTokenExploded<
   Name extends string = string,
-  Parts extends (Arg | Flag)[] = (Arg | Flag)[],
+  Fields extends (Arg | Flag)[] = (Arg | Flag)[],
 > = {
   __objectType__: "blueprint-token-exploded";
   name: Name;
-  parts: Parts;
+  fields: Fields;
 };
 
-export type BlueprintSchema<Parts extends (Arg | Flag)[] = (Arg | Flag)[]> =
+export type BlueprintSchema<Fields extends (Arg | Flag)[] = (Arg | Flag)[]> =
   Partial<{
-    [P in Parts[number] as P["name"]]: P["type"] extends DataTypeToken
-      ? DataTypeSchema<P["type"]>
+    [F in Fields[number] as F["name"]]: F["type"] extends DataTypeToken
+      ? DataTypeSchema<F["type"]>
       : {};
   }>;
 
 export type Blueprint<
   Name extends string = string,
-  Parts extends (Arg | Flag)[] = (Arg | Flag)[],
-  Schema extends BlueprintSchema<Parts> = BlueprintSchema<Parts>,
+  Fields extends (Arg | Flag)[] = (Arg | Flag)[],
+  Schema extends BlueprintSchema<Fields> = BlueprintSchema<Fields>,
 > = {
   __objectType__: "blueprint";
   name: Name;
-  parts: Parts;
+  fields: Fields;
   schema: Schema;
 };
+
+export type ValidBlueprint<
+  Name extends string = string,
+  Fields extends (ValidArg | ValidFlag)[] = (ValidArg | ValidFlag)[],
+  Schema extends BlueprintSchema<Fields> = BlueprintSchema<Fields>,
+> = Blueprint<Name, Fields, Schema>;
 
 export type BlueprintDefinition<BlueprintToken extends string = string> =
   | BlueprintToken
   | [
       BlueprintToken,
-      BlueprintSchema<ExplodeBlueprintToken<BlueprintToken>["parts"]>,
+      BlueprintSchema<ExplodeBlueprintToken<BlueprintToken>["fields"]>,
     ];
 
 /*
@@ -56,9 +62,9 @@ type IsNullablePart<P extends Arg | Flag> = P extends Arg
     : false;
 
 export type RecordFromBlueprint<B extends Blueprint> = {
-  [P in B["parts"][number] as P["name"]]: P["type"] extends DataTypeToken
-    ? IsNullablePart<P> extends true
-      ? DataTypeWithSchema<P["type"], B["schema"][P["name"]]> | null
-      : DataTypeWithSchema<P["type"], B["schema"][P["name"]]>
-    : P["type"];
+  [F in B["fields"][number] as F["name"]]: F["type"] extends DataTypeToken
+    ? IsNullablePart<F> extends true
+      ? DataTypeWithSchema<F["type"], B["schema"][F["name"]]> | null
+      : DataTypeWithSchema<F["type"], B["schema"][F["name"]]>
+    : F["type"];
 };

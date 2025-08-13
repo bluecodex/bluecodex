@@ -10,7 +10,7 @@ test("just the name", () => {
   const { expectParseBlueprintMatch } = createParseBlueprintMatcher({
     __objectType__: "blueprint",
     name: "foo",
-    parts: [] as never,
+    fields: [] as never,
     schema: {},
   } as const);
 
@@ -21,7 +21,7 @@ test("with arg but no flag", () => {
   const { expectParseBlueprintMatch } = createParseBlueprintMatcher({
     __objectType__: "blueprint",
     name: "foo",
-    parts: [
+    fields: [
       {
         __objectType__: "arg",
         name: "arg_one",
@@ -41,7 +41,7 @@ test("with flag but no arg", () => {
   const { expectParseBlueprintMatch } = createParseBlueprintMatcher({
     __objectType__: "blueprint",
     name: "foo",
-    parts: [
+    fields: [
       {
         __objectType__: "flag",
         name: "flag_one",
@@ -62,7 +62,7 @@ test("with multiple args and flags", () => {
   const { expectParseBlueprintMatch } = createParseBlueprintMatcher({
     __objectType__: "blueprint",
     name: "model:new",
-    parts: [
+    fields: [
       {
         __objectType__: "arg",
         name: "name",

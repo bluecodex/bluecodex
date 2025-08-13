@@ -22,3 +22,11 @@ export type Arg<
   explicitType: ExplicitType;
   fallback: Fallback;
 };
+
+export type ValidArg<
+  Name extends string = string,
+  Optional extends boolean = boolean,
+  Type extends DataTypeToken = DataTypeToken,
+  ExplicitType extends boolean = boolean,
+  Fallback extends any | null = any | null,
+> = Arg<Name, Optional, Type, ExplicitType, Fallback>;

@@ -5,10 +5,6 @@ import type { FlagShortHasMoreThanOneCharError } from "./errors/flag-short-has-m
 import type { FlagShortMalformattedError } from "./errors/flag-short-malformed-error";
 import type { InvalidFlagTypeError } from "./errors/invalid-flag-type-error";
 
-/*
- * Types
- */
-
 export type Flag<
   Name extends string = string,
   Short extends
@@ -40,3 +36,12 @@ export type Flag<
   explicitType: ExplicitType;
   fallback: Fallback;
 };
+
+export type ValidFlag<
+  Name extends string = string,
+  Short extends string | true | null = string | true | null,
+  Required extends boolean = boolean,
+  Type extends DataTypeToken = DataTypeToken,
+  ExplicitType extends boolean = boolean,
+  Fallback extends any | null = any | null,
+> = Flag<Name, Short, Required, Type, ExplicitType, Fallback>;

@@ -6,6 +6,7 @@ import type { Arg } from "../arg/arg";
 import type { Command } from "../command/command";
 import type { Flag } from "../flag/flag";
 import { ioc } from "../ioc";
+import { ParseArgvMalformattedInputError } from "../parse-argv/errors/parse-argv-malformatted-input-error";
 
 export class ThemeClass {
   /*
@@ -41,6 +42,16 @@ export class ThemeClass {
   }
 
   /*
+   * Data type
+   */
+
+  rangeText({ min, max }: { min: number | null; max: number | null }) {
+    if (min === null) return `<= ${max}`;
+    if (max === null) return `>= ${min}`;
+    return `between (inclusive) ${min} and ${max}`;
+  }
+
+  /*
    * Arg
    */
 
@@ -69,10 +80,6 @@ export class ThemeClass {
     ]
       .filter(Boolean)
       .join("");
-  }
-
-  invalidArgInputErrorMessage(arg: Arg, input: string) {
-    return `Invalid input ${this.styleError(input)} for arg ${this.styleBold(`${arg.name}:${arg.type}`)}`;
   }
 
   /*
@@ -131,7 +138,7 @@ export class ThemeClass {
   }
 
   commandParts(command: Command) {
-    return command.blueprint.parts
+    return command.blueprint.fields
       .map((part) =>
         part.__objectType__ === "flag" ? this.flag(part) : this.arg(part),
       )
@@ -247,6 +254,16 @@ export class ThemeClass {
         "It's not in your $PATH, an npm package executable, or a bluecodex command.",
       )
     );
+  }
+
+  /*
+   * Parse argv
+   */
+
+  parseArgvMalformattedInputErrorMessage(
+    error: ParseArgvMalformattedInputError,
+  ) {
+    return `Invalid input ${this.styleError(error.input)} for ${error.field.__objectType__} ${this.styleBold(`${error.field.name}:${error.field.type}`)}`;
   }
 
   /*

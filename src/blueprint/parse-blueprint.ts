@@ -13,7 +13,7 @@ export type ParseBlueprint<
   >,
 > = Blueprint<
   Exploded["name"],
-  Exploded["parts"],
+  Exploded["fields"],
   Definition extends string ? {} : Definition[1]
 >;
 
@@ -21,22 +21,22 @@ export function parseBlueprint<Definition extends BlueprintDefinition>(
   definition: Definition,
 ): ParseBlueprint<Definition> {
   if (typeof definition === "string") {
-    const { name, parts } = explodeBlueprintToken(definition);
+    const { name, fields } = explodeBlueprintToken(definition);
 
     return {
       __objectType__: "blueprint",
       name,
-      parts,
+      fields,
       schema: {},
     } satisfies Blueprint<any, any> as ParseBlueprint<Definition>;
   }
 
-  const { name, parts } = explodeBlueprintToken(definition[0]);
+  const { name, fields } = explodeBlueprintToken(definition[0]);
 
   return {
     __objectType__: "blueprint",
     name,
-    parts,
+    fields,
     schema: definition[1] as any,
   } satisfies Blueprint<any, any> as ParseBlueprint<Definition>;
 }
