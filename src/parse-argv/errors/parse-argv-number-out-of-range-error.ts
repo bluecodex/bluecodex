@@ -6,7 +6,7 @@ export class ParseArgvNumberOutOfRangeError extends Error {
   constructor(
     readonly field: ValidArg | ValidFlag,
     readonly range: { min: number | null; max: number | null },
-    readonly input: number,
+    readonly value: number,
   ) {
     super();
   }
@@ -17,6 +17,6 @@ export class ParseArgvNumberOutOfRangeError extends Error {
       max: this.range.max,
     });
 
-    return `${this.field.__objectType__} ${this.field.name} expects a value ${rangeText}, ${this.input} given`;
+    return `${this.field.__objectType__} ${this.field.name} expects a value ${rangeText}, ${this.value} given`;
   }
 }

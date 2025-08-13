@@ -10,32 +10,32 @@ import { ParseArgvNumberOutOfRangeError } from "./errors/parse-argv-number-out-o
 type Args<F extends ValidArg | ValidFlag> = {
   field: F;
   schema: DataTypeSchema<F["type"]>;
-  input: DataType<F["type"]>;
+  value: DataType<F["type"]>;
 };
 
-export function assertInputValidForFieldAndSchema<
+export function assertValueValidForFieldAndSchema<
   F extends ValidArg | ValidFlag,
->({ field, schema: uncastSchema, input: uncastInput }: Args<F>) {
+>({ field, schema: uncastSchema, value: uncastValue }: Args<F>) {
   switch (field.type) {
     case "string": {
       const schema = uncastSchema as DataTypeSchema<typeof field.type>;
-      const input = uncastInput as DataType<typeof field.type>;
+      const value = uncastValue as DataType<typeof field.type>;
 
       if (
         "choices" in schema &&
         schema.choices &&
-        !schema.choices.includes(input)
+        !schema.choices.includes(value)
       ) {
-        throw new ParseArgvInvalidChoiceError(field, schema.choices, input);
+        throw new ParseArgvInvalidChoiceError(field, schema.choices, value);
       }
 
       if ("validate" in schema && schema.validate) {
-        const result = schema.validate(input);
+        const result = schema.validate(value);
 
         if (result !== true) {
           throw new ParseArgvCustomValidationError(
             field,
-            input,
+            value,
             typeof result === "string" ? result : null,
           );
         }
@@ -46,27 +46,27 @@ export function assertInputValidForFieldAndSchema<
 
     case "number": {
       const schema = uncastSchema as DataTypeSchema<typeof field.type>;
-      const input = uncastInput as DataType<typeof field.type>;
+      const value = uncastValue as DataType<typeof field.type>;
 
       if (
-        (typeof schema.min !== "undefined" && input < schema.min) ||
-        (typeof schema.max !== "undefined" && input > schema.max)
+        (typeof schema.min !== "undefined" && value < schema.min) ||
+        (typeof schema.max !== "undefined" && value > schema.max)
       ) {
         const range = { min: schema.min ?? null, max: schema.max ?? null };
-        throw new ParseArgvNumberOutOfRangeError(field, range, input);
+        throw new ParseArgvNumberOutOfRangeError(field, range, value);
       }
 
-      if (!schema.float && Math.abs(input) !== input) {
-        throw new ParseArgvNumberCannotFloatError(field, input);
+      if (!schema.float && Math.abs(value) !== value) {
+        throw new ParseArgvNumberCannotFloatError(field, value);
       }
 
       if (schema.validate) {
-        const result = schema.validate(input);
+        const result = schema.validate(value);
 
         if (result !== true) {
           throw new ParseArgvCustomValidationError(
             field,
-            input,
+            value,
             typeof result === "string" ? result : null,
           );
         }

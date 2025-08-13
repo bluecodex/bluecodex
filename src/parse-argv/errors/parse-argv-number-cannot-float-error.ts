@@ -4,12 +4,12 @@ import type { ValidFlag } from "../../flag/flag";
 export class ParseArgvNumberCannotFloatError extends Error {
   constructor(
     readonly field: ValidArg | ValidFlag,
-    readonly input: number,
+    readonly value: number,
   ) {
     super();
   }
 
   get message() {
-    return `${this.field.__objectType__} expects an integer, ${this.input} given`;
+    return `${this.field.__objectType__} expects an integer, ${this.value} given`;
   }
 }

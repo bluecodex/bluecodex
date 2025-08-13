@@ -6,7 +6,7 @@ import type {
   ValidBlueprint,
 } from "../blueprint/blueprint";
 import { falsyValues, truthyValues } from "../data-type/data-type-token";
-import { assertInputValidForFieldAndSchema } from "./assert-input-valid-for-field-and-schema";
+import { assertValueValidForFieldAndSchema } from "./assert-value-valid-for-field-and-schema";
 import { parseArgvArg } from "./parse-argv-arg";
 import {
   type ParseArgvError,
@@ -64,7 +64,7 @@ export function parseArgv<VB extends ValidBlueprint>({
       }));
 
       if (value !== null) {
-        assertInputValidForFieldAndSchema({
+        assertValueValidForFieldAndSchema({
           field: arg,
           schema: blueprint.schema[arg.name] ?? {},
           value,
@@ -90,7 +90,7 @@ export function parseArgv<VB extends ValidBlueprint>({
       });
 
       if (value !== null) {
-        assertInputValidForFieldAndSchema({
+        assertValueValidForFieldAndSchema({
           field: flag,
           schema: blueprint.schema[flag.name] ?? {},
           value,
