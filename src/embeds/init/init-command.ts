@@ -4,7 +4,7 @@ import * as path from "node:path";
 import { command } from "../../command/command";
 import { ioc } from "../../ioc";
 
-export const initCommand = command("init", async () => {
+export const initCommand = command("init", {}, async () => {
   if (ioc.project.isInitialized) {
     console.log(
       `You've already initialized this project, these are the files sourced:`,

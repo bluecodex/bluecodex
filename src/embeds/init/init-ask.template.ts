@@ -1,6 +1,6 @@
 import { command, prompt } from "../../out/main";
 
-command("foo bar", async ({ bar }) => {
+command("foo bar", {}, async ({ bar }) => {
   let sure = false;
   while (!sure) {
     sure = await prompt.confirm(`Are you sure that bar is "${bar}"?`);

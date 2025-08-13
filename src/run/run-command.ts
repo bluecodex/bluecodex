@@ -13,6 +13,7 @@ export async function runCommand(
   const parsedArgv = parseArgv({
     argv,
     blueprint: command.blueprint,
+    schema: command.schema,
   });
   const { data } = parsedArgv;
 
@@ -29,7 +30,7 @@ export async function runCommand(
 
     for (const error of parsedArgv.errors) {
       const field = error.field;
-      const schema = command.blueprint.schema[field.name] ?? {};
+      const schema = command.schema[field.name] ?? {};
       data[field.name] = await promptField({ field, schema });
     }
   }

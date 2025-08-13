@@ -1,9 +1,6 @@
 import { expect } from "vitest";
 
-import {
-  type Blueprint,
-  type BlueprintDefinition,
-} from "../../../src/blueprint/blueprint";
+import { type Blueprint } from "../../../src/blueprint/blueprint";
 import {
   type ParseBlueprint,
   parseBlueprint,
@@ -24,10 +21,7 @@ type IsLiteralBlueprint<B extends Blueprint> = B["name"] extends `${infer _}`
 export function createParseBlueprintMatcher<B extends Blueprint>(
   expected: B & IsLiteralBlueprint<B>,
 ) {
-  const expectParseBlueprintMatch = <
-    BlueprintToken extends string,
-    Definition extends BlueprintDefinition<BlueprintToken>,
-  >(
+  const expectParseBlueprintMatch = <BlueprintToken extends string>(
     blueprintToken: BlueprintToken &
       (ParseBlueprint<BlueprintToken> extends B ? unknown : never),
   ) => {

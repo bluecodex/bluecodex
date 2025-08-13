@@ -71,7 +71,7 @@ function printSection(
   console.log(""); // Some breathing room
 }
 
-export const helpCommand = command("help", () => {
+export const helpCommand = command("help", {}, () => {
   console.log(""); // Some breathing room
 
   const allCommands = ioc.registry.commands.filter(

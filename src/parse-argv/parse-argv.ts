@@ -1,10 +1,8 @@
 import { parseArgs as nodeParseArgs } from "node:util";
 import type { ParseArgsOptionDescriptor, ParseArgsOptionsConfig } from "util";
 
-import type {
-  RecordFromBlueprint,
-  ValidBlueprint,
-} from "../blueprint/blueprint";
+import type { ValidBlueprint } from "../blueprint/blueprint";
+import type { CommandSchema } from "../command/command";
 import { falsyValues, truthyValues } from "../data-type/data-type-token";
 import { assertValueValidForFieldAndSchema } from "./assert-value-valid-for-field-and-schema";
 import { parseArgvArg } from "./parse-argv-arg";
@@ -13,18 +11,24 @@ import {
   assertIsParseCliArgvError,
 } from "./parse-argv-error";
 import { parseArgvFlag } from "./parse-argv-flag";
+import type { ParsedArgvData } from "./parsed-argv-data";
 
-export function parseArgv<VB extends ValidBlueprint>({
+export function parseArgv<
+  VB extends ValidBlueprint,
+  CS extends CommandSchema<VB>,
+>({
   argv,
   blueprint,
+  schema,
 }: {
   argv: string[];
   blueprint: VB;
+  schema: CS;
 }):
-  | { type: "data"; data: RecordFromBlueprint<VB> }
+  | { type: "data"; data: ParsedArgvData<VB, CS> }
   | {
       type: "error";
-      data: Partial<RecordFromBlueprint<VB>>;
+      data: Partial<ParsedArgvData<VB, CS>>;
       errors: ParseArgvError[];
     } {
   let parsedArgs: ReturnType<typeof nodeParseArgs>;
@@ -66,7 +70,7 @@ export function parseArgv<VB extends ValidBlueprint>({
       if (value !== null) {
         assertValueValidForFieldAndSchema({
           field: arg,
-          schema: blueprint.schema[arg.name] ?? {},
+          schema: schema[arg.name as keyof typeof schema] ?? {},
           value,
         });
       }
@@ -92,7 +96,7 @@ export function parseArgv<VB extends ValidBlueprint>({
       if (value !== null) {
         assertValueValidForFieldAndSchema({
           field: flag,
-          schema: blueprint.schema[flag.name] ?? {},
+          schema: schema[flag.name as keyof typeof schema] ?? {},
           value,
         });
       }
@@ -107,8 +111,8 @@ export function parseArgv<VB extends ValidBlueprint>({
   return errors.length > 0
     ? {
         type: "error",
-        data: dataAcc as Partial<RecordFromBlueprint<VB>>,
+        data: dataAcc as Partial<ParsedArgvData<VB, CS>>,
         errors,
       }
-    : { type: "data", data: dataAcc as RecordFromBlueprint<VB> };
+    : { type: "data", data: dataAcc as ParsedArgvData<VB, CS> };
 }

@@ -24,7 +24,7 @@ export type DataTypeSchema<DT extends DataTypeToken = DataTypeToken> =
 
 export type DataTypeWithSchema<
   DT extends DataTypeToken,
-  Schema extends Partial<DataTypeSchema<DT>> | undefined,
+  Schema extends DataTypeSchema<DT> | undefined,
 > = DT extends "string"
   ? Schema extends { choices: any }
     ? ValueFromPromptSelectChoice<Schema["choices"][number]>
