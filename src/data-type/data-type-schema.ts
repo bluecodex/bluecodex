@@ -5,9 +5,7 @@ export type DataTypeSchema<DT extends DataTypeToken = DataTypeToken> =
     ? {
         initial?: string;
         validate?:
-          | Array<
-              string | { title?: string; value: string; description?: string }
-            >
+          | Array<string | { value: string; description?: string }>
           | ((value: string) => boolean | string);
         message?: string;
       }

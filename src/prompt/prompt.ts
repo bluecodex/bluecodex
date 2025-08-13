@@ -95,21 +95,14 @@ prompt.number = async (
 
 prompt.select = async <TValue extends string>(
   message: string,
-  choices: Array<
-    | TValue
-    | {
-        title?: string;
-        value: TValue;
-        description?: string;
-      }
-  >,
+  choices: Array<TValue | { value: TValue; description?: string }>,
   options?: { initial?: TValue },
 ): Promise<TValue> => {
   const mappedChoices = choices.map((choice) =>
     typeof choice === "string"
       ? { title: choice, value: choice }
       : {
-          title: choice.title ?? choice.value,
+          title: choice.value,
           value: choice.value,
           description: choice.description,
         },
