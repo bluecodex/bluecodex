@@ -24,7 +24,9 @@ export function assertValueValidForFieldAndSchema<
       if (
         "choices" in schema &&
         schema.choices &&
-        !schema.choices.includes(value)
+        !schema.choices
+          .map((choice) => (typeof choice === "string" ? choice : choice.value))
+          .includes(value)
       ) {
         throw new ParseArgvInvalidChoiceError(field, schema.choices, value);
       }
