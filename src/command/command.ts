@@ -14,8 +14,8 @@ import type { ExpandObject } from "../types/object-type-utils";
  * Types
  */
 
-export type CommandFn<B extends Blueprint, CS extends CommandSchema<B>> = (
-  data: ExpandObject<{ argv: string[] } & ParsedArgvData<B, CS>>,
+export type CommandFn<B extends Blueprint> = (
+  data: ExpandObject<{ argv: string[] } & ParsedArgvData<B>>,
 ) =>
   | void
   | number
@@ -30,14 +30,11 @@ export type CommandMeta = {
   local?: boolean;
 };
 
-export type Command<
-  B extends Blueprint = Blueprint,
-  CS extends CommandSchema<B> = CommandSchema<B>,
-> = {
+export type Command<B extends Blueprint = Blueprint> = {
   __objectType__: "command";
   blueprint: B;
-  schema: CS;
-  fn: CommandFn<B, CS>;
+  schema: CommandSchema<B>;
+  fn: CommandFn<B>;
   meta: CommandMeta;
 };
 
@@ -56,35 +53,33 @@ export type CommandSchema<B extends Blueprint = Blueprint> = {
 export function command<
   BlueprintToken extends string,
   B extends ParseBlueprint<BlueprintToken>,
-  CS extends CommandSchema<B>,
 >(
   blueprintToken: BlueprintToken,
-  schema: CS,
-  fn: CommandFn<B, CS>,
-): Command<B, CS> {
+  schema: CommandSchema<B>,
+  fn: CommandFn<B>,
+): Command<B> {
   return ioc.registry.selfRegisterCommandIfEnabled({
     __objectType__: "command",
     blueprint: parseBlueprint(blueprintToken),
     schema,
     fn,
     meta: {},
-  }) as Command<B, CS>;
+  }) as Command<B>;
 }
 
 command.todo = <
   BlueprintToken extends string,
   B extends ParseBlueprint<BlueprintToken>,
-  CS extends CommandSchema<B>,
 >(
   blueprintToken: BlueprintToken,
-  schema: CS,
-  fn: CommandFn<B, CS>,
-): Command<B, CS> => {
+  schema: CommandSchema<B>,
+  fn: CommandFn<B>,
+): Command<B> => {
   return ioc.registry.selfRegisterCommandIfEnabled({
     __objectType__: "command",
     blueprint: parseBlueprint(blueprintToken),
     schema,
     fn,
     meta: { todo: true },
-  }) as Command<B, CS>;
+  }) as Command<B>;
 };

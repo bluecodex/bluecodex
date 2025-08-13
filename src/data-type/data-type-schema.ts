@@ -1,36 +1,26 @@
-import type {
-  PromptConfirmOptions,
-  PromptNumberOptions,
-  PromptSelectChoice,
-  PromptSelectOptions,
-  PromptTextOptions,
-  ValueFromPromptSelectChoice,
-} from "../prompt/prompt";
 import type { DataTypeToken } from "./data-type-token";
 
 export type DataTypeSchema<DT extends DataTypeToken = DataTypeToken> =
   DT extends "string"
-    ? (
-        | PromptTextOptions
-        | (PromptSelectOptions & {
-            choices: PromptSelectChoice[];
-          })
-      ) & { message?: string }
+    ? {
+        initial?: string;
+        validate?:
+          | Array<
+              string | { title?: string; value: string; description?: string }
+            >
+          | ((value: string) => boolean | string);
+        message?: string;
+      }
     : DT extends "boolean"
-      ? PromptConfirmOptions & { message?: string }
+      ? { initial?: boolean; message?: string }
       : DT extends "number"
-        ? PromptNumberOptions & { message?: string }
+        ? {
+            initial?: number;
+            validate?: (value: number) => boolean | string;
+            min?: number;
+            max?: number;
+            float?: boolean | { decimalPlaces: number };
+            step?: number;
+            message?: string;
+          }
         : {};
-
-export type DataTypeWithSchema<
-  DT extends DataTypeToken,
-  Schema extends DataTypeSchema<DT> | undefined,
-> = DT extends "string"
-  ? Schema extends { choices: any }
-    ? ValueFromPromptSelectChoice<Schema["choices"][number]>
-    : string
-  : DT extends "boolean"
-    ? boolean
-    : DT extends "number"
-      ? number
-      : unknown;

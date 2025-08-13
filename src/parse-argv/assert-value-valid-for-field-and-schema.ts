@@ -21,25 +21,24 @@ export function assertValueValidForFieldAndSchema<
       const schema = uncastSchema as DataTypeSchema<typeof field.type>;
       const value = uncastValue as DataType<typeof field.type>;
 
-      if (
-        "choices" in schema &&
-        schema.choices &&
-        !schema.choices
-          .map((choice) => (typeof choice === "string" ? choice : choice.value))
-          .includes(value)
-      ) {
-        throw new ParseArgvInvalidChoiceError(field, schema.choices, value);
-      }
+      if (schema.validate) {
+        if (typeof schema.validate === "function") {
+          const result = schema.validate(value);
 
-      if ("validate" in schema && schema.validate) {
-        const result = schema.validate(value);
-
-        if (result !== true) {
-          throw new ParseArgvCustomValidationError(
-            field,
-            value,
-            typeof result === "string" ? result : null,
+          if (result !== true) {
+            throw new ParseArgvCustomValidationError(
+              field,
+              value,
+              typeof result === "string" ? result : null,
+            );
+          }
+        } else {
+          const choices = schema.validate.map((choice) =>
+            typeof choice === "string" ? choice : choice.value,
           );
+
+          if (!choices.includes(value))
+            throw new ParseArgvInvalidChoiceError(field, choices, value);
         }
       }
 

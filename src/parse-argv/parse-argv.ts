@@ -3,6 +3,7 @@ import type { ParseArgsOptionDescriptor, ParseArgsOptionsConfig } from "util";
 
 import type { ValidBlueprint } from "../blueprint/blueprint";
 import type { CommandSchema } from "../command/command";
+import type { DataTypeSchema } from "../data-type/data-type-schema";
 import { falsyValues, truthyValues } from "../data-type/data-type-token";
 import { assertValueValidForFieldAndSchema } from "./assert-value-valid-for-field-and-schema";
 import { parseArgvArg } from "./parse-argv-arg";
@@ -13,22 +14,19 @@ import {
 import { parseArgvFlag } from "./parse-argv-flag";
 import type { ParsedArgvData } from "./parsed-argv-data";
 
-export function parseArgv<
-  VB extends ValidBlueprint,
-  CS extends CommandSchema<VB>,
->({
+export function parseArgv<VB extends ValidBlueprint>({
   argv,
   blueprint,
   schema,
 }: {
   argv: string[];
   blueprint: VB;
-  schema: CS;
+  schema: CommandSchema<VB>;
 }):
-  | { type: "data"; data: ParsedArgvData<VB, CS> }
+  | { type: "data"; data: ParsedArgvData<VB> }
   | {
       type: "error";
-      data: Partial<ParsedArgvData<VB, CS>>;
+      data: Partial<ParsedArgvData<VB>>;
       errors: ParseArgvError[];
     } {
   let parsedArgs: ReturnType<typeof nodeParseArgs>;
@@ -70,7 +68,8 @@ export function parseArgv<
       if (value !== null) {
         assertValueValidForFieldAndSchema({
           field: arg,
-          schema: schema[arg.name as keyof typeof schema] ?? {},
+          schema: (schema[arg.name as keyof typeof schema] ??
+            {}) as DataTypeSchema,
           value,
         });
       }
@@ -96,7 +95,8 @@ export function parseArgv<
       if (value !== null) {
         assertValueValidForFieldAndSchema({
           field: flag,
-          schema: schema[flag.name as keyof typeof schema] ?? {},
+          schema: (schema[flag.name as keyof typeof schema] ??
+            {}) as DataTypeSchema,
           value,
         });
       }
@@ -111,8 +111,8 @@ export function parseArgv<
   return errors.length > 0
     ? {
         type: "error",
-        data: dataAcc as Partial<ParsedArgvData<VB, CS>>,
+        data: dataAcc as Partial<ParsedArgvData<VB>>,
         errors,
       }
-    : { type: "data", data: dataAcc as ParsedArgvData<VB, CS> };
+    : { type: "data", data: dataAcc as ParsedArgvData<VB> };
 }
