@@ -16,7 +16,7 @@ async function bootCli(): Promise<number | null> {
   });
 
   embeddedCommands.forEach((cmd) => ioc.registry.registerCommand(cmd));
-  ioc.registry.selfRegisterEnabled = true;
+  ioc.registry.enableSelfRegister();
 
   const { name, argv, isCommandNotFoundHandle } = resolveBootParts(
     process.argv.slice(2),

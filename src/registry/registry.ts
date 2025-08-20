@@ -7,7 +7,11 @@ export class Registry {
   private registeredAliases: Alias[] = [];
 
   private markAsLocalEnabled: boolean = false;
-  selfRegisterEnabled: boolean = false;
+  private selfRegisterEnabled: boolean = false;
+
+  enableSelfRegister() {
+    this.selfRegisterEnabled = true;
+  }
 
   get commands(): Command[] {
     // Return a copy to prevent the original array from being manipulated from outside

@@ -1,8 +1,10 @@
+import stripAnsi from "strip-ansi";
+
+import { ioc } from "../ioc";
+import { SpawnStdOption } from "../spawn/spawn-std-option";
 import type { LooseArgv } from "./loose-argv";
-import { resolveRunTarget } from "./resolve-run-target";
+import { runArgvToSpawnTarget } from "./run-argv-to-spawn-target";
 import type { RunResult, RunResultWithOutput } from "./run-result";
-import { spawnRunTarget } from "./spawn-run-target";
-import { SpawnStdOption } from "./spawn-std-option";
 import { tightenLooseArgv } from "./tighten-loose-argv";
 
 /**
@@ -12,14 +14,11 @@ import { tightenLooseArgv } from "./tighten-loose-argv";
  * This method enables TTY support by forwarding stdio directly to the terminal,
  * so command output is displayed live and not captured programmatically.
  *
- * If you need the output use `run.withResult` instead
+ * If you need the output use `run.withOutput` instead
  */
 export async function run(looseArgv: LooseArgv): Promise<RunResult> {
-  const runTarget = await resolveRunTarget(tightenLooseArgv(looseArgv));
-  const result = await spawnRunTarget({
-    runTarget,
-    stdOption: SpawnStdOption.tty,
-  });
+  const runTarget = await runArgvToSpawnTarget(tightenLooseArgv(looseArgv));
+  const result = await ioc.spawn.target(runTarget, SpawnStdOption.tty);
 
   return {
     __objectType__: "run-result",
@@ -29,17 +28,24 @@ export async function run(looseArgv: LooseArgv): Promise<RunResult> {
 }
 
 /**
- * Calls an executable or bluebodex command asynchronously and returns its result.
+ * Calls an executable or bluecodex command asynchronously and returns its result.
  *
  * Note: Commands run with this function do **not** have TTY enabled.
  * If TTY behavior is required (e.g. for interactive prompts), use `run` instead.
  */
-run.withResult = async (looseArgv: LooseArgv): Promise<RunResultWithOutput> => {
-  const runTarget = await resolveRunTarget(tightenLooseArgv(looseArgv));
-  const result = await spawnRunTarget({
-    runTarget,
-    stdOption: SpawnStdOption.pipeAndInherit,
-  });
+run.withOutput = async (looseArgv: LooseArgv): Promise<RunResultWithOutput> => {
+  const target = await runArgvToSpawnTarget(tightenLooseArgv(looseArgv));
+  const spawnResult = await ioc.spawn.target(
+    target,
+    SpawnStdOption.pipeAndInherit,
+  );
 
-  return result;
+  return {
+    __objectType__: "run-result-with-output",
+    all: stripAnsi(spawnResult.rawAll ?? ""),
+    stdout: stripAnsi(spawnResult.rawStdout ?? ""),
+    stderr: stripAnsi(spawnResult.rawStderr ?? ""),
+    failed: spawnResult.failed,
+    exitCode: spawnResult.exitCode,
+  };
 };

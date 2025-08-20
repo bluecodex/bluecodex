@@ -25,7 +25,10 @@ export async function promptField({ field, schema: uncastSchema }: Args) {
 
       return prompt(schema.message ?? `Enter value for ${name}`, {
         initial: schema.initial,
-        validate: "validate" in schema ? schema.validate : undefined,
+        validate:
+          "validate" in schema && typeof schema.validate === "function"
+            ? schema.validate
+            : undefined,
       });
     }
 

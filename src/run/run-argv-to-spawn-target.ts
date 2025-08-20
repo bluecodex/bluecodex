@@ -1,30 +1,38 @@
-import fs from "node:fs";
+import fs from "node:fs/promises";
 import which from "which";
 
 import { ioc } from "../ioc";
-import type { RunTarget } from "./run-target";
+import type { SpawnTarget } from "../spawn/spawn-target";
 import { tightenLooseArgv } from "./tighten-loose-argv";
 
-async function resolveRunTargetBinOrLocalBin(name: string, argv: string[]) {
+async function resolveRunTargetBinOrLocalBin(
+  name: string,
+  argv: string[],
+): Promise<SpawnTarget | null> {
   const binExists = await which(name, { nothrow: true });
-  if (binExists) return { type: "spawn", name, argv } as const;
+  if (binExists) return { type: "bin", name, argv } as const;
 
   const packageBinPath = `node_modules/.bin/${name}`;
-  if (fs.existsSync(packageBinPath)) {
+  if (await fs.exists(packageBinPath)) {
     return {
-      type: "spawn-package-bin",
+      type: "package-bin",
       name,
       path: packageBinPath,
       argv,
     } as const;
   }
+
+  return null;
 }
 
 /**
  * When the first param is `blue` or `bluecodex` we must either resolve to
  * a command, a command-alias or not-found
  */
-async function resolveRunTargetFromBlueRawCmd(name: string, argv: string[]) {
+async function blueRawCmdToSpawnTarget(
+  name: string,
+  argv: string[],
+): Promise<SpawnTarget> {
   const commandOrAlias = ioc.registry.findCommandOrAlias(name);
 
   if (commandOrAlias) {
@@ -65,12 +73,14 @@ async function resolveRunTargetFromBlueRawCmd(name: string, argv: string[]) {
   return { type: "not-found", name: name } as const;
 }
 
-export async function resolveRunTarget(argv: string[]): Promise<RunTarget> {
+export async function runArgvToSpawnTarget(
+  argv: string[],
+): Promise<SpawnTarget> {
   const [name, ...targetArgv] = tightenLooseArgv(argv);
 
   if (name === "blue" || name === "bluecodex") {
     const [firstBlueArgv, ...remainingBlueArgv] = targetArgv;
-    return resolveRunTargetFromBlueRawCmd(firstBlueArgv, remainingBlueArgv);
+    return blueRawCmdToSpawnTarget(firstBlueArgv, remainingBlueArgv);
   }
 
   const binOrLocalBin = await resolveRunTargetBinOrLocalBin(name, targetArgv);
