@@ -1,15 +1,16 @@
-import fs from "node:fs";
+import fs from "node:fs/promises";
 import path from "node:path";
 
 import { ioc } from "../ioc";
+import { fileExists } from "../utils/fileExists";
 
 export async function source(pattern: string) {
   const files =
-    !pattern.includes("*") || fs.existsSync(pattern)
+    !pattern.includes("*") || (await fileExists(pattern))
       ? [pattern]
-      : fs.globSync(path.join(ioc.project.config.path, pattern));
+      : fs.glob(path.join(ioc.project.config.path, pattern));
 
-  for (const file of files) {
+  for await (const file of files) {
     const isLocalOnlyFile = file.startsWith(ioc.project.localBlueFolderPath);
 
     if (isLocalOnlyFile) {

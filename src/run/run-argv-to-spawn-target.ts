@@ -1,8 +1,8 @@
-import fs from "node:fs/promises";
 import which from "which";
 
 import { ioc } from "../ioc";
 import type { SpawnTarget } from "../spawn/spawn-target";
+import { fileExists } from "../utils/fileExists";
 import { tightenLooseArgv } from "./tighten-loose-argv";
 
 async function resolveRunTargetBinOrLocalBin(
@@ -13,7 +13,7 @@ async function resolveRunTargetBinOrLocalBin(
   if (binExists) return { type: "bin", name, argv } as const;
 
   const packageBinPath = `node_modules/.bin/${name}`;
-  if (await fs.exists(packageBinPath)) {
+  if (await fileExists(packageBinPath)) {
     return {
       type: "package-bin",
       name,

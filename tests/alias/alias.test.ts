@@ -1,31 +1,46 @@
-import { beforeEach, expect, test } from "vitest";
+import { afterEach, beforeEach, test } from "vitest";
 
 import { alias } from "../../src/alias/alias";
 import { command } from "../../src/command/command";
 import { ioc } from "../../src/ioc";
-import { run } from "../../src/run/run";
+import { Registry } from "../../src/registry/registry";
+import { SpawnStdOption } from "../../src/spawn/spawn-std-option";
+import { expectRunSpawnTarget } from "../utils/test-spawn-utils";
 
 beforeEach(() => {
   ioc.registry.enableSelfRegister();
 });
 
-test("command", () => {
-  command("foo", {}, () => {});
-  alias("bar=foo");
-
-  expect(run(""));
+afterEach(() => {
+  ioc.registry = new Registry();
 });
 
-test("command + argv", () => {});
+test("command", async () => {
+  const cmd = command("foo", {}, () => {});
+  alias("bar=foo");
 
-test("command exists with alias name", () => {});
+  await expectRunSpawnTarget(
+    "bar",
+    {
+      type: "command",
+      name: "bar",
+      argv: [],
+      command: cmd,
+    },
+    SpawnStdOption.tty,
+  );
+});
 
-test("bin", () => {});
+test.todo("command + argv", () => {});
 
-test("bin + argv", () => {});
+test.todo("command exists with alias name", () => {});
 
-test("local bin", () => {});
+test.todo("bin", () => {});
 
-test("local bin + argv", () => {});
+test.todo("bin + argv", () => {});
 
-test("not found", () => {});
+test.todo("local bin", () => {});
+
+test.todo("local bin + argv", () => {});
+
+test.todo("not found", () => {});
