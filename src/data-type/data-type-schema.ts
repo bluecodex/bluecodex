@@ -1,3 +1,4 @@
+import type { MaybeReadonly } from "../types/maybe-readonly";
 import type { DataTypeToken } from "./data-type-token";
 
 export type DataTypeSchema<DT extends DataTypeToken = DataTypeToken> =
@@ -5,7 +6,9 @@ export type DataTypeSchema<DT extends DataTypeToken = DataTypeToken> =
     ? {
         initial?: string;
         validate?:
-          | Array<string | { value: string; description?: string }>
+          | MaybeReadonly<
+              Array<string | { value: string; description?: string }>
+            >
           | ((value: string) => boolean | string);
         message?: string;
       }
