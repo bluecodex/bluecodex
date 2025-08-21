@@ -22,38 +22,19 @@ export async function runArgvToSpawnTarget(
   const commandOrAlias = ioc.registry.findCommandOrAlias(name);
 
   if (commandOrAlias) {
-    if (commandOrAlias.__objectType__ === "command") {
-      // commandOrAlias is command
-      const command = commandOrAlias;
-      return {
-        type: "command",
-        name: name,
-        argv,
-        command,
-      } as const;
+    if (commandOrAlias.__objectType__ === "alias") {
+      const alias = commandOrAlias; // it's an alias
+      return runArgvToSpawnTarget([alias.target, argv]);
     }
 
-    // commandOrAlias is alias
-    const alias = ioc.registry.findEndAlias(commandOrAlias);
-
-    const aliasedCommand = ioc.registry.findAliasedCommand(alias);
-    if (aliasedCommand) {
-      return {
-        type: "command",
-        name: name,
-        argv,
-        command: aliasedCommand,
-      } as const;
-    }
-
-    const [aliasTargetName, ...aliasTargetArgv] = alias.target.split(" ");
-    const aliasBinOrLocalBin = await checkBinSpawnTarget(
-      aliasTargetName,
-      aliasTargetArgv,
-    );
-
-    if (aliasBinOrLocalBin) return aliasBinOrLocalBin;
+    const command = commandOrAlias; // it's a command
+    return {
+      type: "command",
+      name,
+      argv,
+      command,
+    } as const;
   }
 
-  return { type: "not-found", name } as const;
+  return { type: "not-found", name, argv } as const;
 }

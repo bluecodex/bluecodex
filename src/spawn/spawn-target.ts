@@ -8,7 +8,7 @@ export type SpawnTarget =
   | { type: "command"; name: string; argv: string[]; command: Command }
   | { type: "bin"; name: string; argv: string[] }
   | { type: "package-bin"; name: string; path: string; argv: string[] }
-  | { type: "not-found"; name: string };
+  | { type: "not-found"; name: string; argv: string[] };
 
 export function spawnTarget(
   target: SpawnTarget,

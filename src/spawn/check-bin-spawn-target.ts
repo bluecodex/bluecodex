@@ -1,3 +1,4 @@
+import path from "node:path";
 import which from "which";
 
 import { fileExists } from "../utils/fileExists";
@@ -7,11 +8,20 @@ export async function checkBinSpawnTarget(
   name: string,
   argv: string[],
 ): Promise<SpawnTarget | null> {
-  const binExists = await which(name, { nothrow: true });
-  if (binExists) return { type: "bin", name, argv } as const;
-
+  const binFound = await which(name, { nothrow: true });
   const packageBinPath = `node_modules/.bin/${name}`;
-  if (await fileExists(packageBinPath)) {
+
+  // During tests node_modules/.bin/ is included in the PATH=
+  //
+  // To get around that and allow testing package-bin we check if the binary
+  // found is in that folder
+  const binFoundInPackage =
+    binFound && binFound === path.resolve(packageBinPath);
+
+  if (binFound && !binFoundInPackage)
+    return { type: "bin", name, argv } as const;
+
+  if (binFoundInPackage || (await fileExists(packageBinPath))) {
     return {
       type: "package-bin",
       name,
