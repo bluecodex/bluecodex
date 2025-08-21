@@ -5,7 +5,7 @@ import { MalformattedAliasError } from "./errors/malformatted-alias-error";
 export type ParseAlias<AliasToken extends string> =
   AliasToken extends `${infer Name}=${infer Target}`
     ? Name extends `${string} ${string}`
-      ? InvalidAliasNameError<AliasToken>
+      ? InvalidAliasNameError<Name>
       : Alias<Name, Target>
     : MalformattedAliasError<AliasToken>;
 
