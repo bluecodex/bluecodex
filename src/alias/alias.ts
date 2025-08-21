@@ -2,7 +2,7 @@
  * Types
  */
 import { ioc } from "../ioc";
-import { type ParseAliasToken, parseAliasToken } from "./parse-alias-token";
+import { type ParseAlias, parseAlias } from "./parse-alias";
 
 export type AliasMeta = {
   misspelling?: boolean;
@@ -28,19 +28,19 @@ export type Alias<
  */
 export function alias<AliasToken extends `${string}=${string}`>(
   aliasToken: AliasToken,
-): ParseAliasToken<AliasToken> {
-  const parsedAliasToken = parseAliasToken(aliasToken);
+): ParseAlias<AliasToken> {
+  const parsedAliasToken = parseAlias(aliasToken);
   if (parsedAliasToken instanceof Error) return parsedAliasToken;
 
   return ioc.registry.selfRegisterAliasIfEnabled(
     parsedAliasToken,
-  ) as ParseAliasToken<AliasToken>;
+  ) as ParseAlias<AliasToken>;
 }
 
 alias.misspelling = <AliasToken extends `${string}=${string}`>(
   aliasToken: AliasToken,
-): ParseAliasToken<AliasToken> => {
-  const parsedAliasToken = parseAliasToken(aliasToken);
+): ParseAlias<AliasToken> => {
+  const parsedAliasToken = parseAlias(aliasToken);
   if (parsedAliasToken instanceof Error) return parsedAliasToken;
 
   return ioc.registry.selfRegisterAliasIfEnabled({
@@ -48,5 +48,5 @@ alias.misspelling = <AliasToken extends `${string}=${string}`>(
     meta: {
       misspelling: true,
     },
-  }) as ParseAliasToken<AliasToken>;
+  }) as ParseAlias<AliasToken>;
 };
