@@ -64,6 +64,12 @@ export class Registry {
   }
 
   async markingAsLocal(fn: () => Promise<void>) {
+    // If already marking as local, don't do it again
+    if (this.markAsLocalEnabled) {
+      await fn();
+      return;
+    }
+
     this.markAsLocalEnabled = true;
     await fn();
     this.markAsLocalEnabled = false;

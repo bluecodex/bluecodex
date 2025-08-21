@@ -1,8 +1,9 @@
 export { alias } from "../alias/alias";
 export { command } from "../command/command";
 export { env } from "../env/env";
+export { file } from "../file/file";
 export { git } from "../git/git";
-export { os } from "../os/os";
+export { open } from "../open/open";
 export { prompt } from "../prompt/prompt";
 export { source } from "../registry/source";
 export { run } from "../run/run";

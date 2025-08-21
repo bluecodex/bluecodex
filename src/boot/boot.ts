@@ -1,14 +1,13 @@
 import type { Command } from "../command/command";
 import { commandBlue } from "../command/command.blue";
+import { configBlue } from "../config/config.blue";
 import { helpBlue } from "../help/help.blue";
 import { ioc } from "../ioc";
 import { linkBlue } from "../link/linkBlue";
 import { Project } from "../project/project";
-import { getDefaultSourcePatterns } from "../registry/default-source-patterns";
-import { source } from "../registry/source";
+import { sourceAll } from "../registry/source-all";
 import { run } from "../run/run";
 import { runCommand } from "../run/run-command";
-import { shortBlue } from "../short/short.blue";
 import { findProjectRoot } from "./find-project-root";
 import { resolveBootParts } from "./resolve-boot-parts";
 
@@ -20,10 +19,10 @@ async function bootCli(): Promise<number | null> {
   });
 
   // Register embedded commands
-  ioc.registry.registerCommand(helpBlue);
-  ioc.registry.registerCommand(shortBlue);
-  ioc.registry.registerCommand(linkBlue);
+  ioc.registry.registerCommand(configBlue);
   ioc.registry.registerCommand(commandBlue);
+  ioc.registry.registerCommand(linkBlue);
+  ioc.registry.registerCommand(helpBlue);
 
   // Then enable self register
   ioc.registry.enableSelfRegister();
@@ -32,9 +31,7 @@ async function bootCli(): Promise<number | null> {
     process.argv.slice(2),
   );
 
-  for (const pattern of getDefaultSourcePatterns(projectRoot)) {
-    await source(pattern);
-  }
+  await sourceAll();
 
   const commandOrAlias = ioc.registry.findCommandOrAlias(name);
   if (!commandOrAlias) {
