@@ -8,25 +8,12 @@ import { embeddedCommand } from "./command";
 import { ensureLocalGitIgnore } from "./ensure-local-git-ignore";
 
 export const commandBlue = embeddedCommand(
-  "command name --location!:string",
+  "command name --local",
   {
     description: "Create a new *.blue.ts file for your command",
-    location: {
-      message: "Would you like to create this file just for yourself",
-      validate: [
-        {
-          value: "local",
-          description: ".blue/local/*.ts (git ignored)",
-        },
-        {
-          value: "project",
-          description: ".blue/*.ts",
-        },
-      ],
-    },
   },
-  async ({ name, location }) => {
-    if (location === "local") await ensureLocalGitIgnore();
+  async ({ name, local }) => {
+    if (local) await ensureLocalGitIgnore();
 
     const templateFilename = "__na---__.blue.ts";
     const templatePath = path.join(
@@ -37,12 +24,7 @@ export const commandBlue = embeddedCommand(
 
     const fileName = casexTemplate({ name, text: templateFilename });
     await fyle(
-      path.join(
-        ioc.project.rootPath,
-        ".blue",
-        location === "local" ? ".local" : "",
-        fileName,
-      ),
+      path.join(ioc.project.rootPath, ".blue", local ? ".local" : "", fileName),
     ).save(
       casexTemplate({
         name,

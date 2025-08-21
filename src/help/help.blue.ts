@@ -49,7 +49,7 @@ function printSection(
       ),
     )
     .filter(Boolean);
-  
+
   if (!themedCommands) return;
 
   switch (data.type) {
@@ -71,51 +71,57 @@ function printSection(
   console.log(""); // Some breathing room
 }
 
-export const helpBlue = embeddedCommand("help", {}, () => {
-  console.log(""); // Some breathing room
+export const helpBlue = embeddedCommand(
+  "help",
+  {
+    description: "View the list of commands",
+  },
+  () => {
+    console.log(""); // Some breathing room
 
-  const visibleUserCommands = ioc.registry.commands.filter(
-    (command) => !command.meta.todo && !command.meta.embedded,
-  );
+    const visibleUserCommands = ioc.registry.commands.filter(
+      (command) => !command.meta.todo && !command.meta.embedded,
+    );
 
-  const embeddedCommands = ioc.registry.commands.filter(
-    (command) => command.meta.embedded,
-  );
+    const embeddedCommands = ioc.registry.commands.filter(
+      (command) => command.meta.embedded,
+    );
 
-  const groupedProjectCommands = groupCommands(
-    visibleUserCommands.filter((command) => !command.meta.embedded),
-  );
+    const groupedProjectCommands = groupCommands(
+      visibleUserCommands.filter((command) => !command.meta.embedded),
+    );
 
-  const titles = Object.keys(groupedProjectCommands).sort();
+    const titles = Object.keys(groupedProjectCommands).sort();
 
-  printSection({
-    type: "embedded",
-    commands: embeddedCommands,
-  });
+    printSection({
+      type: "embedded",
+      commands: embeddedCommands,
+    });
 
-  titles.forEach((title) => {
-    if (title) {
-      printSection({
-        type: "grouped",
-        title,
-        commands: groupedProjectCommands[title],
-      });
-    } else {
-      printSection({
-        type: "ungrouped",
-        commands: groupedProjectCommands[title],
-      });
+    titles.forEach((title) => {
+      if (title) {
+        printSection({
+          type: "grouped",
+          title,
+          commands: groupedProjectCommands[title],
+        });
+      } else {
+        printSection({
+          type: "ungrouped",
+          commands: groupedProjectCommands[title],
+        });
+      }
+    });
+
+    const shellAliases = ioc.registry.shellAliases.filter(
+      (alias) => !alias.meta.misspelling,
+    );
+    if (shellAliases.length > 0) {
+      console.log(ioc.theme.shellAliasesGroupTitle());
+
+      for (const alias of shellAliases) {
+        console.log(["  ", ioc.theme.alias(alias)].join(""));
+      }
     }
-  });
-
-  const shellAliases = ioc.registry.shellAliases.filter(
-    (alias) => !alias.meta.misspelling,
-  );
-  if (shellAliases.length > 0) {
-    console.log(ioc.theme.shellAliasesGroupTitle());
-
-    for (const alias of shellAliases) {
-      console.log(["  ", ioc.theme.alias(alias)].join(""));
-    }
-  }
-});
+  },
+);

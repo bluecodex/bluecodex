@@ -3,7 +3,7 @@ import type { Command } from "../command/command";
 import { commandBlue } from "../command/command.blue";
 import { helpBlue } from "../help/help.blue";
 import { ioc } from "../ioc";
-import { linkBlue } from "../link/link.blue";
+import { linkBlue } from "../link/linkBlue";
 import { Project } from "../project/project";
 import { getDefaultSourcePatterns } from "../registry/default-source-patterns";
 import { source } from "../registry/source";

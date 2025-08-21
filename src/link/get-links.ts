@@ -1,7 +1,7 @@
 import { fyle } from "../fyle/fyle";
 import { getLinksFilePath } from "./get-links-file-path";
 
-export async function readLinks() {
+export async function getLinks() {
   const linksFile = fyle(getLinksFilePath());
 
   if (!(await linksFile.exists())) return [];

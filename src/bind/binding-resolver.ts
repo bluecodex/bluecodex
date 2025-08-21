@@ -2,7 +2,7 @@
 import which from "which";
 
 import { findProjectRoot } from "../boot/find-project-root";
-import { readLinks } from "../link/read-links";
+import { getLinks } from "../link/get-links";
 import { getBinBindPath } from "./get-bin-bind-path";
 
 // This file sits at `~/.config/bluecodex/bluecodex-portal.js`
@@ -28,7 +28,7 @@ async function findBluecodexBin() {
   if (await which("bluecodex", { nothrow: true })) return "bluecodex";
 
   // Check 3. Linked through another project
-  const linkedProjectPaths = await readLinks();
+  const linkedProjectPaths = await getLinks();
 
   for (const linkedProjectPath of linkedProjectPaths) {
     const binPath = getBinBindPath(linkedProjectPath);
