@@ -1,8 +1,8 @@
-import { fyle } from "../fyle/fyle";
+import { file } from "../file/file";
 import { ioc } from "../ioc";
 
 export async function ensureLocalGitIgnore() {
-  const localGitIgnoreFile = fyle(
+  const localGitIgnoreFile = file(
     ioc.project.localBlueFolderPath,
     ".gitignore",
   );

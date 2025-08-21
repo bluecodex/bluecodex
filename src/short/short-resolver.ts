@@ -2,7 +2,7 @@
 import which from "which";
 
 import { findProjectRoot } from "../boot/find-project-root";
-import { fyle } from "../fyle/fyle";
+import { file } from "../file/file";
 import { getLinks } from "../link/get-links";
 
 // This file sits at `~/.config/bluecodex/bluecodex-portal.js`
@@ -20,7 +20,7 @@ async function findBluecodexBin() {
   // Check 1. Installed in this project
   const projectRoot = await findProjectRoot();
   if (projectRoot) {
-    const bin = fyle(projectRoot, "node_modules/.bin/bluecodex");
+    const bin = file(projectRoot, "node_modules/.bin/bluecodex");
     if (await bin.exists()) return bin.path;
   }
 
@@ -31,7 +31,7 @@ async function findBluecodexBin() {
   const linkedProjectPaths = await getLinks();
 
   for (const linkedProjectPath of linkedProjectPaths) {
-    const bin = fyle(linkedProjectPath, "node_modules/.bin/bluecodex");
+    const bin = file(linkedProjectPath, "node_modules/.bin/bluecodex");
     if (bin) return bin.path;
   }
 }

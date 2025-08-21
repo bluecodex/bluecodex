@@ -1,7 +1,7 @@
 import path from "node:path";
 import which from "which";
 
-import { fyle } from "../fyle/fyle";
+import { file } from "../file/file";
 import type { SpawnTarget } from "../spawn/spawn-target";
 
 export async function checkRunSpawnTarget(
@@ -21,7 +21,7 @@ export async function checkRunSpawnTarget(
   if (binFound && !binFoundInPackage)
     return { type: "bin", name, argv } as const;
 
-  if (binFoundInPackage || (await fyle(packageBinPath).exists())) {
+  if (binFoundInPackage || (await file(packageBinPath).exists())) {
     return {
       type: "package-bin",
       name,

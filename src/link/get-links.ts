@@ -1,8 +1,8 @@
-import { fyle } from "../fyle/fyle";
+import { file } from "../file/file";
 import { getLinksFilePath } from "./get-links-file-path";
 
 export async function getLinks() {
-  const linksFile = fyle(getLinksFilePath());
+  const linksFile = file(getLinksFilePath());
 
   if (!(await linksFile.exists())) return [];
 
@@ -10,7 +10,7 @@ export async function getLinks() {
 
   const validProjectPaths = [];
   for (const line of lines) {
-    if (await fyle(line).exists()) validProjectPaths.push(line);
+    if (await file(line).exists()) validProjectPaths.push(line);
   }
 
   return validProjectPaths;

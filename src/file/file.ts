@@ -4,7 +4,7 @@ import path from "node:path";
 
 import { ioc } from "../ioc";
 
-export class Fyle {
+export class File {
   readonly path: string;
 
   constructor(filePath: string) {
@@ -86,18 +86,18 @@ export class Fyle {
   }
 }
 
-export function fyle(...filePath: string[]): Fyle {
-  return new Fyle(path.join(...filePath));
+export function file(...filePath: string[]): File {
+  return new File(path.join(...filePath));
 }
 
-fyle.glob = async (pattern: string): Promise<Fyle[]> => {
+file.glob = async (pattern: string): Promise<File[]> => {
   const filePathsIterator = fs.glob(pattern);
 
-  const files: Fyle[] = [];
+  const files: File[] = [];
 
   try {
     for await (const filePath of filePathsIterator) {
-      files.push(fyle(filePath));
+      files.push(file(filePath));
     }
   } catch {
     // do nothing

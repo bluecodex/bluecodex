@@ -1,6 +1,6 @@
 import { casexTemplate } from "casex-template";
 
-import { fyle } from "../fyle/fyle";
+import { file } from "../file/file";
 import { ioc } from "../ioc";
 import { embeddedCommand } from "./command";
 import { ensureLocalGitIgnore } from "./ensure-local-git-ignore";
@@ -14,9 +14,9 @@ export const commandBlue = embeddedCommand(
     if (local) await ensureLocalGitIgnore();
 
     const templateFilename = "__na-me__.blue.ts";
-    const templateFile = fyle(__dirname, "templates/simple", templateFilename);
+    const templateFile = file(__dirname, "templates/simple", templateFilename);
 
-    const targetFile = fyle(
+    const targetFile = file(
       ioc.project.rootPath,
       ".blue",
       local ? "local" : "",

@@ -1,10 +1,10 @@
-import { fyle } from "../fyle/fyle";
+import { file } from "../file/file";
 import { ioc } from "../ioc";
 
 export async function source(pattern: string) {
-  const files = (await fyle(pattern).exists())
-    ? [fyle(pattern)]
-    : await fyle.glob(pattern);
+  const files = (await file(pattern).exists())
+    ? [file(pattern)]
+    : await file.glob(pattern);
 
   for (const file of files) {
     const isLocalOnlyFile = file.path.startsWith(
