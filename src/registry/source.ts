@@ -1,26 +1,26 @@
-import fs from "node:fs/promises";
 import path from "node:path";
 
+import { fyle } from "../fyle/fyle";
 import { ioc } from "../ioc";
-import { fileExists } from "../utils/fileExists";
 
 export async function source(pattern: string) {
-  const files =
-    !pattern.includes("*") || (await fileExists(pattern))
-      ? [pattern]
-      : fs.glob(path.join(ioc.project.rootPath, pattern));
+  const files = (await fyle(pattern).exists())
+    ? [fyle(pattern)]
+    : await fyle.glob(pattern);
 
-  for await (const file of files) {
-    const isLocalOnlyFile = file.startsWith(ioc.project.localBlueFolderPath);
+  for (const file of files) {
+    const isLocalOnlyFile = file.path.startsWith(
+      ioc.project.localBlueFolderPath,
+    );
 
     if (isLocalOnlyFile) {
       await ioc.registry.markingAsLocal(async () => {
-        await import(file);
-        ioc.registry.registerSourceFile(file);
+        await import(file.path);
+        ioc.registry.registerSourceFile(file.path);
       });
     } else {
-      await import(file);
-      ioc.registry.registerSourceFile(file);
+      await import(file.path);
+      ioc.registry.registerSourceFile(file.path);
     }
   }
 

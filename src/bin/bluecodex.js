@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 
 const srcDirPath = path.join(
   path.dirname(fileURLToPath(import.meta.url)),
-  "../"
+  "../",
 );
 
 async function fileExists(filePath) {
@@ -32,7 +32,7 @@ const bunPath = await findBunPath();
 
 if (!bunPath) {
   console.error("Unable bluecodex package deps");
-  return;
+  process.exit(1);
 }
 
 const cmdArgv = process.argv.slice(2);
@@ -40,7 +40,7 @@ const cmdArgv = process.argv.slice(2);
 const { exitCode } = await execa(
   bunPath,
   [path.join(srcDirPath, "boot/boot.ts"), ...cmdArgv],
-  { stdio: "inherit", reject: false }
+  { stdio: "inherit", reject: false },
 );
 
 process.exitCode = exitCode ?? 1;

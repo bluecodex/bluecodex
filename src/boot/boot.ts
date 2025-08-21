@@ -1,9 +1,11 @@
+import { bindBlue } from "../bind/bind.blue";
 import type { Command } from "../command/command";
-import { helpCommand } from "../help/help-command";
+import { commandBlue } from "../command/command.blue";
+import { helpBlue } from "../help/help.blue";
 import { ioc } from "../ioc";
-import { proactivelyRunProjectCommand } from "../project/proactively-run-project-command";
+import { linkBlue } from "../link/link.blue";
 import { Project } from "../project/project";
-import { defaultSourcePatterns } from "../registry/default-source-patterns";
+import { getDefaultSourcePatterns } from "../registry/default-source-patterns";
 import { source } from "../registry/source";
 import { run } from "../run/run";
 import { runCommand } from "../run/run-command";
@@ -17,19 +19,22 @@ async function bootCli(): Promise<number | null> {
     project: new Project(projectRoot),
   });
 
-  ioc.registry.registerCommand(helpCommand);
+  // Register embedded commands
+  ioc.registry.registerCommand(helpBlue);
+  ioc.registry.registerCommand(bindBlue);
+  ioc.registry.registerCommand(linkBlue);
+  ioc.registry.registerCommand(commandBlue);
 
+  // Then enable self register
   ioc.registry.enableSelfRegister();
 
   const { name, argv, isCommandNotFoundHandle } = resolveBootParts(
     process.argv.slice(2),
   );
 
-  for (const pattern of defaultSourcePatterns) {
+  for (const pattern of getDefaultSourcePatterns(projectRoot)) {
     await source(pattern);
   }
-
-  if (await proactivelyRunProjectCommand()) return 0;
 
   const commandOrAlias = ioc.registry.findCommandOrAlias(name);
   if (!commandOrAlias) {

@@ -2,8 +2,8 @@
 import which from "which";
 
 import { findProjectRoot } from "../boot/find-project-root";
-import { getBluecodexBinFromProjectRoot } from "../linked-project/get-bluecodex-bin-from-project-root";
-import { readLinkedProjectPaths } from "../linked-project/read-linked-project-paths";
+import { readLinks } from "../link/read-links";
+import { getBinBindPath } from "./get-bin-bind-path";
 
 // This file sits at `~/.config/bluecodex/bluecodex-portal.js`
 // and has the role of reconciling the multiple ways in which
@@ -20,7 +20,7 @@ async function findBluecodexBin() {
   // Check 1. Installed in this project
   const projectRoot = await findProjectRoot();
   if (projectRoot) {
-    const binPath = getBluecodexBinFromProjectRoot(projectRoot);
+    const binPath = getBinBindPath(projectRoot);
     if (binPath) return binPath;
   }
 
@@ -28,10 +28,10 @@ async function findBluecodexBin() {
   if (await which("bluecodex", { nothrow: true })) return "bluecodex";
 
   // Check 3. Linked through another project
-  const linkedProjectPaths = await readLinkedProjectPaths();
+  const linkedProjectPaths = await readLinks();
 
   for (const linkedProjectPath of linkedProjectPaths) {
-    const binPath = getBluecodexBinFromProjectRoot(linkedProjectPath);
+    const binPath = getBinBindPath(linkedProjectPath);
     if (binPath) return binPath;
   }
 }

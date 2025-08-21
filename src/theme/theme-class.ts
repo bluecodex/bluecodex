@@ -177,7 +177,11 @@ export class ThemeClass {
       aliases.map((alias) => ioc.theme.aliasName(alias)).join(" "),
     ].join("");
 
-    return [firstLine, aliases.length > 0 && aliasesLine]
+    const descriptionLine =
+      command.schema.description &&
+      ["    ", this.styleDim(`└ ${command.schema.description}`)].join("");
+
+    return [firstLine, aliases.length > 0 && aliasesLine, descriptionLine]
       .filter(Boolean)
       .join("\n");
   }

@@ -1,15 +1,10 @@
-export const defaultSourcePatterns: string[] = [
-  // home .blue
-  "~/.blue/bluecodex.{js,jsx,ts,tsx}",
-  "~/.blue/blue.{js,jsx,ts,tsx}",
-  "~/.blue/**/*.blue.{js,jsx,ts,tsx}",
+import os from "node:os";
 
-  // project root
-  "bluecodex.{js,jsx,ts,tsx}",
-  "blue.{js,jsx,ts,tsx}",
+import { getProjectPatterns } from "./get-project-patterns";
 
-  // project .blue
-  ".blue/blue.{js,jsx,ts,tsx}",
-  ".blue/bluecodex.{js,jsx,ts,tsx}",
-  ".blue/**/*.blue.{js,jsx,ts,tsx}",
-];
+export function getDefaultSourcePatterns(projectRoot: string) {
+  return [
+    ...getProjectPatterns(os.homedir()),
+    ...getProjectPatterns(projectRoot),
+  ];
+}

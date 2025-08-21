@@ -49,6 +49,7 @@ function printSection(
       ),
     )
     .filter(Boolean);
+  
   if (!themedCommands) return;
 
   switch (data.type) {
@@ -70,7 +71,7 @@ function printSection(
   console.log(""); // Some breathing room
 }
 
-export const helpCommand = embeddedCommand("help", {}, () => {
+export const helpBlue = embeddedCommand("help", {}, () => {
   console.log(""); // Some breathing room
 
   const visibleUserCommands = ioc.registry.commands.filter(
