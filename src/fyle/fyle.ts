@@ -48,7 +48,7 @@ export class Fyle {
   /**
    * Passing an array is equivalent to `.join('\n')`
    */
-  async save(rawContents: string | string[], options: { log?: boolean }) {
+  async save(rawContents: string | string[], options?: { log?: boolean }) {
     const contents = Array.isArray(rawContents)
       ? rawContents.join("\n")
       : rawContents;
@@ -58,7 +58,7 @@ export class Fyle {
     const alreadyExisted = await this.exists();
     await fs.writeFile(this.path, contents);
 
-    if (options.log) {
+    if (options?.log) {
       console.log(
         alreadyExisted
           ? ioc.theme.fileUpdated(this.relativePath)

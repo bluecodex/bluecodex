@@ -9,14 +9,15 @@ export async function ensureLocalGitIgnore() {
 
   if (await localGitIgnoreFile.exists()) return;
 
-  await localGitIgnoreFile.save([
-    "# You can use this folder to make customizations",
-    "# or experiment with new commands before you share with your team.",
-    "",
-    "# Files in this folder are not tracked on git",
-    "*",
-    "",
-  ]);
-
-  localGitIgnoreFile.logCreated();
+  await localGitIgnoreFile.save(
+    [
+      "# You can use this folder to make customizations",
+      "# or experiment with new commands before you share with your team.",
+      "",
+      "# Files in this folder are not tracked on git",
+      "*",
+      "",
+    ],
+    { log: true },
+  );
 }

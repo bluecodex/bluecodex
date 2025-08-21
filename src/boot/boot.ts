@@ -1,4 +1,3 @@
-import { bindBlue } from "../bind/bind.blue";
 import type { Command } from "../command/command";
 import { commandBlue } from "../command/command.blue";
 import { helpBlue } from "../help/help.blue";
@@ -9,6 +8,7 @@ import { getDefaultSourcePatterns } from "../registry/default-source-patterns";
 import { source } from "../registry/source";
 import { run } from "../run/run";
 import { runCommand } from "../run/run-command";
+import { shortBlue } from "../short/short.blue";
 import { findProjectRoot } from "./find-project-root";
 import { resolveBootParts } from "./resolve-boot-parts";
 
@@ -21,7 +21,7 @@ async function bootCli(): Promise<number | null> {
 
   // Register embedded commands
   ioc.registry.registerCommand(helpBlue);
-  ioc.registry.registerCommand(bindBlue);
+  ioc.registry.registerCommand(shortBlue);
   ioc.registry.registerCommand(linkBlue);
   ioc.registry.registerCommand(commandBlue);
 

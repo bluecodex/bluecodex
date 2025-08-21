@@ -1,6 +1,4 @@
 import { casexTemplate } from "casex-template";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 
 import { fyle } from "../fyle/fyle";
 import { ioc } from "../ioc";
@@ -16,12 +14,7 @@ export const commandBlue = embeddedCommand(
     if (local) await ensureLocalGitIgnore();
 
     const templateFilename = "__na-me__.blue.ts";
-    const templateFile = fyle(
-      fyle(fileURLToPath(import.meta.url)).dirname,
-      "templates",
-      "simple",
-      templateFilename,
-    );
+    const templateFile = fyle(__dirname, "templates/simple", templateFilename);
 
     const targetFile = fyle(
       ioc.project.rootPath,

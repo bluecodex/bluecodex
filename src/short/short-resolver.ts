@@ -2,8 +2,8 @@
 import which from "which";
 
 import { findProjectRoot } from "../boot/find-project-root";
+import { fyle } from "../fyle/fyle";
 import { getLinks } from "../link/get-links";
-import { getBinBindPath } from "./get-bin-bind-path";
 
 // This file sits at `~/.config/bluecodex/bluecodex-portal.js`
 // and has the role of reconciling the multiple ways in which
@@ -20,8 +20,8 @@ async function findBluecodexBin() {
   // Check 1. Installed in this project
   const projectRoot = await findProjectRoot();
   if (projectRoot) {
-    const binPath = getBinBindPath(projectRoot);
-    if (binPath) return binPath;
+    const bin = fyle(projectRoot, "node_modules/.bin/bluecodex");
+    if (await bin.exists()) return bin.path;
   }
 
   // Check 2. Installed globally
@@ -31,8 +31,8 @@ async function findBluecodexBin() {
   const linkedProjectPaths = await getLinks();
 
   for (const linkedProjectPath of linkedProjectPaths) {
-    const binPath = getBinBindPath(linkedProjectPath);
-    if (binPath) return binPath;
+    const bin = fyle(linkedProjectPath, "node_modules/.bin/bluecodex");
+    if (bin) return bin.path;
   }
 }
 
