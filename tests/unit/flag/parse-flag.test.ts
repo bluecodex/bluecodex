@@ -1,7 +1,7 @@
 import { test } from "vitest";
 
-import { FlagShortHasMoreThanOneCharError } from "../../src/flag/errors/flag-short-has-more-than-one-char-error";
-import { FlagShortMalformattedError } from "../../src/flag/errors/flag-short-malformed-error";
+import { FlagShortHasMoreThanOneCharError } from "../../../src/flag/errors/flag-short-has-more-than-one-char-error";
+import { FlagShortMalformattedError } from "../../../src/flag/errors/flag-short-malformed-error";
 import { createParseFlagMatcher } from "./utils/create-parse-flag-matcher";
 
 test("long name with a single word", () => {

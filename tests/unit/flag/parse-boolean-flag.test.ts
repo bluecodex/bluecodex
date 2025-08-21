@@ -1,7 +1,7 @@
 import { test } from "vitest";
 
-import { DataTypeCastBooleanError } from "../../src/data-type/errors/data-type-cast-boolean-error";
-import { FlagFallbackCastError } from "../../src/flag/errors/flag-fallback-cast-error";
+import { DataTypeCastBooleanError } from "../../../src/data-type/errors/data-type-cast-boolean-error";
+import { FlagFallbackCastError } from "../../../src/flag/errors/flag-fallback-cast-error";
 import { createParseFlagMatcher } from "./utils/create-parse-flag-matcher";
 
 test("implicit type", () => {

@@ -1,6 +1,6 @@
 import { test } from "vitest";
 
-import { InvalidArgTypeError } from "../../src/arg/errors/invalid-arg-type-error";
+import { InvalidArgTypeError } from "../../../src/arg/errors/invalid-arg-type-error";
 import { createParseArgMatcher } from "./utils/create-parse-arg-matcher";
 
 test("single word name", () => {

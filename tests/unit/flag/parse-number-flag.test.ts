@@ -1,7 +1,7 @@
 import { test } from "vitest";
 
-import { DataTypeCastNumberError } from "../../src/data-type/errors/data-type-cast-number-error";
-import { FlagFallbackCastError } from "../../src/flag/errors/flag-fallback-cast-error";
+import { DataTypeCastNumberError } from "../../../src/data-type/errors/data-type-cast-number-error";
+import { FlagFallbackCastError } from "../../../src/flag/errors/flag-fallback-cast-error";
 import { createParseFlagMatcher } from "./utils/create-parse-flag-matcher";
 
 test("name + type", () => {

@@ -1,7 +1,7 @@
 import { test } from "vitest";
 
-import { ArgFallbackCastError } from "../../src/arg/errors/arg-fallback-cast-error";
-import { DataTypeCastBooleanError } from "../../src/data-type/errors/data-type-cast-boolean-error";
+import { ArgFallbackCastError } from "../../../src/arg/errors/arg-fallback-cast-error";
+import { DataTypeCastBooleanError } from "../../../src/data-type/errors/data-type-cast-boolean-error";
 import { createParseArgMatcher } from "./utils/create-parse-arg-matcher";
 
 test("explicit type", () => {

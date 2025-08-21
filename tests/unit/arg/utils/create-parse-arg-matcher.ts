@@ -1,7 +1,7 @@
 import { expect } from "vitest";
 
-import { type Arg } from "../../../src/arg/arg";
-import { type ParseArg, parseArg } from "../../../src/arg/parse-arg";
+import { type Arg } from "../../../../src/arg/arg";
+import { type ParseArg, parseArg } from "../../../../src/arg/parse-arg";
 import { skipCustomFunctionInStackTrace } from "../../utils/test-error-utils";
 
 // Ensure the arg is passed with `as const` to avoid attribute types being too broad

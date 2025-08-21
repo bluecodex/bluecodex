@@ -1,7 +1,7 @@
 import stripAnsi from "strip-ansi";
 
-import { ioc } from "../ioc";
 import { SpawnStdOption } from "../spawn/spawn-std-option";
+import { spawnTarget } from "../spawn/spawn-target";
 import type { LooseArgv } from "./loose-argv";
 import { runArgvToSpawnTarget } from "./run-argv-to-spawn-target";
 import type { RunResult, RunResultWithOutput } from "./run-result";
@@ -17,8 +17,8 @@ import { tightenLooseArgv } from "./tighten-loose-argv";
  * If you need the output use `run.withOutput` instead
  */
 export async function run(looseArgv: LooseArgv): Promise<RunResult> {
-  const runTarget = await runArgvToSpawnTarget(tightenLooseArgv(looseArgv));
-  const result = await ioc.spawn.target(runTarget, SpawnStdOption.tty);
+  const target = await runArgvToSpawnTarget(looseArgv);
+  const result = await spawnTarget(target, SpawnStdOption.tty);
 
   return {
     __objectType__: "run-result",
@@ -35,10 +35,7 @@ export async function run(looseArgv: LooseArgv): Promise<RunResult> {
  */
 run.withOutput = async (looseArgv: LooseArgv): Promise<RunResultWithOutput> => {
   const target = await runArgvToSpawnTarget(tightenLooseArgv(looseArgv));
-  const spawnResult = await ioc.spawn.target(
-    target,
-    SpawnStdOption.pipeAndInherit,
-  );
+  const spawnResult = await spawnTarget(target, SpawnStdOption.pipeAndInherit);
 
   return {
     __objectType__: "run-result-with-output",

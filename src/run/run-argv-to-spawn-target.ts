@@ -1,90 +1,23 @@
-import which from "which";
-
 import { ioc } from "../ioc";
+import { checkBinSpawnTarget } from "../spawn/check-bin-spawn-target";
 import type { SpawnTarget } from "../spawn/spawn-target";
-import { fileExists } from "../utils/fileExists";
+import type { LooseArgv } from "./loose-argv";
 import { tightenLooseArgv } from "./tighten-loose-argv";
 
-async function resolveRunTargetBinOrLocalBin(
-  name: string,
-  argv: string[],
-): Promise<SpawnTarget | null> {
-  const binExists = await which(name, { nothrow: true });
-  if (binExists) return { type: "bin", name, argv } as const;
-
-  const packageBinPath = `node_modules/.bin/${name}`;
-  if (await fileExists(packageBinPath)) {
-    return {
-      type: "package-bin",
-      name,
-      path: packageBinPath,
-      argv,
-    } as const;
-  }
-
-  return null;
-}
-
-/**
- * When the first param is `blue` or `bluecodex` we must either resolve to
- * a command, a command-alias or not-found
- */
-async function blueRawCmdToSpawnTarget(
-  name: string,
-  argv: string[],
+export async function runArgvToSpawnTarget(
+  looseArgv: LooseArgv,
 ): Promise<SpawnTarget> {
-  const commandOrAlias = ioc.registry.findCommandOrAlias(name);
+  const tightArgv = tightenLooseArgv(looseArgv);
 
-  if (commandOrAlias) {
-    if (commandOrAlias.__objectType__ === "command") {
-      // commandOrAlias is command
-      const command = commandOrAlias;
+  // When invoked with `blue` or `bluecodex` skip checking for bin
+  const hasBluePrefix = ["blue", "bluecodex"].includes(tightArgv[0]);
 
-      return {
-        type: "command",
-        name,
-        argv,
-        command,
-      } as const;
-    }
+  const [name, ...argv] = hasBluePrefix ? tightArgv.slice(1) : tightArgv;
 
-    // commandOrAlias is alias
-    const alias = commandOrAlias;
-
-    const aliasedCommand = ioc.registry.findAliasedCommand(alias);
-    if (aliasedCommand) {
-      return {
-        type: "command",
-        name,
-        argv,
-        command: aliasedCommand,
-      } as const;
-    }
-
-    const [firstAliasArgv, ...remainingAliasArgv] = argv;
-    const binOrLocalBin = await resolveRunTargetBinOrLocalBin(
-      firstAliasArgv,
-      remainingAliasArgv,
-    );
-
+  if (!hasBluePrefix) {
+    const binOrLocalBin = await checkBinSpawnTarget(name, argv);
     if (binOrLocalBin) return binOrLocalBin;
   }
-
-  return { type: "not-found", name: name } as const;
-}
-
-export async function runArgvToSpawnTarget(
-  argv: string[],
-): Promise<SpawnTarget> {
-  const [name, ...targetArgv] = tightenLooseArgv(argv);
-
-  if (name === "blue" || name === "bluecodex") {
-    const [firstBlueArgv, ...remainingBlueArgv] = targetArgv;
-    return blueRawCmdToSpawnTarget(firstBlueArgv, remainingBlueArgv);
-  }
-
-  const binOrLocalBin = await resolveRunTargetBinOrLocalBin(name, targetArgv);
-  if (binOrLocalBin) return binOrLocalBin;
 
   const commandOrAlias = ioc.registry.findCommandOrAlias(name);
 
@@ -95,7 +28,7 @@ export async function runArgvToSpawnTarget(
       return {
         type: "command",
         name: name,
-        argv: targetArgv,
+        argv,
         command,
       } as const;
     }
@@ -108,13 +41,13 @@ export async function runArgvToSpawnTarget(
       return {
         type: "command",
         name: name,
-        argv: targetArgv,
+        argv,
         command: aliasedCommand,
       } as const;
     }
 
     const [aliasTargetName, ...aliasTargetArgv] = alias.target.split(" ");
-    const aliasBinOrLocalBin = await resolveRunTargetBinOrLocalBin(
+    const aliasBinOrLocalBin = await checkBinSpawnTarget(
       aliasTargetName,
       aliasTargetArgv,
     );

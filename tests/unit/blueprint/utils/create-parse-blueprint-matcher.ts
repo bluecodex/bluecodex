@@ -1,10 +1,10 @@
 import { expect } from "vitest";
 
-import { type Blueprint } from "../../../src/blueprint/blueprint";
+import { type Blueprint } from "../../../../src/blueprint/blueprint";
 import {
   type ParseBlueprint,
   parseBlueprint,
-} from "../../../src/blueprint/parse-blueprint";
+} from "../../../../src/blueprint/parse-blueprint";
 import { skipCustomFunctionInStackTrace } from "../../utils/test-error-utils";
 
 // Ensure the blueprint is passed with `as const` to avoid attribute types being too broad
