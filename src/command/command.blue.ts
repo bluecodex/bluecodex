@@ -28,7 +28,6 @@ export const commandBlue = embeddedCommand(
         name,
         text: (await templateFile.read()).replace("../../command", "bluecodex"),
       }),
-      { log: true },
     );
   },
 );

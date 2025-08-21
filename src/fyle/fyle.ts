@@ -1,16 +1,34 @@
 import fs from "node:fs/promises";
+import os from "node:os";
 import path from "node:path";
 
 import { ioc } from "../ioc";
 
 export class Fyle {
-  constructor(readonly path: string) {}
+  readonly path: string;
+
+  constructor(filePath: string) {
+    this.path = path.resolve(filePath);
+  }
 
   /**
-   * Path relative to project root
+   * If this file is within the project, show a relative path.
+   *
+   * If it's within the user dir ~/..., show ~/...relative
+   *
+   * Otherwise, show the absolute path
    */
-  get relativePath() {
-    return path.relative(ioc.project.rootPath, this.path);
+  get prettyPath() {
+    if (this.path.startsWith(ioc.project.rootPath)) {
+      return path.relative(ioc.project.rootPath, this.path);
+    }
+
+    const homedir = os.homedir();
+    if (this.path.startsWith(homedir)) {
+      return path.relative(homedir, this.path);
+    }
+
+    return this.path;
   }
 
   get dirname(): string {
@@ -48,7 +66,7 @@ export class Fyle {
   /**
    * Passing an array is equivalent to `.join('\n')`
    */
-  async save(rawContents: string | string[], options?: { log?: boolean }) {
+  async save(rawContents: string | string[], options?: { skipLog?: boolean }) {
     const contents = Array.isArray(rawContents)
       ? rawContents.join("\n")
       : rawContents;
@@ -58,11 +76,11 @@ export class Fyle {
     const alreadyExisted = await this.exists();
     await fs.writeFile(this.path, contents);
 
-    if (options?.log) {
+    if (!options?.skipLog) {
       console.log(
         alreadyExisted
-          ? ioc.theme.fileUpdated(this.relativePath)
-          : ioc.theme.fileCreated(this.relativePath),
+          ? ioc.theme.fileUpdated(this.prettyPath)
+          : ioc.theme.fileCreated(this.prettyPath),
       );
     }
   }
