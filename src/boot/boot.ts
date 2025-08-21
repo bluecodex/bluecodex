@@ -1,37 +1,35 @@
 import type { Command } from "../command/command";
-import { askToInit } from "../embeds/ask-to-init";
-import { embeddedCommands } from "../embeds/embeds";
-import { initCommand } from "../embeds/init/init-command";
+import { helpCommand } from "../help/help-command";
 import { ioc } from "../ioc";
+import { proactivelyRunProjectCommand } from "../project/proactively-run-project-command";
 import { Project } from "../project/project";
+import { defaultSourcePatterns } from "../registry/default-source-patterns";
 import { source } from "../registry/source";
 import { run } from "../run/run";
 import { runCommand } from "../run/run-command";
-import { themedProjectName } from "../theme/themedProjectName";
+import { findProjectRoot } from "./find-project-root";
 import { resolveBootParts } from "./resolve-boot-parts";
 
 async function bootCli(): Promise<number | null> {
+  const projectRoot = (await findProjectRoot()) ?? process.cwd();
+
   ioc.init({
-    project: new Project({ path: process.cwd() }),
+    project: new Project(projectRoot),
   });
 
-  embeddedCommands.forEach((cmd) => ioc.registry.registerCommand(cmd));
+  ioc.registry.registerCommand(helpCommand);
+
   ioc.registry.enableSelfRegister();
 
   const { name, argv, isCommandNotFoundHandle } = resolveBootParts(
     process.argv.slice(2),
   );
 
-  if (name !== initCommand.blueprint.name && !ioc.project.isInitialized) {
-    console.log();
-    console.log(`Welcome to ${themedProjectName}\n`);
-
-    return askToInit();
+  for (const pattern of defaultSourcePatterns) {
+    await source(pattern);
   }
 
-  for (const defaultSource of ioc.project.sources) {
-    await source(defaultSource);
-  }
+  if (await proactivelyRunProjectCommand()) return 0;
 
   const commandOrAlias = ioc.registry.findCommandOrAlias(name);
   if (!commandOrAlias) {

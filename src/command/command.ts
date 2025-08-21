@@ -28,6 +28,7 @@ export type CommandFn<B extends Blueprint> = (
 export type CommandMeta = {
   todo?: boolean;
   local?: boolean;
+  embedded?: boolean;
 };
 
 export type Command<B extends Blueprint = Blueprint> = {
@@ -83,3 +84,20 @@ command.todo = <
     meta: { todo: true },
   }) as Command<B>;
 };
+
+export function embeddedCommand<
+  BlueprintToken extends string,
+  B extends ParseBlueprint<BlueprintToken>,
+>(
+  blueprintToken: BlueprintToken,
+  schema: CommandSchema<B>,
+  fn: CommandFn<B>,
+): Command<B> {
+  return ioc.registry.selfRegisterCommandIfEnabled({
+    __objectType__: "command",
+    blueprint: parseBlueprint(blueprintToken),
+    schema,
+    fn,
+    meta: { embedded: true },
+  }) as Command<B>;
+}

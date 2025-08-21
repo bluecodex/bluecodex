@@ -1,6 +1,6 @@
 import { ioc } from "../ioc";
-import { checkBinSpawnTarget } from "../spawn/check-bin-spawn-target";
 import type { SpawnTarget } from "../spawn/spawn-target";
+import { checkRunSpawnTarget } from "./check-run-spawn-target";
 import type { LooseArgv } from "./loose-argv";
 import { tightenLooseArgv } from "./tighten-loose-argv";
 
@@ -15,7 +15,7 @@ export async function runArgvToSpawnTarget(
   const [name, ...argv] = hasBluePrefix ? tightArgv.slice(1) : tightArgv;
 
   if (!hasBluePrefix) {
-    const binOrLocalBin = await checkBinSpawnTarget(name, argv);
+    const binOrLocalBin = await checkRunSpawnTarget(name, argv);
     if (binOrLocalBin) return binOrLocalBin;
   }
 

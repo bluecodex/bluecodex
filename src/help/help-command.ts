@@ -1,6 +1,5 @@
-import { type Command, command } from "../../command/command";
-import { ioc } from "../../ioc";
-import { embeddedCommands } from "../embeds";
+import { type Command, embeddedCommand } from "../command/command";
+import { ioc } from "../ioc";
 
 function groupCommands(commands: Command[]) {
   const groups: Record<string, Command[]> = {};
@@ -71,15 +70,19 @@ function printSection(
   console.log(""); // Some breathing room
 }
 
-export const helpCommand = command("help", {}, () => {
+export const helpCommand = embeddedCommand("help", {}, () => {
   console.log(""); // Some breathing room
 
-  const allCommands = ioc.registry.commands.filter(
-    (command) => !command.meta.todo,
+  const visibleUserCommands = ioc.registry.commands.filter(
+    (command) => !command.meta.todo && !command.meta.embedded,
+  );
+
+  const embeddedCommands = ioc.registry.commands.filter(
+    (command) => command.meta.embedded,
   );
 
   const groupedProjectCommands = groupCommands(
-    allCommands.filter((command) => !embeddedCommands.includes(command)),
+    visibleUserCommands.filter((command) => !command.meta.embedded),
   );
 
   const titles = Object.keys(groupedProjectCommands).sort();

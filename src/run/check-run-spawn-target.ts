@@ -1,10 +1,10 @@
 import path from "node:path";
 import which from "which";
 
+import type { SpawnTarget } from "../spawn/spawn-target";
 import { fileExists } from "../utils/fileExists";
-import type { SpawnTarget } from "./spawn-target";
 
-export async function checkBinSpawnTarget(
+export async function checkRunSpawnTarget(
   name: string,
   argv: string[],
 ): Promise<SpawnTarget | null> {
