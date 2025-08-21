@@ -15,24 +15,27 @@ export const commandBlue = embeddedCommand(
   async ({ name, local }) => {
     if (local) await ensureLocalGitIgnore();
 
-    const templateFilename = "__na---__.blue.ts";
-    const templatePath = path.join(
-      fileURLToPath(import.meta.url),
+    const templateFilename = "__na-me__.blue.ts";
+    const templateFile = fyle(
+      fyle(fileURLToPath(import.meta.url)).dirname,
+      "templates",
       "simple",
       templateFilename,
     );
 
-    const fileName = casexTemplate({ name, text: templateFilename });
-    await fyle(
-      path.join(ioc.project.rootPath, ".blue", local ? ".local" : "", fileName),
-    ).save(
+    const targetFile = fyle(
+      ioc.project.rootPath,
+      ".blue",
+      local ? "local" : "",
+      casexTemplate({ name, text: templateFilename }),
+    );
+
+    await targetFile.save(
       casexTemplate({
         name,
-        text: (await fyle(templatePath).read()).replace(
-          "../../command",
-          "bluecodex",
-        ),
+        text: (await templateFile.read()).replace("../../command", "bluecodex"),
       }),
+      { log: true },
     );
   },
 );

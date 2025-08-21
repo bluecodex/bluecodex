@@ -6,6 +6,13 @@ import { ioc } from "../ioc";
 export class Fyle {
   constructor(readonly path: string) {}
 
+  /**
+   * Path relative to project root
+   */
+  get relativePath() {
+    return path.relative(ioc.project.rootPath, this.path);
+  }
+
   get dirname(): string {
     return path.dirname(this.path);
   }
@@ -41,17 +48,23 @@ export class Fyle {
   /**
    * Passing an array is equivalent to `.join('\n')`
    */
-  async save(rawContents: string | string[]) {
+  async save(rawContents: string | string[], options: { log?: boolean }) {
     const contents = Array.isArray(rawContents)
       ? rawContents.join("\n")
       : rawContents;
 
     await fs.mkdir(this.dirname, { recursive: true });
-    await fs.writeFile(this.path, contents);
-  }
 
-  logCreated() {
-    ioc.theme.fileCreated(this.path);
+    const alreadyExisted = await this.exists();
+    await fs.writeFile(this.path, contents);
+
+    if (options.log) {
+      console.log(
+        alreadyExisted
+          ? ioc.theme.fileUpdated(this.relativePath)
+          : ioc.theme.fileCreated(this.relativePath),
+      );
+    }
   }
 }
 
