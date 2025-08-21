@@ -17,7 +17,12 @@ export class Project {
   }
 
   get defaultSourcesPattern() {
-    return ["blue.{ts,tsx}", ".blue/blue.{ts,tsx}", ".blue/**/*.blue.{ts,tsx}"];
+    return [
+      "bluecodex.{js,jsx,ts,tsx}",
+      "blue.{js,jsx,ts,tsx}",
+      ".blue/blue.{js,jsx,ts,tsx}",
+      ".blue/**/*.blue.{js,jsx,ts,tsx}",
+    ];
   }
 
   get sources() {
