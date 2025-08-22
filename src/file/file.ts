@@ -1,18 +1,25 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 import { ioc } from "../ioc";
+import type { LooseFilePath } from "./loose-file-path";
+import { tightenLooseFilePath } from "./tighten-loose-file-path";
 
 export class File {
   readonly path: string;
 
-  constructor(filePath: string) {
-    this.path = path.resolve(filePath);
+  constructor(...looseFilePath: LooseFilePath) {
+    this.path = tightenLooseFilePath(looseFilePath);
   }
 
-  relative(...relativePaths: string[]): File {
-    return file(this.path, ...relativePaths);
+  /**
+   * Create a new File using a path relative to this one
+   * @param looseFilePath
+   */
+  relative(...looseFilePath: LooseFilePath): File {
+    return new File(looseFilePath);
   }
 
   /**
@@ -90,8 +97,8 @@ export class File {
   }
 }
 
-export function file(...filePath: string[]): File {
-  return new File(path.join(...filePath));
+export function file(...looseFilePath: LooseFilePath): File {
+  return new File(looseFilePath);
 }
 
 file.glob = async (pattern: string): Promise<File[]> => {
