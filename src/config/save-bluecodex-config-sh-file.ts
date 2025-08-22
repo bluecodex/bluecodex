@@ -4,7 +4,7 @@ import path from "node:path";
 import { configFile } from "./config-file";
 
 export async function saveBluecodexConfigShFile(aliasName: string) {
-  const resolverJsFile = configFile("resolver.js");
+  const resolverJsFile = configFile("resolver.mjs");
   const resolverJsFilePathRelativeToHome =
     "~/" + path.relative(os.homedir(), resolverJsFile.path);
 

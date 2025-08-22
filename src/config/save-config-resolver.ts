@@ -11,7 +11,7 @@ export async function saveConfigResolver() {
   });
 
   const bundleContents = await outputs[0].text();
-  const resolverFile = configFile("resolver.js");
+  const resolverFile = configFile("resolver.mjs");
   await resolverFile.save([bundleContents].join("\n"));
 
   fs.chmod(resolverFile.path, 0o755);
