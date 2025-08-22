@@ -21,7 +21,7 @@ async function findBluecodexBin() {
     if (await bin.exists()) return bin.path;
   }
 
-  // Check 3. Linked through another project
+  // Check 2. Linked through another project
   const linkedProjectPaths = await getLinks();
 
   for (const linkedProjectPath of linkedProjectPaths) {

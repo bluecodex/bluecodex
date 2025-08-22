@@ -19,21 +19,18 @@ async function fileExists(filePath) {
 }
 
 async function findBunPath() {
-  // When bluecodex is installed as a package
+  const relativePackageBin = path.join(srcDirPath, "../../.bin/bun");
+  if (await fileExists(relativePackageBin)) return relativePackageBin
+
+  // During development - TODO: figure out a better strategy
   const cwdPackageBin = "node_modules/.bin/bun";
   if (await fileExists(cwdPackageBin)) return cwdPackageBin;
 
-  // When bluecodex is installed in another folder as a package
-  const relativePackageBin = path.join(srcDirPath, "../node_modules/.bin/bun");
-  if (await fileExists(relativePackageBin)) return relativePackageBin;
+  console.error("Unable to find bluecodex package deps");
+  process.exit(1);
 }
 
 const bunPath = await findBunPath();
-
-if (!bunPath) {
-  console.error("Unable bluecodex package deps");
-  process.exit(1);
-}
 
 const cmdArgv = process.argv.slice(2);
 
