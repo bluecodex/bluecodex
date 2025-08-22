@@ -1,6 +1,7 @@
 import { embeddedCommand } from "../command/command";
+import { configFile } from "../config/config-file";
 import { ioc } from "../ioc";
-import { getLinksFile } from "./get-links-file";
+import { getLinks } from "./get-links";
 
 export const linkBlue = embeddedCommand(
   "link",
@@ -8,17 +9,16 @@ export const linkBlue = embeddedCommand(
     description: "Link this project so you can use its commands anywhere",
   },
   async () => {
-    const linksFile = getLinksFile();
+    const links = await getLinks();
 
-    const lines = await linksFile.readLines();
+    const alreadyIncluded = links.some((line) => line === ioc.project.rootPath);
 
-    const alreadyIncluded = lines.some((line) => line === ioc.project.rootPath);
     if (alreadyIncluded) {
       console.log("This project is already linked");
       return;
     }
 
-    lines.push(ioc.project.rootPath);
-    await linksFile.save(lines.filter(Boolean).join("\n"));
+    links.push(ioc.project.rootPath);
+    await configFile("links.txt").save(links);
   },
 );

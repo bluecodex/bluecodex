@@ -28,7 +28,11 @@ async function sourceLinks() {
       process.chdir(link);
 
       for (const pattern of getProjectPatterns(link)) {
-        await source(pattern);
+        try {
+          await source(pattern);
+        } catch (error) {
+          console.log(ioc.theme.styleError((error as Error).message));
+        }
       }
     }
 

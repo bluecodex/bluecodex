@@ -1,14 +1,14 @@
+import { configFile } from "../config/config-file";
 import { file } from "../file/file";
-import { getLinksFile } from "./get-links-file";
 
 export async function getLinks() {
-  const linksFile = getLinksFile();
+  const linksFile = configFile("links.txt");
 
   if (!(await linksFile.exists())) return [];
 
   const lines = await linksFile.readLines();
 
-  const validProjectPaths = [];
+  const validProjectPaths: string[] = [];
   for (const line of lines) {
     if (line && (await file(line).exists())) validProjectPaths.push(line);
   }
