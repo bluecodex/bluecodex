@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { execa } from "execa";
+import { spawn } from "node:child_process";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -37,10 +37,13 @@ if (!bunPath) {
 
 const cmdArgv = process.argv.slice(2);
 
-const { exitCode } = await execa(
+const child = spawn(
   bunPath,
   [path.join(srcDirPath, "boot/boot.ts"), ...cmdArgv],
-  { stdio: "inherit", reject: false },
+  { stdio: "inherit" },
 );
 
-process.exitCode = exitCode ?? 1;
+child.on("close", () => {
+  const exitCode = child.exitCode;
+  if (typeof exitCode == "number") process.exitCode = exitCode;
+});

@@ -11,7 +11,7 @@
     "src"
   ],
   "bin": {
-    "bluecodex": "src/bin/bluecodex.js"
+    "bluecodex": "src/bin/bluecodex-bin.js"
   },
   "keywords": [
     "kb",

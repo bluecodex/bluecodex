@@ -1,6 +1,5 @@
 #!/usr/bin/env node
-import { execa } from "execa";
-import which from "which";
+import { spawn } from "node:child_process";
 
 import { findProjectRoot } from "../boot/find-project-root";
 import { file } from "../file/file";
@@ -10,8 +9,7 @@ import { getLinks } from "../link/get-links";
 //
 // Bluecodex may be used in one of these ways (in order of priority):
 // 1. Installed in this project
-// 2. Installed globally
-// 3. Linked through another project
+// 2. Linked through another project
 //
 // Before being copied this, this file is compiled transpiled file with no external deps
 
@@ -22,9 +20,6 @@ async function findBluecodexBin() {
     const bin = file(projectRoot, "node_modules/.bin/bluecodex");
     if (await bin.exists()) return bin.path;
   }
-
-  // Check 2. Installed globally
-  if (await which("bluecodex", { nothrow: true })) return "bluecodex";
 
   // Check 3. Linked through another project
   const linkedProjectPaths = await getLinks();
@@ -38,8 +33,10 @@ async function findBluecodexBin() {
 }
 
 const bluecodexBin = await findBluecodexBin();
-const { exitCode } = await execa(bluecodexBin, process.argv.slice(2), {
-  stdio: "inherit",
-  reject: false,
+
+const child = spawn(bluecodexBin, process.argv.slice(2), { stdio: "inherit" });
+
+child.on("close", () => {
+  const exitCode = child.exitCode;
+  if (typeof exitCode == "number") process.exitCode = exitCode;
 });
-process.exitCode = exitCode;
