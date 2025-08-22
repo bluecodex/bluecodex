@@ -11,6 +11,10 @@ export class File {
     this.path = path.resolve(filePath);
   }
 
+  relative(...relativePaths: string[]): File {
+    return file(this.path, ...relativePaths);
+  }
+
   /**
    * If this file is within the project, show a relative path.
    *

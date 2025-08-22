@@ -1,7 +1,12 @@
-import { findUp } from "find-up-simple";
-import path from "node:path";
+import { file } from "../file/file";
 
 export async function findProjectRoot() {
-  const nodeModulesPath = await findUp("node_modules");
-  return nodeModulesPath ? path.dirname(nodeModulesPath) : null;
+  const cwd = process.cwd();
+
+  for (let i = 0; i < 5; i++) {
+    const f = file(cwd, "../".repeat(i), "node_modules");
+    if (await f.exists()) return f.dirname;
+  }
+
+  return null;
 }
