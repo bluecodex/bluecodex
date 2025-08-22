@@ -1,11 +1,23 @@
 import { embeddedCommand } from "../command/command";
+import { ioc } from "../ioc";
+import { addSourceConfigResolverInstructionToShellProfile } from "./add-source-config-resolver-instruction-to-shell-profile";
+import { saveBluecodexConfigShFile } from "./save-bluecodex-config-sh-file";
+import { saveConfigResolver } from "./save-config-resolver";
 
 export const configBlue = embeddedCommand(
-  "confg",
+  "config alias",
   {
     description: "Configure your bluecodex setup",
+    alias: { validate: ["blue", "b"] },
   },
-  () => {
-    // TODO
+  async ({ alias }) => {
+    await saveConfigResolver();
+    await saveBluecodexConfigShFile(alias);
+    const { sourceInstruction } =
+      await addSourceConfigResolverInstructionToShellProfile();
+
+    console.log(
+      `Run ${ioc.theme.styleDim('"')}${ioc.theme.stylePrimary(`${sourceInstruction}`)}${ioc.theme.styleDim('"')} or restart your terminal to apply changes.`,
+    );
   },
 );

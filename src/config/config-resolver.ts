@@ -5,9 +5,7 @@ import { findProjectRoot } from "../boot/find-project-root";
 import { file } from "../file/file";
 import { getLinks } from "../link/get-links";
 
-// This file sits at `~/.config/bluecodex/resolver.js`
-// and has the role of reconciling the multiple ways in which
-// bluecodex is used.
+// This files resolves between the multiple ways in which bluecodex can be used.
 //
 // Bluecodex may be used in one of these ways (in order of priority):
 // 1. Installed in this project

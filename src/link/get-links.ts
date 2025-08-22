@@ -1,8 +1,8 @@
 import { file } from "../file/file";
-import { getLinksFilePath } from "./get-links-file-path";
+import { getLinksFile } from "./get-links-file";
 
 export async function getLinks() {
-  const linksFile = file(getLinksFilePath());
+  const linksFile = getLinksFile();
 
   if (!(await linksFile.exists())) return [];
 
@@ -10,7 +10,7 @@ export async function getLinks() {
 
   const validProjectPaths = [];
   for (const line of lines) {
-    if (await file(line).exists()) validProjectPaths.push(line);
+    if (line && (await file(line).exists())) validProjectPaths.push(line);
   }
 
   return validProjectPaths;

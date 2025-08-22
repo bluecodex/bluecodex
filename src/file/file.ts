@@ -25,7 +25,7 @@ export class File {
 
     const homedir = os.homedir();
     if (this.path.startsWith(homedir)) {
-      return path.relative(homedir, this.path);
+      return "~/" + path.relative(homedir, this.path);
     }
 
     return this.path;
