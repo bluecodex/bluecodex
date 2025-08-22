@@ -1,6 +1,3 @@
-import os from "node:os";
-import path from "node:path";
-
 import { configFile } from "./config-file";
 import { findShellProfileFile } from "./find-shell-profile-file";
 
@@ -12,10 +9,8 @@ export async function addSourceConfigResolverInstructionToShellProfile() {
     : "";
 
   const configShFile = configFile("shell.sh");
-  const configShFilePathRelativeToHome =
-    "~/" + path.relative(os.homedir(), configShFile.path);
 
-  const sourceInstruction = `source ${configShFilePathRelativeToHome}`;
+  const sourceInstruction = `source ${configShFile.tildePath}`;
   if (previousContents.includes(sourceInstruction))
     return { sourceInstruction };
 

@@ -1,5 +1,3 @@
-import os from "node:os";
-
 import { file } from "../file/file";
 
 const BASH_PROFILE_FILENAMES = [
@@ -16,7 +14,7 @@ export async function findShellProfileFile() {
 
   if (shell.includes("bash")) {
     for (const filename of BASH_PROFILE_FILENAMES) {
-      const profileFile = file(os.homedir(), filename);
+      const profileFile = file(`~/${filename}`);
       if (await profileFile.exists()) return profileFile;
     }
 
@@ -25,7 +23,7 @@ export async function findShellProfileFile() {
 
   if (shell.includes("zsh")) {
     for (const filename of ZSH_PROFILE_FILENAMES) {
-      const profileFile = file(os.homedir(), filename);
+      const profileFile = file(`~/${filename}`);
       if (await profileFile.exists()) return profileFile;
     }
 
@@ -33,8 +31,8 @@ export async function findShellProfileFile() {
   }
 
   if (shell.includes("fish")) {
-    return file(os.homedir(), ".config/fish/config.fish");
+    return file("~/.config/fish/config.fish");
   }
 
-  return file(os.homedir(), ".profile");
+  return file("~/.profile");
 }

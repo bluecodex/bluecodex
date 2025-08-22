@@ -1,3 +1,4 @@
+import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -9,6 +10,10 @@ export function tightenLooseFilePath(looseFilePath: LooseFilePath): string {
       if (Array.isArray(part)) return tightenLooseFilePath(part);
 
       if (part instanceof URL) return fileURLToPath(part);
+
+      if (part === "~") return os.homedir();
+
+      if (part.startsWith("~/")) return path.join(os.homedir(), part.slice(2));
 
       return part;
     }),

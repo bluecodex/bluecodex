@@ -14,14 +14,6 @@ export class File {
   }
 
   /**
-   * Create a new File using a path relative to this one
-   * @param looseFilePath
-   */
-  relative(...looseFilePath: LooseFilePath): File {
-    return new File(looseFilePath);
-  }
-
-  /**
    * If this file is within the project, show a relative path.
    *
    * If it's within the user dir ~/..., show ~/...relative
@@ -33,12 +25,15 @@ export class File {
       return path.relative(ioc.project.rootPath, this.path);
     }
 
-    const homedir = os.homedir();
-    if (this.path.startsWith(homedir)) {
-      return "~/" + path.relative(homedir, this.path);
+    if (this.path.startsWith(os.homedir())) {
+      return this.tildePath;
     }
 
     return this.path;
+  }
+
+  get tildePath() {
+    return "~/" + path.relative(os.homedir(), this.path);
   }
 
   get dirname(): string {
