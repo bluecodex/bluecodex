@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { execa } from "execa";
 import which from "which";
 
 import { findProjectRoot } from "../boot/find-project-root";
@@ -32,12 +33,13 @@ async function findBluecodexBin() {
     const bin = file(linkedProjectPath, "node_modules/.bin/bluecodex");
     if (bin) return bin.path;
   }
+
+  throw new Error("Unable to find bluecodex");
 }
 
-try {
-  const bluecodexBin = await findBluecodexBin();
-  console.log(bluecodexBin);
-  process.exitCode = 0;
-} catch {
-  process.exitCode = 1;
-}
+const bluecodexBin = await findBluecodexBin();
+const { exitCode } = await execa(bluecodexBin, process.argv.slice(2), {
+  stdio: "inherit",
+  reject: false,
+});
+process.exitCode = exitCode;

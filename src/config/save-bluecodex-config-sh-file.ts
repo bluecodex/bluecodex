@@ -8,7 +8,8 @@ export async function saveBluecodexConfigShFile(aliasName: string) {
   const resolverJsFilePathRelativeToHome =
     "~/" + path.relative(os.homedir(), resolverJsFile.path);
 
-  await configFile("shell.sh").save(
+  const shellShFile = configFile("shell.sh");
+  await shellShFile.save([
     `alias ${aliasName}="${resolverJsFilePathRelativeToHome}"`,
-  );
+  ]);
 }
