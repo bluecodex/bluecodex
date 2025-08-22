@@ -4,41 +4,34 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const srcDirPath = path.join(
-  path.dirname(fileURLToPath(import.meta.url)),
-  "../",
-);
-
-async function fileExists(filePath) {
-  try {
-    await fs.access(filePath, fs.constants.F_OK);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
 async function findBunPath() {
-  const relativePackageBin = path.join(srcDirPath, "../../.bin/bun");
-  if (await fileExists(relativePackageBin)) return relativePackageBin;
+  for (let i = 0; i < 5; i++) {
+    const binPath = path.join(
+      path.dirname(fileURLToPath(import.meta.url)),
+      "../".repeat(i),
+      "node_modules/.bin/bun",
+    );
 
-  // During development - TODO: figure out a better strategy
-  const cwdPackageBin = "node_modules/.bin/bun";
-  if (await fileExists(cwdPackageBin)) return cwdPackageBin;
+    try {
+      await fs.access(path.join(binPath), fs.constants.F_OK);
+      return binPath;
+    } catch {}
+  }
 
-  console.error("[error] Unable to find bun to initialize bluecodex");
+  console.error("Unable to find bun to initialize bluecodex");
   process.exit(1);
 }
 
 const bunPath = await findBunPath();
 
+const bootFilePath = path.join(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "../boot/boot.ts",
+);
+
 const cmdArgv = process.argv.slice(2);
 
-const child = spawn(
-  bunPath,
-  [path.join(srcDirPath, "boot/boot.ts"), ...cmdArgv],
-  { stdio: "inherit" },
-);
+const child = spawn(bunPath, [bootFilePath, ...cmdArgv], { stdio: "inherit" });
 
 child.on("close", () => {
   const exitCode = child.exitCode;
