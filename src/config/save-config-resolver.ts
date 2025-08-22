@@ -1,18 +1,17 @@
-import Bun from "bun";
 import fs from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 import { file } from "../file/file";
 import { configFile } from "./config-file";
 
 export async function saveConfigResolver() {
-  const { outputs } = await Bun.build({
-    entrypoints: [file(__dirname, "config-resolver.ts").path],
-    target: "node",
-  });
+  const resolverMjsFile = file(
+    path.dirname(fileURLToPath(import.meta.url)),
+    "config-resolver.mjs",
+  );
 
-  const bundleContents = await outputs[0].text();
   const resolverFile = configFile("resolver.mjs");
-  await resolverFile.save([bundleContents].join("\n"));
-
+  await resolverFile.save(await resolverMjsFile.read());
   fs.chmod(resolverFile.path, 0o755);
 }
