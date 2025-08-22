@@ -20,13 +20,13 @@ async function fileExists(filePath) {
 
 async function findBunPath() {
   const relativePackageBin = path.join(srcDirPath, "../../.bin/bun");
-  if (await fileExists(relativePackageBin)) return relativePackageBin
+  if (await fileExists(relativePackageBin)) return relativePackageBin;
 
   // During development - TODO: figure out a better strategy
   const cwdPackageBin = "node_modules/.bin/bun";
   if (await fileExists(cwdPackageBin)) return cwdPackageBin;
 
-  console.error("Unable to find bluecodex package deps");
+  console.error("[error] Unable to find bun to initialize bluecodex");
   process.exit(1);
 }
 
