@@ -31,7 +31,7 @@ async function findBluecodexBin() {
 
   for (const linkedProjectPath of linkedProjectPaths) {
     const bin = file(linkedProjectPath, "node_modules/.bin/bluecodex");
-    if (bin) return bin.path;
+    if (await bin.exists()) return bin.path;
   }
 
   throw new Error("Unable to find bluecodex");
