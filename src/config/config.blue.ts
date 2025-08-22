@@ -17,7 +17,7 @@ export const configBlue = embeddedCommand(
       await addSourceConfigResolverInstructionToShellProfile();
 
     console.log(
-      `Run ${ioc.theme.styleDim('"')}${ioc.theme.stylePrimary(`${sourceInstruction}`)}${ioc.theme.styleDim('"')} or restart your terminal to apply changes.`,
+      `Run ${ioc.theme.stylePrimary(`${sourceInstruction}`)} or restart your terminal.`,
     );
   },
 );
