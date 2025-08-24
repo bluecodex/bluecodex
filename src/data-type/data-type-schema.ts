@@ -1,12 +1,12 @@
 import type { DataType } from "./data-type";
 
 export type DataTypeSchemaValidateArray<DT extends DataType = DataType> = Array<
-  DT | { value: DT; description?: string }
+  DT | { value: DT; label?: string; description?: string }
 >;
 
 export type DataTypeSchemaValidateFn<DT extends DataType = DataType> = (
   value: DT,
-) => boolean | string;
+) => boolean;
 
 export type DataTypeSchema<DT extends DataType = DataType> = {
   initial?: DT;
@@ -14,5 +14,8 @@ export type DataTypeSchema<DT extends DataType = DataType> = {
     | DataTypeSchemaValidateArray<DT>
     | Readonly<DataTypeSchemaValidateArray<DT>>
     | DataTypeSchemaValidateFn<DT>;
-  message?: string;
+  // TODO: [feature] validate: | type-guard
+  // TODO: [feature] transform?:
+  prompt?: string;
+  // TODO: [feature] prompt async fn?:
 };

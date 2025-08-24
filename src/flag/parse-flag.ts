@@ -215,9 +215,7 @@ function extractFlagShortFromNameInput(nameShortToken: string): {
   };
 }
 
-export function parseFlag<FlagToken extends string>(
-  flagToken: FlagToken,
-): ParseFlag<FlagToken> {
+export function parseFlag(flagToken: string): Flag {
   const dashCount = flagToken[1] === "-" ? 2 : 1;
 
   const parts = flagToken.slice(dashCount).split(/[:=]/);
@@ -238,7 +236,7 @@ export function parseFlag<FlagToken extends string>(
           name: nameToken[0],
           short:
             nameToken.length === 1
-              ? true
+              ? true as const
               : new FlagShortHasMoreThanOneCharError(nameToken[0], nameToken),
         }
       : extractFlagShortFromNameInput(nameToken);
@@ -274,5 +272,5 @@ export function parseFlag<FlagToken extends string>(
     explicitType,
     required,
     fallback,
-  } satisfies Flag<any, any, any, any, any> as ParseFlag<FlagToken>;
+  } satisfies Flag;
 }

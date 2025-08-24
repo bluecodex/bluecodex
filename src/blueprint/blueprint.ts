@@ -1,8 +1,6 @@
 import type { Arg, ValidArg } from "../arg/arg";
 import type { Flag, ValidFlag } from "../flag/flag";
 
-/* Types */
-
 export type Blueprint<
   Name extends string = string,
   Fields extends (Arg | Flag)[] = (Arg | Flag)[],

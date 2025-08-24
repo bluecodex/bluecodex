@@ -30,9 +30,7 @@ export type ParseBlueprint<BlueprintToken extends string> =
  * Function
  */
 
-export function parseBlueprint<BlueprintToken extends string>(
-  blueprintToken: BlueprintToken,
-): ParseBlueprint<BlueprintToken> {
+export function parseBlueprint(blueprintToken: string): Blueprint {
   const [name, ...inputParts] = blueprintToken.split(" ");
 
   const fields: (Arg | Flag)[] = inputParts.map((part) =>
@@ -43,5 +41,5 @@ export function parseBlueprint<BlueprintToken extends string>(
     __objectType__: "blueprint",
     name,
     fields,
-  } satisfies Blueprint<any, any> as ParseBlueprint<BlueprintToken>;
+  } satisfies Blueprint;
 }

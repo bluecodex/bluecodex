@@ -63,9 +63,7 @@ type ParseArg_Step4<
 
 export type ParseArg<ArgToken extends string> = ParseArg_Step1<ArgToken>;
 
-export function parseArg<ArgToken extends string>(
-  argToken: ArgToken,
-): ParseArg<ArgToken> {
+export function parseArg(argToken: string): Arg {
   const tokenParts = argToken.split(/[:=]/);
   const explicitType = argToken.includes(":");
 
@@ -108,5 +106,5 @@ export function parseArg<ArgToken extends string>(
     explicitType,
     optional,
     fallback,
-  } satisfies Arg<any, any, any, any> as ParseArg<ArgToken>;
+  } satisfies Arg;
 }

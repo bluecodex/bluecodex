@@ -14,7 +14,7 @@ type Args = {
 export async function promptField({ field, schema }: Args) {
   if (Array.isArray(schema.validate)) {
     return prompt.select<any>(
-      schema.message ?? `Select a value for ${field.name}`,
+      schema.prompt ?? `Select a value for ${field.name}`,
       schema.validate,
       { initial: schema.initial },
     );
@@ -22,14 +22,14 @@ export async function promptField({ field, schema }: Args) {
 
   switch (field.type) {
     case "string":
-      return prompt(schema.message ?? `Enter value for ${field.name}`, {
+      return prompt(schema.prompt ?? `Enter value for ${field.name}`, {
         initial: schema.initial as string | undefined,
         validate: schema.validate as DataTypeSchemaValidateFn | undefined,
       });
 
     case "boolean":
       return prompt.confirm(
-        schema.message ?? `Provide confirmation for ${field.name}`,
+        schema.prompt ?? `Provide confirmation for ${field.name}`,
         {
           initial: schema.initial as boolean | undefined,
         },
@@ -37,7 +37,7 @@ export async function promptField({ field, schema }: Args) {
 
     case "number":
       return prompt.number(
-        schema.message ?? `Enter a number for ${field.name}`,
+        schema.prompt ?? `Enter a number for ${field.name}`,
         {
           initial: schema.initial as number | undefined,
           validate: schema.validate as DataTypeSchemaValidateFn | undefined,

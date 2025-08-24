@@ -13,7 +13,7 @@ type IsNullableField<P extends Arg | Flag> = P extends Arg
     ? IsNullableFlag<P>
     : false;
 
-type SelfOrValue<V> = V extends { value: any } ? V["value"] : V;
+type SelfOrValue<V> = V extends { value: infer ObjectValue } ? ObjectValue : V;
 
 type MaybeNullable<Nullable, V> = Nullable extends true ? V | null : V;
 
@@ -24,9 +24,9 @@ export type ParsedArgvData<
   [F in B["fields"][number] as F["name"]]: MaybeNullable<
     IsNullableField<F>,
     S[F["name"]] extends {
-      validate: Array<any> | ReadonlyArray<any>;
+      validate: Array<infer Value> | ReadonlyArray<infer Value>;
     }
-      ? SelfOrValue<S[F["name"]]["validate"][number]>
+      ? SelfOrValue<Value>
       : F["type"] extends DataTypeToken
         ? DataType<F["type"]>
         : F["type"]
