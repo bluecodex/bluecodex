@@ -236,7 +236,7 @@ export function parseFlag(flagToken: string): Flag {
           name: nameToken[0],
           short:
             nameToken.length === 1
-              ? true as const
+              ? (true as const)
               : new FlagShortHasMoreThanOneCharError(nameToken[0], nameToken),
         }
       : extractFlagShortFromNameInput(nameToken);

@@ -1,7 +1,7 @@
 import type { DataType } from "./data-type";
 
 export type DataTypeSchemaValidateArray<DT extends DataType = DataType> = Array<
-  DT | { value: DT; label?: string; description?: string }
+  DT | { value: DT; title?: string; description?: string }
 >;
 
 export type DataTypeSchemaValidateFn<DT extends DataType = DataType> = (
