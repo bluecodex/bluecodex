@@ -14,8 +14,7 @@ export type DataTypeSchema<DT extends DataType = DataType> = {
     | DataTypeSchemaValidateArray<DT>
     | Readonly<DataTypeSchemaValidateArray<DT>>
     | DataTypeSchemaValidateFn<DT>;
-  // TODO: [feature] validate: | type-guard
-  // TODO: [feature] transform?:
   prompt?: string;
-  // TODO: [feature] prompt async fn?:
+  // TODO: [feature] prompt `async fn?:` to allow custom prompt implementation
+  // TODO: [feature] transform?:
 };

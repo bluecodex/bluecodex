@@ -17,7 +17,7 @@ export async function prompt(
   message: string,
   options?: {
     initial?: string;
-    validate?: (value: string) => boolean | string;
+    validate?: (value: string) => boolean | Promise<boolean>;
   },
 ): Promise<string> {
   const { value } = await prompts({
@@ -25,6 +25,7 @@ export async function prompt(
     name: "value",
     message,
     initial: options?.initial,
+    // TODO: try/catch and return error as message
     validate: options?.validate,
   });
 
@@ -63,7 +64,7 @@ prompt.number = async (
   message: string,
   options?: {
     initial?: number;
-    validate?: (value: number) => boolean | string;
+    validate?: (value: number) => boolean | Promise<boolean>;
     min?: number;
     max?: number;
     float?: boolean | { decimalPlaces: number };
@@ -75,6 +76,7 @@ prompt.number = async (
     name: "value",
     message,
     initial: options?.initial ?? options?.min ?? 0,
+    // TODO: try/catch and return error as message
     validate: options?.validate,
     min: options?.min,
     max: options?.max,
