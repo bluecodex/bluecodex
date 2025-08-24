@@ -1,27 +1,18 @@
-import type { MaybeReadonly } from "../types/maybe-readonly";
-import type { DataTypeToken } from "./data-type-token";
+import type { DataType } from "./data-type";
 
-export type DataTypeSchema<DT extends DataTypeToken = DataTypeToken> =
-  DT extends "string"
-    ? {
-        initial?: string;
-        validate?:
-          | MaybeReadonly<
-              Array<string | { value: string; description?: string }>
-            >
-          | ((value: string) => boolean | string);
-        message?: string;
-      }
-    : DT extends "boolean"
-      ? { initial?: boolean; message?: string }
-      : DT extends "number"
-        ? {
-            initial?: number;
-            validate?: (value: number) => boolean | string;
-            min?: number;
-            max?: number;
-            float?: boolean | { decimalPlaces: number };
-            step?: number;
-            message?: string;
-          }
-        : {};
+export type DataTypeSchemaValidateArray<DT extends DataType = DataType> = Array<
+  DT | { value: DT; description?: string }
+>;
+
+export type DataTypeSchemaValidateFn<DT extends DataType = DataType> = (
+  value: DT,
+) => boolean | string;
+
+export type DataTypeSchema<DT extends DataType = DataType> = {
+  initial?: DT;
+  validate?:
+    | DataTypeSchemaValidateArray<DT>
+    | Readonly<DataTypeSchemaValidateArray<DT>>
+    | DataTypeSchemaValidateFn<DT>;
+  message?: string;
+};

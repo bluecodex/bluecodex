@@ -37,7 +37,6 @@ async function findBluecodexBin() {
   // Check 2. Linked through another project
   const linksFilePath = path.join(os.homedir(), ".config/bluecodex/links.txt");
 
-  let foundMissingProject = false;
   let hasLinks = false;
   if (await fsExists(linksFilePath)) {
     const linksContents = await fs.readFile(linksFilePath, {
@@ -48,7 +47,6 @@ async function findBluecodexBin() {
     if (links.length > 0) hasLinks = true;
     for (const link of links) {
       if (!(await fsExists(link))) {
-        foundMissingProject = true;
         console.log(`[warning] The linked project ${link} no longer exists`);
         continue;
       }

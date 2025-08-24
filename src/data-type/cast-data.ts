@@ -11,14 +11,14 @@ import { DataTypeCastBooleanError } from "./errors/data-type-cast-boolean-error"
 import { DataTypeCastNumberError } from "./errors/data-type-cast-number-error";
 
 export type CastData<
-  DT extends DataTypeToken,
+  DTToken extends DataTypeToken,
   ValueToken extends string | null,
 > = ValueToken extends string
-  ? DT extends "string"
+  ? DTToken extends "string"
     ? ValueToken
-    : DT extends "number"
+    : DTToken extends "number"
       ? StringToNumber<ValueToken, DataTypeCastNumberError<ValueToken>>
-      : DT extends "boolean"
+      : DTToken extends "boolean"
         ? ValueToken extends TruthyValue
           ? true
           : ValueToken extends FalsyValue
@@ -27,25 +27,25 @@ export type CastData<
         : never
   : null;
 
-export function castData<DT extends DataTypeToken>({
+export function castData<DTToken extends DataTypeToken>({
   type,
   input,
 }: {
-  type: DT;
+  type: DTToken;
   input: string;
-}): DataType<DT> {
+}): DataType<DTToken> {
   switch (type) {
     case "string":
-      return input as DataType<DT>;
+      return input as DataType<DTToken>;
     case "number": {
       const numberCast = Number(input);
       if (isNaN(numberCast)) throw new DataTypeCastNumberError(input);
 
-      return numberCast as DataType<DT>;
+      return numberCast as DataType<DTToken>;
     }
     case "boolean":
-      if (truthyValues.includes(input)) return true as DataType<DT>;
-      if (falsyValues.includes(input)) return false as DataType<DT>;
+      if (truthyValues.includes(input)) return true as DataType<DTToken>;
+      if (falsyValues.includes(input)) return false as DataType<DTToken>;
 
       throw new DataTypeCastBooleanError(input);
   }

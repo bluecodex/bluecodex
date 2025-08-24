@@ -14,19 +14,17 @@ import {
 import { parseArgvFlag } from "./parse-argv-flag";
 import type { ParsedArgvData } from "./parsed-argv-data";
 
-export function parseArgv<VB extends ValidBlueprint>({
-  argv,
-  blueprint,
-  schema,
-}: {
+type Args = {
   argv: string[];
-  blueprint: VB;
-  schema: CommandSchema<VB>;
-}):
-  | { type: "data"; data: ParsedArgvData<VB> }
+  blueprint: ValidBlueprint;
+  schema: CommandSchema;
+};
+
+export function parseArgv({ argv, blueprint, schema }: Args):
+  | { type: "data"; data: ParsedArgvData }
   | {
       type: "error";
-      data: Partial<ParsedArgvData<VB>>;
+      data: Partial<ParsedArgvData>;
       errors: ParseArgvError[];
     } {
   let parsedArgs: ReturnType<typeof nodeParseArgs>;
@@ -109,10 +107,6 @@ export function parseArgv<VB extends ValidBlueprint>({
   });
 
   return errors.length > 0
-    ? {
-        type: "error",
-        data: dataAcc as Partial<ParsedArgvData<VB>>,
-        errors,
-      }
-    : { type: "data", data: dataAcc as ParsedArgvData<VB> };
+    ? { type: "error", data: dataAcc as Partial<ParsedArgvData>, errors }
+    : { type: "data", data: dataAcc as ParsedArgvData };
 }

@@ -1,5 +1,6 @@
 import { assertBlueprintIsValid } from "../blueprint/assert-blueprint-is-valid";
 import type { Command } from "../command/command";
+import type { DataTypeSchema } from "../data-type/data-type-schema";
 import { ioc } from "../ioc";
 import { parseArgv } from "../parse-argv/parse-argv";
 import { promptField } from "../prompt/prompt-field";
@@ -30,7 +31,7 @@ export async function runCommand(
 
     for (const error of parsedArgv.errors) {
       const field = error.field;
-      const schema = command.schema[field.name] ?? {};
+      const schema = (command.schema[field.name] ?? {}) as DataTypeSchema;
       data[field.name] = await promptField({ field, schema });
     }
   }

@@ -1,5 +1,8 @@
 import type { ValidArg } from "../arg/arg";
-import type { DataTypeSchema } from "../data-type/data-type-schema";
+import type {
+  DataTypeSchema,
+  DataTypeSchemaValidateFn,
+} from "../data-type/data-type-schema";
 import type { ValidFlag } from "../flag/flag";
 import { prompt } from "./prompt";
 
@@ -8,49 +11,37 @@ type Args = {
   schema: DataTypeSchema;
 };
 
-export async function promptField({ field, schema: uncastSchema }: Args) {
-  const name = field.name;
+export async function promptField({ field, schema }: Args) {
+  if (Array.isArray(schema.validate)) {
+    return prompt.select<any>(
+      schema.message ?? `Select a value for ${field.name}`,
+      schema.validate,
+      { initial: schema.initial },
+    );
+  }
 
   switch (field.type) {
-    case "string": {
-      const schema = uncastSchema as DataTypeSchema<typeof field.type>;
-
-      if (Array.isArray(schema.validate)) {
-        return prompt.select(
-          schema.message ?? `Select a value for ${name}`,
-          schema.validate,
-          { initial: schema.initial },
-        );
-      }
-
-      return prompt(schema.message ?? `Enter value for ${name}`, {
-        initial: schema.initial,
-        validate:
-          "validate" in schema && typeof schema.validate === "function"
-            ? schema.validate
-            : undefined,
+    case "string":
+      return prompt(schema.message ?? `Enter value for ${field.name}`, {
+        initial: schema.initial as string | undefined,
+        validate: schema.validate as DataTypeSchemaValidateFn | undefined,
       });
-    }
 
-    case "boolean": {
-      const schema = uncastSchema as DataTypeSchema<typeof field.type>;
-
+    case "boolean":
       return prompt.confirm(
-        schema.message ?? `Provide confirmation for ${name}`,
-        { initial: schema.initial },
+        schema.message ?? `Provide confirmation for ${field.name}`,
+        {
+          initial: schema.initial as boolean | undefined,
+        },
       );
-    }
 
-    case "number": {
-      const schema = uncastSchema as DataTypeSchema<typeof field.type>;
-
-      return prompt.number(schema.message ?? `Enter a number for ${name}`, {
-        initial: schema.initial,
-        min: schema.min,
-        max: schema.max,
-        float: schema.float,
-        step: schema.step,
-      });
-    }
+    case "number":
+      return prompt.number(
+        schema.message ?? `Enter a number for ${field.name}`,
+        {
+          initial: schema.initial as number | undefined,
+          validate: schema.validate as DataTypeSchemaValidateFn | undefined,
+        },
+      );
   }
 }

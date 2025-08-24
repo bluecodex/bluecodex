@@ -75,7 +75,7 @@ export class Registry {
     this.markAsLocalEnabled = false;
   }
 
-  registerCommand<C extends Command>(command: C): C {
+  registerCommand(command: Command): Command {
     this.throwIfCommandOrAliasAlreadyRegistered(command.blueprint.name);
 
     const adjustedCommand = this.markAsLocalEnabled
@@ -94,7 +94,7 @@ export class Registry {
       throw new CommandAlreadyRegisteredError(existingCommandOrAlias);
   }
 
-  selfRegisterCommandIfEnabled<C extends Command>(command: C): C {
+  selfRegisterCommandIfEnabled(command: Command): Command {
     return this.selfRegisterEnabled ? this.registerCommand(command) : command;
   }
 

@@ -4,15 +4,12 @@ import type { DataType } from "../data-type/data-type";
 import { ParseArgvMalformattedInputError } from "../parse-argv/errors/parse-argv-malformatted-input-error";
 import { ParseArgvMissingRequiredFieldError } from "./errors/parse-argv-missing-required-field-error";
 
-type Args<VA extends ValidArg> = {
-  arg: VA;
+type Args = {
+  arg: ValidArg;
   input: string;
 };
 
-export function parseArgvArg<VA extends ValidArg>({
-  arg,
-  input,
-}: Args<VA>): DataType<VA["type"]> | null {
+export function parseArgvArg({ arg, input }: Args): DataType | null {
   if (!input) {
     if (!arg.optional) throw new ParseArgvMissingRequiredFieldError(arg);
     return null;

@@ -4,15 +4,12 @@ import type { ValidFlag } from "../flag/flag";
 import { ParseArgvMalformattedInputError } from "./errors/parse-argv-malformatted-input-error";
 import { ParseArgvMissingRequiredFieldError } from "./errors/parse-argv-missing-required-field-error";
 
-type Args<VF extends ValidFlag> = {
-  flag: VF;
+type Args = {
+  flag: ValidFlag;
   input: string;
 };
 
-export function parseArgvFlag<VF extends ValidFlag>({
-  flag,
-  input,
-}: Args<VF>): DataType<VF["type"]> | null {
+export function parseArgvFlag({ flag, input }: Args): DataType | null {
   if (!input) {
     if (flag.required) throw new ParseArgvMissingRequiredFieldError(flag);
 

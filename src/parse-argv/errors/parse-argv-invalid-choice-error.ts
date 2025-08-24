@@ -1,11 +1,12 @@
 import type { ValidArg } from "../../arg/arg";
+import type { DataType } from "../../data-type/data-type";
 import type { ValidFlag } from "../../flag/flag";
 
 export class ParseArgvInvalidChoiceError extends Error {
   constructor(
     readonly field: ValidArg | ValidFlag,
-    readonly choices: string[],
-    readonly value: string,
+    readonly choices: DataType[],
+    readonly value: DataType,
   ) {
     super();
   }

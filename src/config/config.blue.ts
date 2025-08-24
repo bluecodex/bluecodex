@@ -8,7 +8,7 @@ export const configBlue = embeddedCommand(
   "config alias",
   {
     description: "Configure your bluecodex setup",
-    alias: { validate: ["blue", "b"] },
+    alias: { validate: ["blue", "b"] as const },
   },
   async ({ alias }) => {
     await saveConfigResolver();
