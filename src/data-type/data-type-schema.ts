@@ -6,7 +6,7 @@ export type DataTypeSchemaValidateArray<DT extends DataType = DataType> = Array<
 
 export type DataTypeSchemaValidateFn<DT extends DataType = DataType> = (
   value: DT,
-) => boolean;
+) => boolean | Promise<boolean>;
 
 export type DataTypeSchema<DT extends DataType = DataType> = {
   initial?: DT;

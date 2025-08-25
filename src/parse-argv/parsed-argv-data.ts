@@ -27,8 +27,10 @@ export type ParsedArgvData<
       validate: Array<infer Value> | ReadonlyArray<infer Value>;
     }
       ? SelfOrValue<Value>
-      : F["type"] extends DataTypeToken
-        ? DataType<F["type"]>
-        : F["type"]
+      : S[F["name"]] extends { validate: (value: any) => value is infer Value }
+        ? Value
+        : F["type"] extends DataTypeToken
+          ? DataType<F["type"]>
+          : F["type"]
   >;
 };
