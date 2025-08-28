@@ -12,7 +12,7 @@ export type DataTypeSchema<DT extends DataType = DataType> = {
   initial?: DT;
   validate?:
     | DataTypeSchemaValidateArray<DT>
-    // TODO: [feature] async fn?: () => Array<DT>
+    // TODO: [feature] fn?: () => Array<DT> | Promise<Array<DT>>
     | Readonly<DataTypeSchemaValidateArray<DT>>
     | DataTypeSchemaValidateFn<DT>;
   prompt?: string;

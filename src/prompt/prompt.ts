@@ -1,13 +1,11 @@
-import prompts from "prompts";
-
 // =============================================================================
-// Note:
-// Currently these prompts use the library `prompts` internally.
+// Currently these prompts use the library `inquirer` internally.
 //
-// The `prompts` library offer a reasonable set of well-built prompts and, until
+// This library offer a reasonable set of well-built prompts and, until
 // bluecodex is mature enough to justify having its own prompts, we'll defer
-// to using `prompts` or some other library.
+// to using a library.
 // =============================================================================
+import * as inquirer from "@inquirer/prompts";
 
 /*
  * Text
@@ -20,18 +18,20 @@ export async function prompt(
     validate?: (value: string) => boolean | Promise<boolean>;
   },
 ): Promise<string> {
-  const { value } = await prompts({
-    type: "text",
-    name: "value",
-    message,
-    initial: options?.initial,
-    // TODO: try/catch and return error as message
-    validate: options?.validate,
-  });
+  try {
+    const value = await inquirer.input({
+      message,
+      default: options?.initial,
+      required: true,
+      // TODO: try/catch and return error as message
+      validate: options?.validate,
+    });
 
-  if (typeof value === "undefined") process.exit(1);
-
-  return value;
+    return value;
+  } catch {
+    // TODO: check error type
+    process.exit(1);
+  }
 }
 
 /*
@@ -44,16 +44,17 @@ prompt.confirm = async (
     initial?: boolean;
   },
 ): Promise<boolean> => {
-  const { value } = await prompts({
-    type: "confirm",
-    name: "value",
-    message,
-    initial: options?.initial ?? true,
-  });
+  try {
+    const value = await inquirer.confirm({
+      message,
+      default: options?.initial ?? true,
+    });
 
-  if (typeof value === "undefined") process.exit(1);
-
-  return value;
+    return value;
+  } catch {
+    // TODO: check error type
+    process.exit(1);
+  }
 };
 
 /*
@@ -67,60 +68,57 @@ prompt.number = async (
     validate?: (value: number) => boolean | Promise<boolean>;
     min?: number;
     max?: number;
-    float?: boolean | { decimalPlaces: number };
     step?: number;
   },
 ): Promise<number> => {
-  const { value } = await prompts({
-    type: "number",
-    name: "value",
-    message,
-    initial: options?.initial ?? options?.min ?? 0,
-    // TODO: try/catch and return error as message
-    validate: options?.validate,
-    min: options?.min,
-    max: options?.max,
-    float: Boolean(options?.float),
-    round:
-      typeof options?.float === "object"
-        ? options.float.decimalPlaces
-        : undefined,
-    increment: options?.step,
-  });
+  try {
+    const value = await inquirer.number({
+      message,
+      default: options?.initial ?? options?.min,
+      required: true,
+      // TODO: try/catch and return error as message
+      validate: options?.validate,
+      min: options?.min,
+      max: options?.max,
+      step: options?.step,
+    });
 
-  if (typeof value === "undefined") process.exit(1);
-
-  return value;
+    return value;
+  } catch {
+    // TODO: check error type
+    process.exit(1);
+  }
 };
 
 // Select
 
 prompt.select = async <Value extends string>(
   message: string,
-  choices: Array<Value | { value: Value; description?: string }>,
+  choices: Array<
+    Value | { value: Value; title?: string; description?: string }
+  >,
   options?: { initial?: Value },
 ): Promise<Value> => {
   const mappedChoices = choices.map((choice) =>
     typeof choice === "string"
-      ? { title: choice, value: choice }
+      ? { value: choice }
       : {
-          title: choice.value,
+          name: choice.title,
           value: choice.value,
           description: choice.description,
         },
   );
 
-  const { value } = await prompts({
-    type: "autocomplete",
-    name: "value",
-    // @ts-expect-error prompts types have not been updated yet
-    clearFirst: true,
-    message,
-    choices: mappedChoices,
-    initial: options?.initial ?? 0,
-  });
+  try {
+    const value = await inquirer.select({
+      message,
+      choices: mappedChoices,
+      default: options?.initial,
+    });
 
-  if (typeof value === "undefined") process.exit(1);
-
-  return value;
+    return value;
+  } catch {
+    // TODO: check error type
+    process.exit(1);
+  }
 };
