@@ -1,1 +1,1 @@
-export type LooseFilePath = (string | URL | LooseFilePath)[];
+export type LooseFilePath = (string | LooseFilePath)[];
