@@ -2,12 +2,11 @@
 import { spawn } from "node:child_process";
 import fs from "node:fs/promises";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 
 async function findTsxPath() {
   for (let i = 0; i < 5; i++) {
     const binPath = path.join(
-      path.dirname(fileURLToPath(import.meta.url)),
+      import.meta.dirname,
       "../".repeat(i),
       "node_modules/.bin/tsx",
     );
@@ -24,10 +23,7 @@ async function findTsxPath() {
 
 const tsxPath = await findTsxPath();
 
-const bootFilePath = path.join(
-  path.dirname(fileURLToPath(import.meta.url)),
-  "../boot/boot.ts",
-);
+const bootFilePath = path.join(import.meta.dirname, "../boot/boot.ts");
 
 const cmdArgv = process.argv.slice(2);
 

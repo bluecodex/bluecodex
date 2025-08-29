@@ -1,6 +1,4 @@
 import { casexTemplate } from "casex-template";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 
 import { file } from "../file/file";
 import { ioc } from "../ioc";
@@ -17,7 +15,7 @@ export const commandBlue = embeddedCommand(
 
     const templateFilename = "__na-me__.blue.ts";
     const templateFile = file(
-      path.dirname(fileURLToPath(import.meta.url)),
+      import.meta.dirname,
       "templates/simple",
       templateFilename,
     );
