@@ -1,6 +1,5 @@
 import stripAnsi from "strip-ansi";
 
-import { SpawnStdOption } from "../spawn/spawn-std-option";
 import { spawnTarget } from "../spawn/spawn-target";
 import type { LooseArgv } from "./loose-argv";
 import { runArgvToSpawnTarget } from "./run-argv-to-spawn-target";
@@ -18,7 +17,7 @@ import { tightenLooseArgv } from "./tighten-loose-argv";
  */
 export async function run(looseArgv: LooseArgv): Promise<RunResult> {
   const target = await runArgvToSpawnTarget(looseArgv);
-  const result = await spawnTarget(target, SpawnStdOption.tty);
+  const result = await spawnTarget(target, "tty");
 
   return {
     __objectType__: "run-result",
@@ -35,7 +34,7 @@ export async function run(looseArgv: LooseArgv): Promise<RunResult> {
  */
 run.withOutput = async (looseArgv: LooseArgv): Promise<RunResultWithOutput> => {
   const target = await runArgvToSpawnTarget(tightenLooseArgv(looseArgv));
-  const spawnResult = await spawnTarget(target, SpawnStdOption.pipeAndInherit);
+  const spawnResult = await spawnTarget(target, "pipe-and-inherit");
 
   return {
     __objectType__: "run-result-with-output",
