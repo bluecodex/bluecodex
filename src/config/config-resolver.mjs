@@ -4,26 +4,26 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 
-async function fsExists(filePath) {
+async function fsExists(filename) {
   try {
-    await fs.access(filePath, fs.constants.F_OK);
+    await fs.access(filename, fs.constants.F_OK);
     return true;
   } catch {
     return false;
   }
 }
 
-async function resolveProjectBluecodexBin() {
+async function resolveProjectBluecodexBinFilename() {
   const cwd = process.cwd();
 
   for (let i = 0; i < 5; i++) {
-    const binPath = path.join(
+    const binFilename = path.join(
       cwd,
       "../".repeat(i),
       "node_modules/.bin/bluecodex",
     );
 
-    if (await fsExists(binPath)) return binPath;
+    if (await fsExists(binFilename)) return binFilename;
   }
 
   return null;
@@ -31,15 +31,16 @@ async function resolveProjectBluecodexBin() {
 
 async function findBluecodexBin() {
   // Check 1. Installed in this project
-  const projectBluecodexBinPath = await resolveProjectBluecodexBin();
-  if (projectBluecodexBinPath) return projectBluecodexBinPath;
+  const projectBluecodexBinFilename =
+    await resolveProjectBluecodexBinFilename();
+  if (projectBluecodexBinFilename) return projectBluecodexBinFilename;
 
   // Check 2. Linked through another project
-  const linksFilePath = path.join(os.homedir(), ".config/bluecodex/links.txt");
+  const linksFilename = path.join(os.homedir(), ".config/bluecodex/links.txt");
 
   let hasLinks = false;
-  if (await fsExists(linksFilePath)) {
-    const linksContents = await fs.readFile(linksFilePath, {
+  if (await fsExists(linksFilename)) {
+    const linksContents = await fs.readFile(linksFilename, {
       encoding: "utf-8",
     });
 
@@ -51,8 +52,8 @@ async function findBluecodexBin() {
         continue;
       }
 
-      const binPath = path.join(link, "node_modules/.bin/bluecodex");
-      if (await fsExists(binPath)) return binPath;
+      const binFilename = path.join(link, "node_modules/.bin/bluecodex");
+      if (await fsExists(binFilename)) return binFilename;
     }
   }
 

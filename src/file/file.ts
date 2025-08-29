@@ -3,14 +3,14 @@ import os from "node:os";
 import path from "node:path";
 
 import { ioc } from "../ioc";
-import type { LooseFilePath } from "./loose-file-path";
-import { tightenLooseFilePath } from "./tighten-loose-file-path";
+import type { LooseFilename } from "./loose-filename";
+import { tightenLooseFilename } from "./tighten-loose-filename";
 
 export class File {
-  readonly path: string;
+  readonly filename: string;
 
-  constructor(...looseFilePath: LooseFilePath) {
-    this.path = tightenLooseFilePath(looseFilePath);
+  constructor(...looseFilename: LooseFilename) {
+    this.filename = tightenLooseFilename(looseFilename);
   }
 
   /**
@@ -21,36 +21,36 @@ export class File {
    * Otherwise, show the absolute path
    */
   get prettyPath() {
-    if (this.path.startsWith(ioc.project.rootPath)) {
-      return path.relative(ioc.project.rootPath, this.path);
+    if (this.filename.startsWith(ioc.project.rootPath)) {
+      return path.relative(ioc.project.rootPath, this.filename);
     }
 
-    if (this.path.startsWith(os.homedir())) {
+    if (this.filename.startsWith(os.homedir())) {
       return this.tildePath;
     }
 
-    return this.path;
+    return this.filename;
   }
 
   get tildePath() {
-    return "~/" + path.relative(os.homedir(), this.path);
+    return "~/" + path.relative(os.homedir(), this.filename);
   }
 
   get dirname(): string {
-    return path.dirname(this.path);
+    return path.dirname(this.filename);
   }
 
   get basename(): string {
-    return path.basename(this.path);
+    return path.basename(this.filename);
   }
 
   get extname(): string {
-    return path.extname(this.path);
+    return path.extname(this.filename);
   }
 
   async exists(): Promise<boolean> {
     try {
-      await fs.access(this.path, fs.constants.F_OK);
+      await fs.access(this.filename, fs.constants.F_OK);
       return true;
     } catch {
       return false;
@@ -58,7 +58,7 @@ export class File {
   }
 
   async read(): Promise<string> {
-    return fs.readFile(this.path, {
+    return fs.readFile(this.filename, {
       encoding: "utf-8",
     });
   }
@@ -79,7 +79,7 @@ export class File {
     await fs.mkdir(this.dirname, { recursive: true });
 
     const alreadyExisted = await this.exists();
-    await fs.writeFile(this.path, contents);
+    await fs.writeFile(this.filename, contents);
 
     if (!options?.skipLog) {
       console.log(
@@ -91,18 +91,18 @@ export class File {
   }
 }
 
-export function file(...looseFilePath: LooseFilePath): File {
-  return new File(looseFilePath);
+export function file(...looseFilename: LooseFilename): File {
+  return new File(looseFilename);
 }
 
 file.glob = async (pattern: string): Promise<File[]> => {
-  const filePathsIterator = fs.glob(pattern);
+  const filenamesIterator = fs.glob(pattern);
 
   const files: File[] = [];
 
   try {
-    for await (const filePath of filePathsIterator) {
-      files.push(file(filePath));
+    for await (const filename of filenamesIterator) {
+      files.push(file(filename));
     }
   } catch {
     // do nothing

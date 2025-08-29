@@ -7,18 +7,18 @@ export async function source(pattern: string) {
     : await file.glob(pattern);
 
   for (const file of files) {
-    const isLocalOnlyFile = file.path.startsWith(
+    const isLocalOnlyFile = file.filename.startsWith(
       ioc.project.localBlueFolderPath,
     );
 
     if (isLocalOnlyFile) {
       await ioc.registry.markingAsLocal(async () => {
-        await import(file.path);
-        ioc.registry.registerSourceFile(file.path);
+        await import(file.filename);
+        ioc.registry.registerSourceFile(file.filename);
       });
     } else {
-      await import(file.path);
-      ioc.registry.registerSourceFile(file.path);
+      await import(file.filename);
+      ioc.registry.registerSourceFile(file.filename);
     }
   }
 

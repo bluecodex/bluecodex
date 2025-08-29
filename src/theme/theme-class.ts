@@ -278,19 +278,19 @@ export class ThemeClass {
    * File
    */
 
-  relativePath(filePath: string) {
-    return path.relative(ioc.project.rootPath, filePath);
+  relativeFilename(filename: string) {
+    return path.relative(ioc.project.rootPath, filename);
   }
 
-  fileCreated(filePath: string) {
-    return this.styleSuccess(`+ ${this.relativePath(filePath)} created`);
+  fileCreated(filename: string) {
+    return this.styleSuccess(`+ ${this.relativeFilename(filename)} created`);
   }
 
-  fileUpdated(filePath: string) {
-    return this.styleSuccess(`◉ ${this.relativePath(filePath)} updated`);
+  fileUpdated(filename: string) {
+    return this.styleSuccess(`◉ ${this.relativeFilename(filename)} updated`);
   }
 
-  fileDeleted(filePath: string) {
-    return this.styleSuccess(`- ${this.relativePath(filePath)} deleted`);
+  fileDeleted(filename: string) {
+    return this.styleSuccess(`- ${this.relativeFilename(filename)} deleted`);
   }
 }

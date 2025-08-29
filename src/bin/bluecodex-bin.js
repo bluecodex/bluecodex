@@ -5,15 +5,15 @@ import path from "node:path";
 
 async function findTsxPath() {
   for (let i = 0; i < 5; i++) {
-    const binPath = path.join(
+    const binFilename = path.join(
       import.meta.dirname,
       "../".repeat(i),
       "node_modules/.bin/tsx",
     );
 
     try {
-      await fs.access(binPath, fs.constants.F_OK);
-      return binPath;
+      await fs.access(binFilename, fs.constants.F_OK);
+      return binFilename;
     } catch {}
   }
 
@@ -21,13 +21,15 @@ async function findTsxPath() {
   process.exit(1);
 }
 
-const tsxPath = await findTsxPath();
+const tsxFilename = await findTsxPath();
 
-const bootFilePath = path.join(import.meta.dirname, "../boot/boot.ts");
+const bootFilename = path.join(import.meta.dirname, "../boot/boot.ts");
 
 const cmdArgv = process.argv.slice(2);
 
-const child = spawn(tsxPath, [bootFilePath, ...cmdArgv], { stdio: "inherit" });
+const child = spawn(tsxFilename, [bootFilename, ...cmdArgv], {
+  stdio: "inherit",
+});
 
 child.on("close", () => {
   const exitCode = child.exitCode;

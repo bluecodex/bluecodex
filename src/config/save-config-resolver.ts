@@ -8,5 +8,5 @@ export async function saveConfigResolver() {
 
   const resolverFile = configFile("resolver.mjs");
   await resolverFile.save(await resolverMjsFile.read());
-  fs.chmod(resolverFile.path, 0o755);
+  fs.chmod(resolverFile.filename, 0o755);
 }

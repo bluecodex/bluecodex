@@ -10,7 +10,7 @@ export class Registry {
   private selfRegisterEnabled: boolean = false;
 
   private registeredSources: {
-    filePath: string;
+    filename: string;
     local: boolean;
   }[] = [];
 
@@ -18,8 +18,11 @@ export class Registry {
     return [...this.registeredSources];
   }
 
-  registerSourceFile(filePath: string) {
-    this.registeredSources.push({ filePath, local: this.markAsLocalEnabled });
+  registerSourceFile(filename: string) {
+    this.registeredSources.push({
+      filename,
+      local: this.markAsLocalEnabled,
+    });
   }
 
   enableSelfRegister() {

@@ -1,12 +1,12 @@
 import os from "node:os";
 import path from "node:path";
 
-import type { LooseFilePath } from "./loose-file-path";
+import type { LooseFilename } from "./loose-filename";
 
-export function tightenLooseFilePath(looseFilePath: LooseFilePath): string {
+export function tightenLooseFilename(looseFilename: LooseFilename): string {
   return path.resolve(
-    ...looseFilePath.map((part) => {
-      if (Array.isArray(part)) return tightenLooseFilePath(part);
+    ...looseFilename.map((part) => {
+      if (Array.isArray(part)) return tightenLooseFilename(part);
 
       if (part === "~") return os.homedir();
 
