@@ -36,17 +36,17 @@
   "devDependencies": {
     "@total-typescript/ts-reset": "^0.6.1",
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
-    "@types/bun": "^1.2.20",
+    "@types/node": "^24.3.0",
     "@types/which": "^3.0.4",
     "oxlint": "^1.5.0",
     "prettier": "^3.6.2",
+    "tsx": "^4.20.5",
     "typescript": "^5.8.3",
     "vitest": "^3.2.4"
   },
   "dependencies": {
     "@inquirer/prompts": "^7.8.4",
     "ansi-escapes": "^7.0.0",
-    "bun": "^1.2.21",
     "casex": "^4.0.2",
     "casex-template": "^4.0.1",
     "chalk": "^5.6.0",
