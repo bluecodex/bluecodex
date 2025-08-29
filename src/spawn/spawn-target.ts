@@ -36,7 +36,7 @@ export function spawnTarget(
     case "command": {
       console.log(ioc.theme.runCommand(target.command, target.argv));
       return spawnWithStdOption({
-        name: process.argv0,
+        name: process.env.tsxFilename!,
         argv: [process.argv[1], target.name, ...target.argv],
         stdOption,
       });

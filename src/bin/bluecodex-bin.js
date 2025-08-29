@@ -29,6 +29,10 @@ const cmdArgv = process.argv.slice(2);
 
 const child = spawn(tsxFilename, [bootFilename, ...cmdArgv], {
   stdio: "inherit",
+  env: {
+    ...process.env,
+    tsxFilename,
+  },
 });
 
 child.on("close", () => {
