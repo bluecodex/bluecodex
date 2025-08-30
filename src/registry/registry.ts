@@ -14,10 +14,6 @@ export class Registry {
     local: boolean;
   }[] = [];
 
-  get sourceFiles() {
-    return [...this.registeredSources];
-  }
-
   registerSourceFile(filename: string) {
     this.registeredSources.push({
       filename,
