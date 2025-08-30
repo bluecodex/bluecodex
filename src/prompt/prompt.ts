@@ -5,7 +5,10 @@
 // bluecodex is mature enough to justify having its own prompts, we'll defer
 // to using a library.
 // =============================================================================
-import * as inquirer from "@inquirer/prompts";
+import inquirerConfirm from "@inquirer/confirm";
+import inquirerInput from "@inquirer/input";
+import inquirerNumber from "@inquirer/number";
+import inquirerSelect from "@inquirer/select";
 
 /*
  * Text
@@ -19,7 +22,7 @@ export async function prompt(
   },
 ): Promise<string> {
   try {
-    const value = await inquirer.input({
+    const value = await inquirerInput({
       message,
       default: options?.initial,
       required: true,
@@ -45,7 +48,7 @@ prompt.confirm = async (
   },
 ): Promise<boolean> => {
   try {
-    const value = await inquirer.confirm({
+    const value = await inquirerConfirm({
       message,
       default: options?.initial ?? true,
     });
@@ -72,7 +75,7 @@ prompt.number = async (
   },
 ): Promise<number> => {
   try {
-    const value = await inquirer.number({
+    const value = await inquirerNumber({
       message,
       default: options?.initial ?? options?.min,
       required: true,
@@ -110,7 +113,7 @@ prompt.select = async <Value extends string>(
   );
 
   try {
-    const value = await inquirer.select({
+    const value = await inquirerSelect({
       message,
       choices: mappedChoices,
       default: options?.initial,

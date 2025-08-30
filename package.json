@@ -45,7 +45,10 @@
     "vitest": "^3.2.4"
   },
   "dependencies": {
-    "@inquirer/prompts": "^7.8.4",
+    "@inquirer/confirm": "^5.1.16",
+    "@inquirer/input": "^4.2.2",
+    "@inquirer/number": "^3.0.18",
+    "@inquirer/select": "^4.3.2",
     "ansi-escapes": "^7.0.0",
     "casex": "^4.0.2",
     "casex-template": "^4.0.1",
